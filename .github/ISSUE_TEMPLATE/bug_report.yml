@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a problem with an Akame mod or the website
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Project
+      options: [ModCore, Chest, Crosshair+, ChunkLoader, Items, Zoom, Website]
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the issue and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open ...\n2. Click ..."
+  - type: input
+    id: versions
+    attributes:
+      label: Minecraft / Fabric / mod versions
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs (remove tokens and personal data)
+      render: text
