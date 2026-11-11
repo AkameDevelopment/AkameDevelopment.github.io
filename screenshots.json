@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "description": "Add real screenshots only; relative image paths must be under assets/screenshots/. No mockups.",
+  "projects": {
+    "modcore": [],
+    "chest": [],
+    "crosshair": [],
+    "chunkloader": [],
+    "items": [],
+    "zoom": []
+  }
+}
