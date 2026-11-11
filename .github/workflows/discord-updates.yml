@@ -1,0 +1,40 @@
+name: Announce updates on Discord
+on:
+  push:
+    branches: [main]
+    paths: [updates.json]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  announce:
+    if: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send latest release or announcement
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.parse
+          with open("updates.json", encoding="utf-8") as f:
+              data=json.load(f)
+          releases=data.get("releases",[])
+          announcements=data.get("announcements",[])
+          item=releases[0] if releases else (announcements[0] if announcements else None)
+          if not item:
+              print("No updates to announce.")
+              raise SystemExit(0)
+          name=item.get("mod") or item.get("title") or "AkameDevelopment"
+          version=item.get("version","")
+          summary=str(item.get("summary",""))[:1000]
+          text=f"💜 **AkameDevelopment Update**\\n**{name} {version}**\\n{summary}"
+          payload=json.dumps({"content":text[:1900],"allowed_mentions":{"parse":[]}}).encode()
+          url=os.environ["DISCORD_WEBHOOK_URL"]
+          if not url.startswith("https://discord.com/api/webhooks/") and not url.startswith("https://discordapp.com/api/webhooks/"):
+              raise SystemExit("Invalid Discord webhook URL")
+          request=urllib.request.Request(url,data=payload,headers={"Content-Type":"application/json","User-Agent":"AkameDevelopment-Updates/1.0"},method="POST")
+          with urllib.request.urlopen(request,timeout=15) as response:
+              print("Discord notification sent:",response.status)
+          PY
