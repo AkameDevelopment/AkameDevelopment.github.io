@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest an improvement or new feature
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Project
+      options: [ModCore, Chest, Crosshair+, ChunkLoader, Items, Zoom, Website]
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to see?
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why would this be useful?
