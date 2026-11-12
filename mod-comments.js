@@ -13,7 +13,7 @@ if (root && slugs.has(slug)) {
   .akame-comment-box button,.akame-comment-list button{background:#8e5bdb;border:1px solid #ae86f6;border-radius:10px;color:#fff;padding:9px 14px;font:700 13px system-ui;cursor:pointer}
   .akame-comment-box button:disabled,.akame-comment-list button:disabled{opacity:.5;cursor:wait}.akame-comment-box small{color:#a99bbb}
   .akame-comment-list{display:grid;gap:12px}.akame-comment{border:1px solid #ffffff1d;background:#171120;border-radius:15px;padding:17px;overflow-wrap:anywhere}
-  .akame-comment-meta{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}.akame-comment-meta strong{color:#ead7ff}
+  .akame-comment-meta{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}.akame-comment-identity{display:flex;align-items:center;gap:11px;min-width:0}.akame-comment-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#352344;flex:none;border:1px solid #a782cc55}.akame-comment-meta strong{color:#ead7ff}
   .akame-comment-meta time{font-size:12px;color:#9f91af}.akame-comment p{white-space:pre-wrap;color:#ded2ec;margin:10px 0 0;max-width:none}
   .akame-comment-list .akame-delete{background:transparent;border:1px solid #84526a;color:#f4afc5;padding:5px 9px;font-size:12px}
   .akame-comments [hidden]{display:none!important}.akame-comment-msg{color:#cbb5e7;font-size:13px}
@@ -29,7 +29,7 @@ if (root && slugs.has(slug)) {
   async function fetchComments(){
     list.replaceChildren();
     showMessage("Kommentare werden geladen …");
-    const {data,error} = await supabase.from("mod_comments").select("id,project_slug,author_id,author_name,body,created_at").eq("project_slug",slug).order("created_at",{ascending:false}).limit(50);
+    const {data,error} = await supabase.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at").eq("project_slug",slug).order("created_at",{ascending:false}).limit(50);
     if(error){showMessage("Kommentare konnten nicht geladen werden: "+error.message);return;}
     showMessage(data.length ? data.length+" Kommentar"+(data.length===1?"":"e")+" (maximal 50 angezeigt)" : "Noch keine Kommentare. Sei die erste Person!");
     for(const item of data){
@@ -37,7 +37,7 @@ if (root && slugs.has(slug)) {
       const meta=document.createElement("div");meta.className="akame-comment-meta";
       const name=document.createElement("strong");name.textContent=item.author_name||"Discord-Nutzer";
       const time=document.createElement("time");time.dateTime=item.created_at;time.textContent=timestamp(item.created_at);
-      const info=document.createElement("div");info.append(name,document.createTextNode(" · "),time);meta.append(info);
+      const info=document.createElement("div");info.append(name,document.createTextNode(" · "),time);const identity=document.createElement("div");identity.className="akame-comment-identity";const avatar=document.createElement("img");avatar.className="akame-comment-avatar";avatar.alt="Profilbild von "+name.textContent;avatar.loading="lazy";avatar.referrerPolicy="no-referrer";const avatarUrl=String(item.author_avatar_url||"");avatar.src=/^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(avatarUrl)?avatarUrl:"https://cdn.discordapp.com/embed/avatars/0.png";identity.append(avatar,info);meta.append(identity);
       if(currentUser && (currentUser.id===item.author_id || moderator)){
         const remove=document.createElement("button");remove.type="button";remove.className="akame-delete";remove.textContent="Löschen";
         remove.addEventListener("click",async()=>{
