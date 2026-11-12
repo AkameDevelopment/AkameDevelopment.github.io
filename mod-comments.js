@@ -24,27 +24,29 @@ if (root && slugs.has(slug)) {
   const list = q("#comment-list"), message = q("#comment-message"), composer = q("#comment-composer"), guest = q("#comment-guest");
   const textarea = q("#comment-body"), counter = q("#comment-count"), submit = q("#comment-submit");
   let currentUser = null, moderator = false;
+  const tr=(de,en)=>window.AkameLanguage?.get()==="en"?en:de;
+  document.addEventListener("akame-language-change",()=>{submit.textContent=tr("Kommentar veröffentlichen","Post comment");void fetchComments();});
   function showMessage(text){message.textContent=text;}
   function timestamp(iso){return new Date(iso).toLocaleString(document.documentElement.lang==="en"?"en-GB":"de-DE",{dateStyle:"medium",timeStyle:"short"});}
   async function fetchComments(){
     list.replaceChildren();
-    showMessage("Kommentare werden geladen …");
+    showMessage(tr("Kommentare werden geladen …","Loading comments …"));
     const {data,error} = await supabase.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at").eq("project_slug",slug).order("created_at",{ascending:false}).limit(50);
-    if(error){showMessage("Kommentare konnten nicht geladen werden: "+error.message);return;}
-    showMessage(data.length ? data.length+" Kommentar"+(data.length===1?"":"e")+" (maximal 50 angezeigt)" : "Noch keine Kommentare. Sei die erste Person!");
+    if(error){showMessage(tr("Kommentare konnten nicht geladen werden: ","Could not load comments: ")+error.message);return;}
+    showMessage(data.length ? (window.AkameLanguage?.get()==="en"?data.length+" comment"+(data.length===1?"":"s")+" (up to 50 shown)":data.length+" Kommentar"+(data.length===1?"":"e")+" (maximal 50 angezeigt)") : tr("Noch keine Kommentare. Sei die erste Person!","No comments yet. Be the first!"));
     for(const item of data){
       const article=document.createElement("article");article.className="akame-comment";
       const meta=document.createElement("div");meta.className="akame-comment-meta";
-      const name=document.createElement("strong");name.textContent=item.author_name||"Discord-Nutzer";
+      const name=document.createElement("strong");name.textContent=item.author_name||tr("Discord-Nutzer","Discord user");
       const time=document.createElement("time");time.dateTime=item.created_at;time.textContent=timestamp(item.created_at);
-      const info=document.createElement("div");info.append(name,document.createTextNode(" · "),time);const identity=document.createElement("div");identity.className="akame-comment-identity";const avatar=document.createElement("img");avatar.className="akame-comment-avatar";avatar.alt="Profilbild von "+name.textContent;avatar.loading="lazy";avatar.referrerPolicy="no-referrer";const avatarUrl=String(item.author_avatar_url||"");avatar.src=/^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(avatarUrl)?avatarUrl:"https://cdn.discordapp.com/embed/avatars/0.png";identity.append(avatar,info);meta.append(identity);
+      const info=document.createElement("div");info.append(name,document.createTextNode(" · "),time);const identity=document.createElement("div");identity.className="akame-comment-identity";const avatar=document.createElement("img");avatar.className="akame-comment-avatar";avatar.alt=tr("Profilbild von ","Profile picture of ")+name.textContent;avatar.loading="lazy";avatar.referrerPolicy="no-referrer";const avatarUrl=String(item.author_avatar_url||"");avatar.src=/^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(avatarUrl)?avatarUrl:"https://cdn.discordapp.com/embed/avatars/0.png";identity.append(avatar,info);meta.append(identity);
       if(currentUser && (currentUser.id===item.author_id || moderator)){
-        const remove=document.createElement("button");remove.type="button";remove.className="akame-delete";remove.textContent="Löschen";
+        const remove=document.createElement("button");remove.type="button";remove.className="akame-delete";remove.textContent=tr("Löschen","Delete");
         remove.addEventListener("click",async()=>{
-          if(!confirm("Diesen Kommentar wirklich löschen?"))return;
+          if(!confirm(tr("Diesen Kommentar wirklich löschen?","Really delete this comment?")))return;
           remove.disabled=true;
           const {error}=await supabase.from("mod_comments").delete().eq("id",item.id);
-          if(error){showMessage("Löschen fehlgeschlagen: "+error.message);remove.disabled=false;return;}
+          if(error){showMessage(tr("Löschen fehlgeschlagen: ","Delete failed: ")+error.message);remove.disabled=false;return;}
           await fetchComments();
         });meta.append(remove);
       }
@@ -67,11 +69,11 @@ if (root && slugs.has(slug)) {
   q("#comment-form").addEventListener("submit",async event=>{
     event.preventDefault();if(!currentUser)return;
     const body=textarea.value.trim();
-    if(body.length<3 || body.length>1200){showMessage("Bitte 3 bis 1200 Zeichen eingeben.");return;}
-    submit.disabled=true;submit.textContent="Wird veröffentlicht …";
+    if(body.length<3 || body.length>1200){showMessage(tr("Bitte 3 bis 1200 Zeichen eingeben.","Please enter between 3 and 1,200 characters."));return;}
+    submit.disabled=true;submit.textContent=tr("Wird veröffentlicht …","Posting …");
     const {error}=await supabase.from("mod_comments").insert({project_slug:slug,body});
-    submit.disabled=false;submit.textContent="Kommentar veröffentlichen";
-    if(error){showMessage("Kommentar konnte nicht gespeichert werden: "+error.message);return;}
+    submit.disabled=false;submit.textContent=tr("Kommentar veröffentlichen","Post comment");
+    if(error){showMessage(tr("Kommentar konnte nicht gespeichert werden: ","Could not save comment: ")+error.message);return;}
     textarea.value="";counter.textContent="0/1200";await fetchComments();
   });
   await checkUser();
