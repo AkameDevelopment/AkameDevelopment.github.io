@@ -193,3 +193,37 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
  }
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button{flex-shrink:0!important}
 }
+
+/* Desktop uses regular links only; the expandable Menu is mobile-exclusive. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  display:flex!important;
+  visibility:visible!important;
+  margin-left:30px!important;
+  margin-right:0!important;
+  padding:0!important;
+  gap:11px!important;
+  flex:0 1 auto!important;
+ }
+ html body header>.akame-menu-panel{display:none!important}
+}
+@media(min-width:1101px) and (max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4){display:none!important}
+}
+@media(min-width:851px) and (max-width:1100px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  gap:10px!important;
+  margin-left:auto!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(5),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important}
+}
