@@ -27,6 +27,8 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 .ghost{background:#ffffff0b;border:1px solid #ffffff29;border-radius:10px;padding:10px 13px}
 .beta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:16px 0}.beta label{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid #ffffff21;border-radius:10px;background:#ffffff06;cursor:pointer;font-size:13px}.beta input{accent-color:#af84f0;width:16px;height:16px}.beta label:has(input:checked){border-color:#ad88e9;background:#9e78ef22}
 .notice{font-size:12px;color:#bfb3cb;margin:10px 0}.error{color:#ffb7ca}.success{color:#c7a6ff}
+/* Wiederhergestellte Benutzerverwaltung: breites linkes Profil, schmale rechte Nutzerliste. */
+@media(min-width:811px){#dashboard>.layout{grid-template-columns:minmax(0,1fr) 340px!important;gap:20px!important;align-items:start!important}#admin-controls{width:340px!important;max-width:340px!important;justify-self:end!important}#people{max-height:420px!important}#selected{margin-top:0!important}#selected .separator{margin:20px 0!important}}
 [hidden]{display:none!important}@media(max-width:810px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.toplinks{gap:8px}.toplinks a{font-size:12px}}
 @media(max-width:480px){.grid{grid-template-columns:1fr}.beta{grid-template-columns:1fr}.top{padding:12px 15px}.shell{padding:25px 15px}.brand{font-size:15px}.panel{padding:17px}}
 </style><link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261112-purple-anime-large-2"><link rel="shortcut icon" href="favicon.svg?v=20261112-purple-anime-large-2"></head>
