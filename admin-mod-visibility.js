@@ -2,7 +2,7 @@ import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
 const root=document.getElementById("mod-visibility-manager");
 if(root){
  const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
- const names={modcore:"ModCore",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud+",info:"AkameInfos",admin:"Admin",zoom:"AkameZoom"};
+ const names={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud+",info:"AkameInfos",admin:"Admin",zoom:"AkameZoom"};
  const lang=()=>window.AkameLanguage?.get()==="en"?"en":"de";
  const tr=(de,en)=>lang()==="en"?en:de;
  const list=document.getElementById("mod-visibility-list");
