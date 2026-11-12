@@ -55,7 +55,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 <div id="beta-options" class="beta"></div>
 <p id="edit-message" class="notice" role="status" aria-live="polite"></p>
 </div></div></div></div>
-</main>
+<section id="news-manager" class="panel" style="margin-top:24px" hidden><h2>News & Updates verwalten</h2><p>News pro Mod erstellen, bearbeiten, veröffentlichen oder löschen.</p><form id="news-form" style="display:grid;gap:12px"><h3 id="news-id">Neue Meldung</h3><label>Mod / Projekt<select id="news-mod" class="input"></select></label><label>Typ<select id="news-kind" class="input"><option value="news">News</option><option value="update">Update</option><option value="release">Release</option></select></label><label>Titel<input id="news-title" class="input" minlength="3" maxlength="140" required></label><label>Text<textarea id="news-body" class="input" style="min-height:150px;color:#fff;font:inherit" minlength="3" maxlength="8000" required></textarea></label><label><input id="news-published" type="checkbox"> Veröffentlichen</label><div class="controls"><button class="primary" id="news-save" type="submit">Entwurf speichern</button><button class="ghost" type="button" id="news-cancel" hidden>Abbrechen</button><button class="ghost" type="button" id="news-delete" hidden>Löschen</button></div></form><p id="news-message" class="notice" role="status"></p><h2>Meldungen</h2><div id="news-list"></div></section></main>
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
@@ -139,4 +139,4 @@ async function init(){
 await init();
 const params=new URLSearchParams(location.search);
 if(params.get("login")==="discord"&&!current){history.replaceState(null,"",location.pathname);await login();}
-</script><script src="language.js?v=20261112-audit-15" defer></script></body></html>
+</script><script src="language.js?v=20261112-audit-15" defer></script><script type="module" src="admin-news.js?v=2"></script></body></html>
