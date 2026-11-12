@@ -178,3 +178,18 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button{margin-left:auto!important}
  html body header>.wrap.nav.akame-site-nav>.akame-account{margin-left:0!important;transform:none!important}
 }
+
+/* Keep Discord profile anchored to the viewport's right edge, not the centered content width. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav{position:static!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+   position:absolute!important;
+   top:50%!important;
+   right:clamp(16px,2vw,36px)!important;
+   left:auto!important;
+   margin:0!important;
+   transform:translateY(-50%)!important;
+   z-index:95!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{flex-shrink:0!important}
+}
