@@ -227,3 +227,39 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
  html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important}
 }
+
+/* Mobile navigation override: legacy styles must not hide the real Menu button. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:110!important;
+  margin:0 0 0 auto!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:42px!important;
+  transform:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+  display:flex!important;
+  visibility:visible!important;
+  position:relative!important;
+  margin:0!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+ }
+ html body header>.akame-menu-panel{
+  position:absolute!important;
+  top:100%!important;
+  left:0!important;
+  right:0!important;
+  z-index:105!important;
+  display:none!important;
+ }
+ html body header>.akame-menu-panel.open{display:block!important}
+}
