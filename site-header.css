@@ -65,3 +65,9 @@ html body header .akame-site-nav > a.brand > span{
  line-height:1.2!important;
  vertical-align:middle!important;
 }
+
+/* Keep viewport layout width stable when switching between pages with different scroll lengths. */
+html{scrollbar-gutter:stable!important}
+html body header>.wrap.nav.akame-site-nav{width:min(1180px,calc(100% - 44px))!important;max-width:1180px!important;margin-inline:auto!important}
+html body header>.wrap.nav.akame-site-nav>a.brand{align-self:center!important;flex-shrink:0!important;top:auto!important;translate:none!important}
+@media(max-width:850px){html body header>.wrap.nav.akame-site-nav{width:calc(100% - 32px)!important}}
