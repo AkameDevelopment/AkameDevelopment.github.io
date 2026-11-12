@@ -263,3 +263,42 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
  }
  html body header>.akame-menu-panel.open{display:block!important}
 }
+
+/* Unified GitHub + Discord controls: a single right-anchored group on desktop. */
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ gap:12px!important;flex:0 0 auto!important;white-space:nowrap!important;
+}
+html body header .akame-header-actions>.nav-action{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ padding:9px 13px!important;border:1px solid #70538f!important;
+ background:#a982ff13!important;color:#f6edff!important;
+ border-radius:11px!important;font:650 12px/18px Inter,system-ui,sans-serif!important;
+ text-decoration:none!important;white-space:nowrap!important;
+}
+html body header .akame-header-actions>.akame-account{
+ position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ transform:none!important;margin:0!important;display:flex!important;visibility:visible!important;z-index:95!important;
+}
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:235px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  position:absolute!important;right:clamp(16px,2vw,34px)!important;top:50%!important;
+  transform:translateY(-50%)!important;margin:0!important;z-index:95!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{margin-left:26px!important;margin-right:0!important}
+}
+@media(min-width:1101px) and (max-width:1550px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  position:static!important;transform:none!important;gap:0!important;margin:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.nav-action{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{
+  position:relative!important;transform:none!important;margin:0!important;
+ }
+}
