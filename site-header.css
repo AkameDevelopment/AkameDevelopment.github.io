@@ -119,3 +119,21 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
  html body header>.wrap.nav.akame-site-nav>.brand{font-size:15px!important}
  html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:15px!important}
 }
+
+/* Desktop spacing: navigation closer to logo, account a little farther right. */
+@media(min-width:1351px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+   margin-left:30px!important;
+   margin-right:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+   margin-left:auto!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+   margin-left:0!important;
+   transform:translateX(38px)!important;
+ }
+}
+@media(max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>.akame-account{transform:none!important}
+}
