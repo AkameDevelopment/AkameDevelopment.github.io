@@ -1,0 +1,14 @@
+/* Shared desktop and mobile header — canonical AkameDevelopment navigation */
+header{height:78px!important;min-height:78px!important;padding:0!important;position:sticky!important;top:0!important;z-index:80!important;background:#090811dd!important;border-bottom:1px solid #ffffff10!important;backdrop-filter:blur(22px)!important;display:block!important}
+header>.nav,header>.wrap.nav,header .akame-site-nav{width:min(1180px,calc(100% - 44px))!important;max-width:1180px!important;min-height:78px!important;height:78px!important;padding:0!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-wrap:nowrap!important;gap:18px!important}
+header .brand{display:inline-flex!important;align-items:center!important;flex:none!important;white-space:nowrap!important;margin:0!important;font:850 18px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif!important;letter-spacing:-.055em!important;color:#fff!important;text-decoration:none!important}
+header .brand b{color:#b58cff!important;font:inherit!important}
+header .navlinks{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:17px!important;color:#b7b0c5!important;font-size:13px!important;font-weight:650!important}
+header .navlinks a{white-space:nowrap!important;color:#b7b0c5!important;text-decoration:none!important}
+header .navlinks a:hover{color:#fff!important}
+header .navlinks .nav-action{border:1px solid #70538f!important;padding:9px 13px!important;border-radius:11px!important;background:#a982ff13!important;color:#f6edff!important}
+header .akame-menu-button{margin:0!important;flex-shrink:0!important}
+header .akame-account{margin-left:0!important;flex-shrink:0!important}
+header .akame-back-home{display:none!important}
+@media(max-width:1100px){header .navlinks{display:none!important}header .akame-menu-button{margin-left:auto!important}}
+@media(max-width:850px){header,header .nav,header .akame-site-nav{height:66px!important;min-height:66px!important}header .nav,header .akame-site-nav{width:calc(100% - 32px)!important;gap:10px!important}header .brand{font-size:15px!important}}
