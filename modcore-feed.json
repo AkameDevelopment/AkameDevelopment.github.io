@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "posts": [
     {
+      "modId": "akamecore",
+      "version": "0.2.0-beta.4-dev",
+      "date": "2026-11-12",
+      "title": {
+        "de": "TEST – ModCore Website-Feed",
+        "en": "TEST – ModCore website feed"
+      },
+      "body": {
+        "de": "Testmeldung zur Prüfung der Website-Verbindung in ModCore. Wenn diese Meldung im Update-Verlauf erscheint, funktioniert der Feed-Abruf.",
+        "en": "Test message to verify the website connection in ModCore. If this message appears in the update history, the feed request is working."
+      }
+    },
+    {
       "modId": "serveradmin",
       "version": "0.2.0-beta.1",
       "date": "2026-10-31",
