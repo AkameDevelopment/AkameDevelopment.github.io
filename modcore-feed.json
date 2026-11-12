@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "posts": [
+    {
+      "modId": "serveradmin",
+      "version": "0.2.0-beta.1",
+      "date": "2026-10-31",
+      "title": {
+        "de": "ServerAdmin – erste öffentliche Beta",
+        "en": "ServerAdmin – first public beta"
+      },
+      "body": {
+        "de": "Neues Admin-Dashboard mit Spielerköpfen, Suche, Online-Filter, Statistik-Karten, Leistungsübersicht und schreibgeschützter Enderchest-Ansicht für Online-Spieler. Nur berechtigte Admins mit OP-Level 3+ erhalten Zugriff; gleich- oder höherrangige Spieler sind geschützt. /server (Mod Core) und /serveradmin öffnen die Verwaltung. Für das Admin-Menü ServerAdmin auf dem Server und auf dem Admin-Client installieren.",
+        "en": "Redesigned admin dashboard with player avatars, search, online filter, statistic cards, performance metrics and a read-only Ender Chest view for online players. Access requires server-side permission (OP level 3+ by default); equal or higher-level players are protected. Use /server (Mod Core) or /serveradmin. Install ServerAdmin on the server and the admin client."
+      }
+    },
+    {
+      "modId": "akamecore",
+      "version": "0.2.0-beta.1",
+      "date": "2026-10-31",
+      "title": {
+        "de": "Mod Core – öffentlicher Beta-Start",
+        "en": "Mod Core – public beta launch"
+      },
+      "body": {
+        "de": "Neuer Beta-Versionszweig. Der integrierte Update-Verlauf startet mit dieser Beta neu; frühere Alpha-Notizen werden nicht mehr mitgeliefert. ModCore-Menüs bleiben einheitlich, die Serververwaltung ist ohne Admin-Rechte ausgegraut. /server öffnet mit passender ServerAdmin-Installation das Admin-Menü. Persönliche Einstellungen werden nicht zurückgesetzt.",
+        "en": "New beta version line. The bundled changelog starts fresh with this beta; older alpha notes are no longer bundled. ModCore menus stay consistent, and Server Administration is disabled for non-admins. /server opens the ServerAdmin menu when installed. Existing personal settings are untouched."
+      }
+    }
+  ]
+}
