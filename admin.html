@@ -1,15 +1,142 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#090811"><title>Mitarbeiter-Login · AkameDevelopment</title><style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 0,#28183e,#090811 65%);color:#f9f7ff;font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;padding:24px}main{width:min(520px,100%);border:1px solid #ffffff24;border-radius:24px;padding:34px;background:#171120e8;box-shadow:0 24px 80px #0006}.brand{font-size:19px;font-weight:800;text-decoration:none;color:#fff}.brand span{color:#b99aff}h1{font-size:30px;line-height:1.2;margin:28px 0 12px}p{color:#bdb5cc}a{color:#c8aaff}button{font:inherit;font-weight:750;border:1px solid #a982ff88;background:#a982ff23;color:#fff;padding:13px 20px;border-radius:12px;cursor:pointer;width:100%;margin-top:12px}button:disabled{opacity:.55;cursor:wait}.discord-auth{display:flex;align-items:center;justify-content:center;gap:11px;background:#5865f2;border:1px solid #7983ff;color:white;box-shadow:0 8px 24px #5865f240;transition:background .2s,transform .2s}.discord-auth:hover:not(:disabled){background:#4752c4;transform:translateY(-1px)}.state{border:1px solid #ffffff1c;background:#21182f;padding:15px;border-radius:13px;color:#e8dafa;margin:20px 0}.back{display:inline-block;margin-top:20px;text-decoration:none;font-weight:650}.hidden{display:none}small{color:#aaa0ba}
-</style></head><body><main><a class="brand" href="index.html">Akame<span>Development</span></a><h1>Mitarbeiter-Login</h1><p>Dieser Bereich ist ausschließlich für autorisierte Mitarbeiter von AkameDevelopment vorgesehen.</p><div class="state" id="status" role="status" aria-live="polite">Anmeldestatus wird geprüft …</div><button id="login" class="hidden discord-auth" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="21" height="17" fill="currentColor" aria-hidden="true"><path d="M104.4 8.18A101.55 101.55 0 0 0 79.26 0a72.06 72.06 0 0 0-3.22 6.65 94.65 94.65 0 0 0-28.96 0A72.06 72.06 0 0 0 43.86 0 101.46 101.46 0 0 0 18.7 8.2C2.8 31.65-1.5 54.5.65 77.03A102.44 102.44 0 0 0 31.48 92.7a73.65 73.65 0 0 0 6.6-10.73 65.8 65.8 0 0 1-10.4-5.04c.87-.64 1.72-1.3 2.55-1.98 20.05 9.42 46.86 9.42 66.67 0 .83.68 1.68 1.34 2.55 1.98a65.7 65.7 0 0 1-10.43 5.05 73.65 73.65 0 0 0 6.6 10.72 102.43 102.43 0 0 0 30.85-15.67c2.5-26.15-4.28-48.79-18.05-68.85ZM42.45 64.93c-6.02 0-10.96-5.49-10.96-12.21s4.82-12.22 10.96-12.22c6.2 0 11.06 5.54 10.96 12.22 0 6.72-4.86 12.21-10.96 12.21Zm42.24 0c-6.02 0-10.96-5.49-10.96-12.21s4.82-12.22 10.96-12.22c6.2 0 11.06 5.54 10.96 12.22 0 6.72-4.86 12.21-10.96 12.21Z"/></svg><span>Mit Discord anmelden</span></button><button id="logout" class="hidden" type="button">Abmelden</button><p id="notice" class="hidden">Du bist angemeldet. Der Zugriff auf die Verwaltung bleibt gesperrt, bis deine Discord-ID serverseitig freigegeben und die Datenbankregeln eingerichtet sind.</p><small>Die Discord-Anmeldung allein verleiht keine Admin-Rechte.</small><div><a class="back" href="index.html">← Zur Startseite</a></div></main>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#090811">
+<title>Dashboard · AkameDevelopment</title>
+<style>
+:root{color-scheme:dark;--bg:#090811;--panel:#1a1426;--line:#ffffff1c;--muted:#afa5c0;--accent:#b58cff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 75% -15%,#5d2a9955,transparent 52%),var(--bg);color:#f9f7ff;font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:#d3b6ff;text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}
+header{border-bottom:1px solid var(--line);background:#0c0915d9;position:sticky;top:0;z-index:10;backdrop-filter:blur(18px)}
+.top{max-width:1230px;min-height:73px;padding:12px 22px;margin:auto;display:flex;align-items:center;gap:18px;justify-content:space-between}
+.brand{font-size:19px;font-weight:850;color:#fff;letter-spacing:-.055em;white-space:nowrap}.brand b{color:#b990ff}
+.toplinks{display:flex;align-items:center;gap:16px}.toplinks a{white-space:nowrap}.toplinks button{border:1px solid #82609d;border-radius:10px;padding:8px 14px;background:#ffffff0a}
+.shell{max-width:1230px;margin:auto;padding:36px 22px 70px}.intro{margin-bottom:24px}
+.eyebrow{color:#b98eff;font-size:11px;font-weight:850;letter-spacing:.17em;text-transform:uppercase}
+h1{font-size:clamp(32px,5vw,48px);letter-spacing:-.06em;margin:10px 0 9px}h2{margin:0 0 14px;font-size:20px;letter-spacing:-.035em}
+p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-radius:14px;background:#a58ae90c;color:#e6d8f9;margin:22px 0}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}.panel{background:linear-gradient(145deg,#21182e,#15101f);border:1px solid var(--line);border-radius:19px;padding:22px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.stat{padding:17px;background:#ffffff07;border:1px solid var(--line);border-radius:15px}.stat strong{font-size:27px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.profile{display:flex;align-items:center;gap:13px}.profile img,.person img{width:43px;height:43px;border-radius:50%;object-fit:cover;background:#302440;border:1px solid #a78bc255}
+.profile strong{display:block}.profile small{color:var(--muted)}
+.input{display:block;width:100%;background:#0c0a14;border:1px solid #876fa360;border-radius:10px;padding:11px 13px;outline:none}.input:focus{border-color:#c19bff}
+.people{display:grid;gap:8px;max-height:420px;overflow:auto;margin-top:14px}.person{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:10px;background:#ffffff05;border:1px solid transparent;border-radius:11px}.person:hover,.person.selected{border-color:#986fcb;background:#b78cf318}
+.person img{width:34px;height:34px}.person b{font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis}.person small{color:#b5a4ca}
+.pill{display:inline-block;border:1px solid #a381e959;border-radius:99px;padding:3px 10px;color:#e2c8ff;background:#9a70cf20;font-size:11px;font-weight:750}
+.separator{border:0;border-top:1px solid var(--line);margin:20px 0}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.controls select{flex:1;background:#171020;border:1px solid #9d7bc8;border-radius:10px;padding:10px}
+.primary{background:linear-gradient(115deg,#a475ef,#7950c7);border:1px solid #b995f5;border-radius:10px;padding:11px 15px;font-weight:800;color:#fff}
+.ghost{background:#ffffff0b;border:1px solid #ffffff29;border-radius:10px;padding:10px 13px}
+.beta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:16px 0}.beta label{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid #ffffff21;border-radius:10px;background:#ffffff06;cursor:pointer;font-size:13px}.beta input{accent-color:#af84f0;width:16px;height:16px}.beta label:has(input:checked){border-color:#ad88e9;background:#9e78ef22}
+.notice{font-size:12px;color:#bfb3cb;margin:10px 0}.error{color:#ffb7ca}.success{color:#c7a6ff}
+[hidden]{display:none!important}@media(max-width:810px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.toplinks{gap:8px}.toplinks a{font-size:12px}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.beta{grid-template-columns:1fr}.top{padding:12px 15px}.shell{padding:25px 15px}.brand{font-size:15px}.panel{padding:17px}}
+</style></head>
+<body>
+<header><div class="top"><a href="index.html" class="brand">Akame<b>Development</b></a><div class="toplinks"><a href="index.html">← Startseite</a><button type="button" id="logout" hidden>Abmelden</button></div></div></header>
+<main class="shell">
+<div class="intro"><span class="eyebrow">AkameDevelopment / Internal</span><h1>Mitarbeiter-Dashboard<span style="color:#b58cff">.</span></h1><p>Rollen, Beta-Freigaben und Community-Verwaltung.</p></div>
+<div id="status" class="state" role="status" aria-live="polite">Anmeldestatus wird überprüft …</div>
+<section id="login-view" class="panel" hidden><h2>Discord-Anmeldung erforderlich</h2><p>Du musst angemeldet und freigeschaltet sein, um den Mitarbeiterbereich zu sehen.</p><button type="button" class="primary" id="login">Mit Discord anmelden</button></section>
+<section id="denied-view" class="panel" hidden><h2>Kein Zugriff</h2><p>Dein Discord-Konto ist angemeldet, hat aber keine Mitarbeiterberechtigung. Öffne die öffentliche Website oder wende dich an einen Administrator.</p><a href="index.html">Zur Startseite</a></section>
+<div id="dashboard" hidden>
+<div class="grid"><div class="stat"><strong id="user-count">–</strong><span>Registrierte Benutzer</span></div><div class="stat"><strong id="staff-count">–</strong><span>Team-Mitglieder</span></div><div class="stat"><strong id="beta-count">–</strong><span>Beta-Freigaben</span></div></div>
+<div class="layout">
+<div>
+<section class="panel"><h2>Mein Discord-Profil</h2><div class="profile"><img id="my-avatar" alt="Dein Discord-Profilbild" referrerpolicy="no-referrer"><div><strong id="my-name">Discord-Benutzer</strong><small id="my-role">Mitarbeiter</small></div></div></section>
+<section class="panel" style="margin-top:20px"><h2>Community & Moderation</h2><p>Kommentare zu Mods lesen, eigene Kommentare löschen und als Mitarbeiter Diskussionen moderieren.</p><div class="controls"><a class="ghost" href="community.html#discussions">Mod-Diskussionen ansehen</a><a class="ghost" href="project.html?mod=modcore#mod-comments">ModCore-Kommentare</a></div></section>
+</div>
+<div id="admin-controls" class="panel" hidden>
+<h2>Benutzerverwaltung</h2><p class="notice">Nur Administratoren können Rollen und Beta-Zugänge ändern.</p>
+<input id="search" class="input" type="search" placeholder="Discord-Benutzer suchen …" aria-label="Benutzer suchen">
+<div id="people" class="people" aria-live="polite"></div>
+<hr class="separator">
+<div id="selected" hidden><h2 id="selected-name">Benutzer</h2><p id="selected-uid" class="notice"></p>
+<div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Normaler Benutzer</option><option value="staff">Mitarbeiter</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
+<hr class="separator"><h2>Beta-Zugriffe</h2><p class="notice">Diese Auswahl wird pro Benutzer gespeichert. Die tatsächlichen Beta-Downloads werden später separat per RLS/Storage abgesichert.</p>
+<div id="beta-options" class="beta"></div>
+<p id="edit-message" class="notice" role="status" aria-live="polite"></p>
+</div></div></div></div>
+</main>
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const supabase=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});
-const status=document.getElementById("status"),login=document.getElementById("login"),logout=document.getElementById("logout"),notice=document.getElementById("notice");
-function render(user){if(user&&sessionStorage.getItem("akame-discord-login-return")==="1"){sessionStorage.removeItem("akame-discord-login-return");location.replace("index.html");return}login.classList.toggle("hidden",!!user);logout.classList.toggle("hidden",!user);notice.classList.toggle("hidden",!user);status.textContent=user?"Discord-Anmeldung erfolgreich. Admin-Zugriff noch nicht freigeschaltet.":"Nicht angemeldet. Mitarbeiter können sich über Discord anmelden."}
-async function startDiscordLogin(){login.disabled=true;status.textContent="Weiterleitung zu Discord …";sessionStorage.setItem("akame-discord-login-return","1");try{const {error}=await supabase.auth.signInWithOAuth({provider:"discord",options:{redirectTo:"https://akamedevelopment.github.io/admin.html",scopes:"identify email"}});if(error)throw error}catch(error){sessionStorage.removeItem("akame-discord-login-return");status.textContent="Anmeldung fehlgeschlagen: "+error.message;login.disabled=false;login.classList.remove("hidden")}}login.addEventListener("click",startDiscordLogin);
-logout.addEventListener("click",async()=>{logout.disabled=true;const {error}=await supabase.auth.signOut();if(error)status.textContent="Abmeldung fehlgeschlagen: "+error.message;else render(null);logout.disabled=false});
-try{const {data,error}=await supabase.auth.getUser();if(error&&error.name!=="AuthSessionMissingError")status.textContent="Sitzung konnte nicht geprüft werden: "+error.message;else render(data?.user||null)}catch(e){status.textContent="Verbindung fehlgeschlagen. Bitte später erneut versuchen.";login.classList.remove("hidden")}
-supabase.auth.onAuthStateChange((_event,session)=>render(session?.user||null));
-const params=new URLSearchParams(location.search);if(params.get("login")==="discord"){history.replaceState(null,"",location.pathname);const {data}=await supabase.auth.getSession();if(!data?.session?.user)await startDiscordLogin();}
+const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
+const $=id=>document.getElementById(id);
+const names={modcore:"ModCore",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud+",info:"AkameInfos",admin:"Admin",zoom:"AkameZoom"};
+let current=null,role=null,people=[],roles=new Map(),betas=new Map(),selected=null;
+const fallback="https://cdn.discordapp.com/embed/avatars/0.png";
+function avatar(url){return /^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(String(url||""))?url:fallback;}
+function status(text){$("status").textContent=text;}
+function show(section){for(const id of ["login-view","denied-view","dashboard"])$(id).hidden=(id!==section);}
+function msg(text,error=false){$("edit-message").textContent=text;$("edit-message").className=error?"notice error":"notice success";}
+async function login(){status("Weiterleitung zu Discord …");const {error}=await db.auth.signInWithOAuth({provider:"discord",options:{redirectTo:"https://akamedevelopment.github.io/admin.html",scopes:"identify email"}});if(error)status("Anmeldung fehlgeschlagen: "+error.message);}
+$("login").addEventListener("click",login);
+$("logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(!error)location.replace("index.html");else status("Abmelden fehlgeschlagen: "+error.message)});
+function renderPeople(){
+ const term=$("search").value.trim().toLowerCase(),root=$("people");root.replaceChildren();
+ const filtered=people.filter(p=>(p.display_name||"").toLowerCase().includes(term)||p.user_id.toLowerCase().includes(term));
+ if(!filtered.length){root.textContent="Keine passenden Benutzer.";return}
+ for(const p of filtered){
+  const b=document.createElement("button");b.type="button";b.className="person"+(selected===p.user_id?" selected":"");
+  const img=document.createElement("img");img.src=avatar(p.avatar_url);img.alt="";img.loading="lazy";
+  const wrap=document.createElement("span"),strong=document.createElement("b"),small=document.createElement("small");strong.textContent=p.display_name;small.textContent=roles.get(p.user_id)||"Benutzer";wrap.append(strong,small);b.append(img,wrap);
+  b.addEventListener("click",()=>{selected=p.user_id;renderPeople();renderSelection();});root.append(b);
+ }
+}
+function renderSelection(){
+ const p=people.find(x=>x.user_id===selected);$("selected").hidden=!p;if(!p)return;
+ $("selected-name").textContent=p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
+ $("role-select").value=roles.get(p.user_id)||"";
+ const grid=$("beta-options");grid.replaceChildren();
+ for(const [key,value] of Object.entries(names)){
+  const label=document.createElement("label"),input=document.createElement("input");input.type="checkbox";input.checked=betas.get(p.user_id)?.has(key)||false;
+  const selfTarget=selected,mod=key;
+  input.addEventListener("change",async()=>{
+   input.disabled=true;msg("Beta-Freigabe wird gespeichert …");
+   const {error}=input.checked?await db.from("beta_access").insert({user_id:selfTarget,project_slug:mod}):await db.from("beta_access").delete().eq("user_id",selfTarget).eq("project_slug",mod);
+   if(error){input.checked=!input.checked;msg("Fehler: "+error.message,true)}
+   else{if(!betas.has(selfTarget))betas.set(selfTarget,new Set());if(input.checked)betas.get(selfTarget).add(mod);else betas.get(selfTarget).delete(mod);$("beta-count").textContent=[...betas.values()].reduce((n,s)=>n+s.size,0);msg("Beta-Zugriff gespeichert.");}
+   input.disabled=false;
+  });label.append(input,document.createTextNode(value));grid.append(label);
+ }
+ msg("");
+}
+$("search").addEventListener("input",renderPeople);
+$("save-role").addEventListener("click",async()=>{
+ if(!selected)return;
+ if(selected===current.id){msg("Die eigene Administratorrolle kann hier nicht geändert werden.",true);return;}
+ const next=$("role-select").value;
+ $("save-role").disabled=true;msg("Rolle wird gespeichert …");
+ const {error}=next?await db.from("staff_access").upsert({user_id:selected,role:next},{onConflict:"user_id"}):await db.from("staff_access").delete().eq("user_id",selected);
+ $("save-role").disabled=false;
+ if(error){$("role-select").value=roles.get(selected)||"";msg("Fehler: "+error.message,true);return;}
+ if(next)roles.set(selected,next);else roles.delete(selected);
+ $("staff-count").textContent=roles.size;renderPeople();msg("Rolle erfolgreich gespeichert.");
+});
+async function loadDirectory(){
+ status("Benutzer und Freigaben werden geladen …");
+ const [p,r,b]=await Promise.all([
+ db.from("community_profiles").select("user_id,display_name,avatar_url,created_at").order("created_at",{ascending:false}).limit(500),
+ db.from("staff_access").select("user_id,role"),
+ db.from("beta_access").select("user_id,project_slug")
+ ]);
+ if(p.error||r.error||b.error){status("Verwaltungsdaten konnten nicht geladen werden: "+(p.error||r.error||b.error).message);return;}
+ people=p.data||[];roles=new Map((r.data||[]).map(x=>[x.user_id,x.role]));betas=new Map();
+ for(const record of b.data||[]){if(!betas.has(record.user_id))betas.set(record.user_id,new Set());betas.get(record.user_id).add(record.project_slug);}
+ $("user-count").textContent=people.length;$("staff-count").textContent=roles.size;$("beta-count").textContent=(b.data||[]).length;
+ renderPeople();status("Administratorzugriff bestätigt. Rollen und Beta-Freigaben werden sicher über Supabase geprüft.");
+}
+async function init(){
+ const {data,error}=await db.auth.getUser();
+ if(error||!data?.user){status("Bitte melde dich mit Discord an.");show("login-view");return;}
+ current=data.user;
+ const {data:access,error:roleError}=await db.from("staff_access").select("role").eq("user_id",current.id).maybeSingle();
+ if(roleError||!["admin","staff"].includes(access?.role)){status("Keine Mitarbeiterberechtigung vorhanden.");show("denied-view");$("logout").hidden=false;return;}
+ role=access.role;show("dashboard");$("logout").hidden=false;
+ const meta=current.user_metadata||{};$("my-name").textContent=String(meta.full_name||meta.name||meta.user_name||"Discord-Benutzer");
+ $("my-avatar").src=avatar(meta.avatar_url);$("my-role").textContent=role==="admin"?"Administrator":"Mitarbeiter";
+ if(role==="admin"){$("admin-controls").hidden=false;await loadDirectory();}
+ else{status("Mitarbeiterzugriff bestätigt.");$("user-count").textContent="–";$("staff-count").textContent="–";$("beta-count").textContent="–";}
+}
+await init();
+const params=new URLSearchParams(location.search);
+if(params.get("login")==="discord"&&!current){history.replaceState(null,"",location.pathname);await login();}
 </script></body></html>
