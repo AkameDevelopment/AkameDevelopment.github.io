@@ -137,3 +137,44 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
 @media(max-width:1350px){
  html body header>.wrap.nav.akame-site-nav>.akame-account{transform:none!important}
 }
+
+/* Final shared header ordering: navigation + Menu together, login anchored right. */
+@media(min-width:1351px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  display:flex!important;
+  flex:0 1 auto!important;
+  margin-left:30px!important;
+  margin-right:0!important;
+  gap:11px!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  display:inline-flex!important;
+  margin:0!important;
+  margin-left:0!important;
+  transform:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+  margin-left:auto!important;
+  margin-right:0!important;
+  transform:none!important;
+  flex-shrink:0!important;
+ }
+}
+@media(min-width:851px) and (max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  display:inline-flex!important;
+  margin-left:16px!important;
+  margin-right:0!important;
+  transform:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+  margin-left:auto!important;
+  margin-right:0!important;
+  transform:none!important;
+ }
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{margin-left:auto!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-account{margin-left:0!important;transform:none!important}
+}
