@@ -5,6 +5,8 @@ async function refresh(){
  const [{data:rules,error},{data:auth}]=await Promise.all([db.from("mod_visibility").select("project_slug,visibility,visible"),db.auth.getUser()]);
  if(error||!Array.isArray(rules))return;
  const userId=auth?.user?.id;
+ let isAdmin=false;
+ if(userId){const access=await db.from("staff_access").select("role").eq("user_id",userId).maybeSingle();isAdmin=!access.error&&access.data?.role==="admin";}
  let allowed=new Set();
  if(userId){const beta=await db.from("beta_access").select("project_slug").eq("user_id",userId);if(!beta.error)allowed=new Set((beta.data||[]).map(x=>x.project_slug));}
  const bySlug=new Map(rules.map(r=>[r.project_slug,r.visibility|| (r.visible?"public":"hidden")]));
@@ -12,7 +14,7 @@ async function refresh(){
    const href=card.querySelector("a.details")?.getAttribute("href")||"";
    const slug=new URL(href,location.href).searchParams.get("mod");
    const mode=bySlug.get(slug)||"public";
-   card.dataset.adminHidden=mode==="public"||mode==="beta"&&allowed.has(slug)?"false":"true";
+   card.dataset.adminHidden=isAdmin||mode==="public"||mode==="beta"&&allowed.has(slug)?"false":"true";
  }
  window.akameRefreshProjects?.();
 }
