@@ -1,0 +1,15 @@
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const root=document.getElementById("mod-visibility-manager");
+if(root){
+ const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
+ const names={modcore:"ModCore",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud+",info:"AkameInfos",admin:"Admin",zoom:"AkameZoom"};
+ const lang=()=>window.AkameLanguage?.get()==="en"?"en":"de";
+ const tr=(de,en)=>lang()==="en"?en:de;
+ const list=document.getElementById("mod-visibility-list");
+ const status=document.getElementById("mod-visibility-status");
+ let items=[];
+ function note(text,error=false){status.textContent=text;status.className=error?"notice error":"notice success";}
+ function render(){list.replaceChildren();for(const entry of items){const row=document.createElement("label");row.className="mod-visibility-row";row.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0;border-bottom:1px solid #ffffff22;cursor:pointer";const text=document.createElement("div");const name=document.createElement("strong");name.textContent=names[entry.project_slug]||entry.project_slug;const detail=document.createElement("small");detail.style.cssText="display:block;color:#a89cbb";detail.textContent=entry.visible?tr("Auf der Website sichtbar","Visible on website"):tr("Auf der Website ausgeblendet","Hidden from website");text.append(name,detail);const input=document.createElement("input");input.type="checkbox";input.checked=entry.visible;input.setAttribute("aria-label",name.textContent+" "+tr("anzeigen","visible"));input.style.cssText="accent-color:#ae83ef;width:21px;height:21px;cursor:pointer;flex:none";input.addEventListener("change",async()=>{input.disabled=true;const value=input.checked;const {error}=await db.from("mod_visibility").update({visible:value,updated_at:new Date().toISOString()}).eq("project_slug",entry.project_slug);if(error){input.checked=!value;note(tr("Speichern fehlgeschlagen: ","Save failed: ")+error.message,true);}else{entry.visible=value;detail.textContent=value?tr("Auf der Website sichtbar","Visible on website"):tr("Auf der Website ausgeblendet","Hidden from website");note(tr("Sichtbarkeit gespeichert.","Visibility saved."));}input.disabled=false;});row.append(text,input);list.append(row);}}
+ (async()=>{const {data,error}=await db.auth.getUser();if(error||!data?.user)return;const permission=await db.from("staff_access").select("role").eq("user_id",data.user.id).maybeSingle();if(permission.error||permission.data?.role!=="admin")return;root.hidden=false;const result=await db.from("mod_visibility").select("project_slug,visible").order("project_slug");if(result.error){note(tr("Mods konnten nicht geladen werden: ","Could not load mods: ")+result.error.message,true);return;}items=result.data||[];render();})();
+ document.addEventListener("akame-language-change",render);
+}
