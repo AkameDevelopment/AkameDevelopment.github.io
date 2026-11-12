@@ -71,3 +71,51 @@ html{scrollbar-gutter:stable!important}
 html body header>.wrap.nav.akame-site-nav{width:min(1180px,calc(100% - 44px))!important;max-width:1180px!important;margin-inline:auto!important}
 html body header>.wrap.nav.akame-site-nav>a.brand{align-self:center!important;flex-shrink:0!important;top:auto!important;translate:none!important}
 @media(max-width:850px){html body header>.wrap.nav.akame-site-nav{width:calc(100% - 32px)!important}}
+
+/* Header layout reset: exactly the same measurements regardless of page CSS. */
+html body header{box-sizing:border-box!important;line-height:normal!important}
+html body header .akame-site-nav,html body header .akame-site-nav *{box-sizing:border-box!important}
+html body header>.wrap.nav.akame-site-nav{
+ width:calc(100% - 44px)!important;
+ max-width:1180px!important;
+ min-height:78px!important;
+ height:78px!important;
+ padding:0!important;
+ margin-left:auto!important;
+ margin-right:auto!important;
+ column-gap:18px!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ flex-wrap:nowrap!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand{
+ font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ font-size:18px!important;
+ font-weight:850!important;
+ line-height:22px!important;
+ letter-spacing:-.055em!important;
+ text-align:left!important;
+ display:flex!important;
+ align-items:center!important;
+ height:32px!important;
+ min-height:32px!important;
+ padding:0!important;
+ border:0!important;
+ color:#fff!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand>span{font:inherit!important;line-height:22px!important;color:#fff!important;white-space:nowrap!important}
+html body header>.wrap.nav.akame-site-nav>.brand b{color:#b58cff!important;font:inherit!important}
+html body header>.wrap.nav.akame-site-nav>.navlinks{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;line-height:18px!important;gap:11px!important}
+html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+ font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ font-size:13px!important;
+ line-height:18px!important;
+ height:42px!important;
+ min-height:42px!important;
+ padding:10px 13px!important;
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{width:calc(100% - 32px)!important;height:66px!important;min-height:66px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{font-size:15px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:15px!important}
+}
