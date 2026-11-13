@@ -128,6 +128,23 @@ main{box-sizing:border-box!important;width:100%!important;max-width:1180px!impor
 .gallery-tile-empty{box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;aspect-ratio:4/3!important;border:1px dashed #8e7d9d50!important;background:linear-gradient(140deg,#211a2a,#17131e)!important;opacity:.58!important;cursor:default!important;pointer-events:none!important}
 .gallery-tile-empty-label{color:#a89ab8!important;font-size:12px!important;font-weight:600!important}
 @media(max-width:780px){.gallery-public.gallery-layout-four,.gallery-public.gallery-layout-two{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+/* Larger profile portrait; badges align with the portrait's lower edge. */
+.person{grid-template-columns:112px minmax(0,1fr)!important;column-gap:18px!important}
+.person>img{width:112px!important;height:112px!important;border-radius:19px!important;object-fit:cover!important}
+.person .profile-joined-header{margin-top:39px!important}
+.person .profile-badges{margin-top:77px!important}
+@media(max-width:650px){
+ .person{grid-template-columns:96px minmax(0,1fr)!important;column-gap:13px!important}
+ .person>img{width:96px!important;height:96px!important;border-radius:16px!important}
+ .person .profile-joined-header{margin-top:32px!important}
+ .person .profile-badges{margin-top:67px!important}
+}
+@media(max-width:370px){
+ .person{grid-template-columns:82px minmax(0,1fr)!important;column-gap:10px!important}
+ .person>img{width:82px!important;height:82px!important}
+ .person .profile-badges{margin-top:65px!important}
+}
 </style><link rel="stylesheet" href="site-header.css?v=unified-header-5"></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">AKAMEDEVELOPMENT · BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
