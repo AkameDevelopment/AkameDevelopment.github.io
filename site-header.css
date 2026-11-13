@@ -328,3 +328,12 @@ html body header .akame-header-actions>.akame-account{
  html body header>.wrap.nav.akame-site-nav>.akame-header-actions{gap:0!important}
  html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages{display:none!important}
 }
+
+/* Mobile: logo | menu | Discord (Discord always rightmost). */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{order:0!important;flex:0 1 auto!important;min-width:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{order:1!important;margin-left:auto!important;margin-right:0!important;flex:0 0 auto!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{order:2!important;margin-left:0!important;margin-right:0!important;flex:0 0 auto!important;position:static!important;transform:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{position:relative!important;right:auto!important;left:auto!important;top:auto!important;transform:none!important}
+}
