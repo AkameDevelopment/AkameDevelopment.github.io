@@ -27,6 +27,22 @@ async function loadProfileMods(user){
  })}
 }
 const fallback=$("profile-fallback"), avatar=$("profile-avatar");
+async function updateNameCooldown(){
+ const button=$("profile-change-name"),message=$("profile-name-message");
+ if(!button||!$("profile-display-name").disabled)return;
+ const {data,error}=await db.rpc("profile_name_cooldown");
+ if(error||!data?.length)return;
+ const {changes_remaining,wait_seconds}=data[0];
+ if(wait_seconds>0){
+  button.disabled=true;
+  const minutes=Math.ceil(wait_seconds/60);
+  message.textContent="Namensänderung gesperrt. Noch "+minutes+" Min. warten.";
+  button.title="Namensänderung in "+minutes+" Min. wieder möglich";
+ }else{
+  button.disabled=false;button.title="Namen bearbeiten";
+  if(message.textContent.startsWith("Namensänderung gesperrt."))message.textContent="";
+ }
+}
 let savedProfileState={bio:"",showMemberSince:true};
 function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==savedProfileState.bio||$("profile-show-member-since").checked!==savedProfileState.showMemberSince;$("profile-save").hidden=!changed;$("profile-save").style.display=changed?"inline-flex":"none";if(changed){$("save-message").textContent="";delete $("save-message").dataset.state;}}
 function lang(){return window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang")||"de"}
@@ -56,7 +72,7 @@ async function showProfile(user){
  if(existing?.display_name)$("profile-public-link").href="user.html?name="+encodeURIComponent(existing.display_name);
  $("profile-show-member-since").checked=existing?.show_member_since!==false;
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
- savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked};updateSaveVisibility();await loadProfileMods(user);
+ savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked};updateSaveVisibility();await updateNameCooldown();await loadProfileMods(user);
  const role=staff.data?.role;
  $("profile-role").textContent=role==="owner"?"Owner":role==="admin"?"Administrator":role==="staff"?"Team":"Community";
  const betas=beta.error?[]:(beta.data||[]);
@@ -89,7 +105,7 @@ $("profile-save").addEventListener("click",async()=>{
 });
 $("profile-change-name").addEventListener("click",async()=>{
  const input=$("profile-display-name"),button=$("profile-change-name"),message=$("profile-name-message");
- if(input.disabled){input.disabled=false;input.focus();input.setSelectionRange(input.value.length,input.value.length);button.title="Namen speichern";button.setAttribute("aria-label","Namen speichern");$("profile-name-edit-icon").innerHTML='<path d="M20 6 9 17l-5-5"/>';message.textContent="Neuen Namen eingeben und auf das Häkchen klicken.";return}
+ if(input.disabled){await updateNameCooldown();if(button.disabled)return;input.disabled=false;input.focus();input.setSelectionRange(input.value.length,input.value.length);button.title="Namen speichern";button.setAttribute("aria-label","Namen speichern");$("profile-name-edit-icon").innerHTML='<path d="M20 6 9 17l-5-5"/>';message.textContent="Neuen Namen eingeben und auf das Häkchen klicken.";return}
  const displayName=input.value.trim();
  if(!displayName||displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){message.textContent="Bitte 1–32 gültige Zeichen eingeben.";return}
  const {data:{user},error:authError}=await db.auth.getUser();
@@ -102,8 +118,8 @@ $("profile-change-name").addEventListener("click",async()=>{
   updated=created.data;error=created.error;
  }
  button.disabled=false;
- if(error||!updated||updated.display_name!==displayName){message.textContent=error?.code==="23505"?"Dieser Name ist bereits vergeben. Bitte wähle einen anderen.":"Speichern fehlgeschlagen: "+(error?.message||"Keine Änderung in der Datenbank bestätigt.");return}
- $("profile-name").textContent=displayName;$("profile-public-link").href="user.html?name="+encodeURIComponent(displayName);input.value=displayName;input.disabled=true;button.title="Namen bearbeiten";button.setAttribute("aria-label","Namen bearbeiten");$("profile-name-edit-icon").innerHTML='<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>';message.textContent="Anzeigename gespeichert ✓";
+ if(error||!updated||updated.display_name!==displayName){if(error?.message?.includes("NAME_COOLDOWN:")){input.disabled=true;message.textContent="Zwei Namensänderungen genutzt. Bitte eine Stunde warten.";await updateNameCooldown();return;}message.textContent=error?.code==="23505"?"Dieser Name ist bereits vergeben. Bitte wähle einen anderen.":"Speichern fehlgeschlagen: "+(error?.message||"Keine Änderung in der Datenbank bestätigt.");return}
+ $("profile-name").textContent=displayName;$("profile-public-link").href="user.html?name="+encodeURIComponent(displayName);input.value=displayName;input.disabled=true;button.title="Namen bearbeiten";button.setAttribute("aria-label","Namen bearbeiten");$("profile-name-edit-icon").innerHTML='<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>';message.textContent="Anzeigename gespeichert ✓";await updateNameCooldown();
  } catch(e){message.textContent="Speichern fehlgeschlagen: "+(e?.message||String(e));} finally {button.disabled=false;}
 });
 
