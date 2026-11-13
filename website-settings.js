@@ -13,7 +13,7 @@ function previewAccent(value){if(!/^#[0-9a-f]{6}$/i.test(value))return;document.
 const lang=()=>window.AkameLanguage?.get?.()||store.getItem("akame-lang")||"de";
 function renderLanguage(){const t=words[lang()]||words.de;document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(t[key])el.textContent=t[key]});document.documentElement.lang=lang();const theme=$("setting-theme");if(theme){for(const option of theme.options)option.textContent=option.value==="light"?t.lightMode:t.darkMode}const status=$("system-motion-status");if(status)status.textContent=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?t.systemMotionOn:t.systemMotionOff;}
 function applyLocal(){document.documentElement.dataset.akameTheme=current("theme");const accent=current("accent");document.documentElement.style.setProperty("--akame-user-accent",accent);document.documentElement.style.setProperty("--settings-accent",/^#[0-9a-f]{6}$/i.test(accent)?accent:"#a678ec");document.documentElement.style.accentColor=accent;document.documentElement.style.setProperty("--akame-accent",accent);document.documentElement.classList.toggle("akame-compact",current("compact")==="true");document.documentElement.classList.toggle("akame-reduced-motion",current("motion")==="true");}
-function sync(){applyLocal();for(const key of Object.keys(keys)){const el=$("setting-"+(key==="motion"?"motion":key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(!el)continue;if(el.type==="checkbox")el.checked=current(key)==="true";else el.value=current(key)}$("setting-language").value=store.getItem("akame-lang-preference")||"auto";renderLanguage();pendingAccent=null;previewAccent(current("accent"));updateAccentButton()}
+function sync(){applyLocal();for(const key of Object.keys(keys)){const el=$("setting-"+(key==="motion"?"motion":key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(!el)continue;if(el.type==="checkbox")el.checked=current(key)==="true";else el.value=current(key)}$("setting-language").value=["de","en"].includes(store.getItem("akame-lang-preference"))?store.getItem("akame-lang-preference"):lang();renderLanguage();pendingAccent=null;previewAccent(current("accent"));updateAccentButton()}
 function save(key,value){store.setItem(keys[key],String(value));window.AkameWebsiteSettings?.apply?.();applyLocal();$("save-status").textContent=(words[lang()]||words.de).saved;document.dispatchEvent(new CustomEvent("akame-settings-change"))}
 for(const key of Object.keys(keys)){if(key==="accent")continue;const el=$("setting-"+(key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(el)el.addEventListener(el.type==="checkbox"?"change":"input",()=>save(key,el.type==="checkbox"?el.checked:el.value))}
 $("setting-accent")?.addEventListener("input",e=>{pendingAccent=e.target.value;previewAccent(pendingAccent);updateAccentButton()});
@@ -58,33 +58,41 @@ function showResetToast(message){
  clearTimeout(showResetToast.timeout);showResetToast.timeout=setTimeout(()=>{toast.style.opacity="0";setTimeout(()=>{toast.hidden=true},220)},3200);
 }
 $("reset-settings").addEventListener("click",()=>{
- const button=$("reset-settings"),browser=(navigator.languages?.[0]||navigator.language||"en").toLowerCase().startsWith("de")?"de":"en";
- button.disabled=true;
+ const button=$("reset-settings");
+ // A synchronous, self-contained reset: no network, promises or account operations.
  try{
-  // Reset locally FIRST. Account sync must never block the UI or the reset.
-  for(const [key,value] of Object.entries(defaults))store.setItem(keys[key],String(value));
-  store.setItem("akame-site-theme","dark");
-  store.setItem("akame-lang-preference","auto");
-  store.setItem("akame-lang",browser);
+  for(const [key,value] of Object.entries(defaults)){
+   if(key==="accent")continue;
+   localStorage.setItem(keys[key],String(value));
+  }
+  localStorage.removeItem("akame-site-accent");
+  localStorage.setItem("akame-site-theme","dark");
+  localStorage.setItem("akame-lang-preference","de");
+  localStorage.setItem("akame-lang","de");
+  document.documentElement.dataset.akameTheme="dark";
+  document.documentElement.classList.remove("akame-compact","akame-reduced-motion");
+  document.documentElement.style.setProperty("--akame-user-accent","#a678ec");
+  document.documentElement.style.setProperty("--settings-accent","#a678ec");
+  document.documentElement.style.setProperty("--akame-accent","#a678ec");
+  for(const key of Object.keys(defaults)){
+   const id=key==="community"?"setting-notify-community":key==="beta"?"setting-notify-beta":key==="updates"?"setting-notify-updates":"setting-"+key;
+   const el=$(id);if(!el)continue;
+   if(el.type==="checkbox")el.checked=!!defaults[key];else el.value=String(defaults[key]);
+  }
+  $("setting-language").value="de";
   pendingAccent=null;
-  sync();
-  window.AkameWebsiteSettings?.apply?.();
   window.AkameTheme?.apply?.();
+  window.AkameWebsiteSettings?.apply?.();
   window.AkameAccent?.apply?.();
   document.dispatchEvent(new CustomEvent("akame-settings-change"));
-  const message=(words[browser]||words.de).restored;
+  try{window.AkameLanguage?.set?.("de")}catch(error){console.warn("Language change",error)}
+  renderLanguage();
+  const message=(words.de).restored;
   $("save-status").textContent=message;
   showResetToast(message);
-  try{window.AkameLanguage?.set?.(browser)}catch(error){console.warn("Language reset",error)}
-  // Keep the reset successful even if account syncing is offline or fails.
-  Promise.resolve().then(()=>undefined).catch(error=>{
-   console.warn("Default accent could not sync to account",error);
-   const note=browser==="en"?" Default accent could not sync to your account.":" Standard-Akzentfarbe konnte nicht mit deinem Konto synchronisiert werden.";
-   $("save-status").textContent=message+note;
-  });
  }catch(error){
-  console.error("Settings reset failed",error);
-  showResetToast(browser==="en"?"Could not restore defaults.":"Standardeinstellungen konnten nicht wiederhergestellt werden.");
+  console.error("Restore defaults error:",error);
+  showResetToast(lang()==="en"?"Could not restore defaults.":"Standardeinstellungen konnten nicht wiederhergestellt werden.");
  }finally{button.disabled=false}
 });
 
