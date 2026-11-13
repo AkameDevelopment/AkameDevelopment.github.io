@@ -596,24 +596,29 @@ html body main #content>.person>.akame-profile-actions{z-index:5!important}
  }
  html body main #content>.person>.profile-bio-stats-row{
   grid-column:1/-1!important;grid-row:2!important;
-  display:flex!important;align-items:center!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:flex-start!important;justify-content:flex-start!important;
   position:relative!important;z-index:4!important;
-  align-self:start!important;justify-self:stretch!important;
-  width:100%!important;min-width:0!important;max-width:none!important;
-  gap:20px!important;margin:24px 0 0!important;
+  align-self:start!important;justify-self:start!important;
+  width:min(440px,100%)!important;max-width:440px!important;min-width:0!important;
+  gap:11px!important;margin:18px 0 0!important;
   padding:13px 0 0!important;border-top:1px solid rgba(231,212,255,.32)!important;
+  box-sizing:border-box!important;
  }
  html body main #content>.person>.profile-bio-stats-row>.profile-hero-bio{
-  flex:1 1 auto!important;min-width:0!important;max-width:none!important;
+  display:block!important;flex:none!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
   position:static!important;grid-column:auto!important;grid-row:auto!important;
-  margin:0!important;padding:0!important;line-height:1.5!important;
+  margin:0!important;padding:0!important;line-height:1.55!important;
+  overflow-wrap:anywhere!important;word-break:break-word!important;
+  white-space:pre-wrap!important;
  }
  html body main #content>.person>.profile-bio-stats-row>.profile-hero-stats{
-  flex:0 0 auto!important;display:flex!important;align-items:center!important;
-  width:auto!important;max-width:none!important;gap:18px!important;
+  display:flex!important;flex:none!important;align-items:center!important;
+  width:auto!important;max-width:100%!important;gap:18px!important;
   position:static!important;grid-column:auto!important;grid-row:auto!important;
-  margin:0!important;padding:0 0 0 18px!important;
-  border-top:0!important;border-left:1px solid #e9d7ff47!important;
+  margin:0!important;padding:0!important;
+  border-top:0!important;border-left:0!important;
  }
  html body main #content>.person>.akame-profile-actions{
   position:absolute!important;top:10px!important;right:20px!important;
@@ -630,7 +635,7 @@ html body main #content>.person>.akame-profile-actions{z-index:5!important}
   grid-column:2!important;grid-row:1!important;gap:7px!important;
  }
  html body main #content>.person>.profile-bio-stats-row{
-  grid-column:1/-1!important;grid-row:2!important;align-self:start!important;
+  grid-column:1/-1!important;grid-row:2!important;align-self:start!important;max-width:440px!important;
  }
 }
 </style></style><style id="akame-discord-name-inline-20261113">
