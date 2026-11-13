@@ -70,7 +70,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 </section>
 <div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Community</option><option value="staff">Mitarbeiter</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
 <hr class="separator"><h2>Beta-Zugriffe</h2><p class="notice">Diese Auswahl wird pro Benutzer gespeichert. Die tatsächlichen Beta-Downloads werden später separat per RLS/Storage abgesichert.</p>
-<p class="notice">Einladung senden: Das Mitglied entscheidet selbst. Direkt freischalten: sofortiger Zugriff.</p><div class="controls"><button type="button" class="primary" id="beta-invite-selected">Ausgewählte Beta-Einladungen senden</button><button type="button" class="ghost" id="beta-direct-selected">Ausgewählte direkt freischalten</button><button type="button" class="ghost" id="beta-revoke-selected">Zugriff entziehen</button></div><div id="beta-options" class="beta"></div><p id="beta-invite-summary" class="notice"></p>
+<p class="notice">Einladung senden: Das Mitglied entscheidet selbst. Direkt freischalten: sofortiger Zugriff.</p><div class="controls"><button type="button" class="primary" id="beta-invite-selected">Ausgewählte Beta-Einladungen senden</button><button type="button" class="ghost" id="beta-direct-selected">Ausgewählte direkt freischalten</button><button type="button" class="ghost" id="beta-revoke-selected">Zugriff entziehen</button><button type="button" class="ghost" id="beta-cancel-selected">Einladung zurückziehen</button></div><div id="beta-options" class="beta"></div><p id="beta-invite-summary" class="notice"></p>
 <p id="edit-message" class="notice" role="status" aria-live="polite"></p>
 </div></div></div>
 <div class="layout">
@@ -147,8 +147,7 @@ function renderSelection(){
  const grid=$("beta-options");grid.replaceChildren();
  renderBetaInvitationSummary();
  for(const [key,value] of Object.entries(names)){
-  const label=document.createElement("label"),input=document.createElement("input");input.type="checkbox";input.dataset.mod=key;input.checked=betas.get(p.user_id)?.has(key)||false;
-  const selfTarget=selected,mod=key;
+  const label=document.createElement("label"),input=document.createElement("input");input.type="checkbox";input.dataset.mod=key;
   input.checked=false;
   const state=betas.get(p.user_id)?.has(key)?" · Aktiv":invitations.some(x=>x.user_id===p.user_id&&x.project_slug===key&&x.status==="pending")?" · Eingeladen":"";
   label.append(input,document.createTextNode(value+state));grid.append(label);
@@ -161,15 +160,19 @@ function renderBetaInvitationSummary(){
  root.textContent=list.length?"Einladungen: "+list.map(x=>(names[x.project_slug]||x.project_slug)+" ("+({pending:"Offen",accepted:"Angenommen",declined:"Abgelehnt"}[x.status]||x.status)+")").join(" · "):"Noch keine Einladungen für dieses Mitglied.";
 }
 async function manageBetaInvitations(mode){
- const direct=mode==="direct",revoke=mode==="revoke";
+ const direct=mode==="direct",revoke=mode==="revoke",cancel=mode==="cancel";
  if(!selected||!["owner","admin"].includes(role))return;
- const target=selected,buttons=[$("beta-invite-selected"),$("beta-direct-selected"),$("beta-revoke-selected")];
+ const target=selected,buttons=[$("beta-invite-selected"),$("beta-direct-selected"),$("beta-revoke-selected"),$("beta-cancel-selected")];
  const keys=[...$("beta-options").querySelectorAll("input:checked")].map(x=>x.dataset.mod).filter(Boolean);
  if(!keys.length){msg("Bitte mindestens eine Mod auswählen.",true);return;}
- buttons.forEach(x=>x.disabled=true);msg(revoke?"Beta-Zugänge werden entzogen …":direct?"Beta-Zugänge werden freigeschaltet …":"Einladungen werden gesendet …");
+ buttons.forEach(x=>x.disabled=true);msg(cancel?"Einladungen werden zurückgezogen …":revoke?"Beta-Zugänge werden entzogen …":direct?"Beta-Zugänge werden freigeschaltet …":"Einladungen werden gesendet …");
  let successes=0,errors=[];
  for(const mod of keys){
-  if(revoke){
+  if(cancel){
+   const {error}=await db.from("beta_invitations").delete().eq("user_id",target).eq("project_slug",mod).eq("status","pending");
+   if(error)errors.push((names[mod]||mod)+": "+error.message);
+   else{invitations=invitations.filter(x=>!(x.user_id===target&&x.project_slug===mod&&x.status==="pending"));successes++;}
+  }else if(revoke){
    const {error}=await db.from("beta_access").delete().eq("user_id",target).eq("project_slug",mod);
    if(error)errors.push((names[mod]||mod)+": "+error.message);
    else{betas.get(target)?.delete(mod);successes++;}
@@ -189,12 +192,12 @@ async function manageBetaInvitations(mode){
  }
  buttons.forEach(x=>x.disabled=false);
  $("beta-count").textContent=[...betas.values()].reduce((n,x)=>n+x.size,0);
- renderBetaInvitationSummary();msg(successes+" "+(revoke?"Beta-Zugänge entzogen.":direct?"Beta-Zugänge freigeschaltet.":"Einladungen gesendet.")+(errors.length?" Fehler: "+errors.join("; "):""),!!errors.length);
- renderSelection();
+ renderSelection();msg(successes+" "+(cancel?"Einladungen zurückgezogen.":revoke?"Beta-Zugänge entzogen.":direct?"Beta-Zugänge freigeschaltet.":"Einladungen gesendet.")+(errors.length?" Fehler: "+errors.join("; "):""),!!errors.length);
 }
 $("beta-invite-selected").addEventListener("click",()=>manageBetaInvitations("invite"));
 $("beta-direct-selected").addEventListener("click",()=>manageBetaInvitations("direct"));
 $("beta-revoke-selected").addEventListener("click",()=>manageBetaInvitations("revoke"));
+$("beta-cancel-selected").addEventListener("click",()=>manageBetaInvitations("cancel"));
 $("akamesmp-toggle").addEventListener("change",async()=>{if(!selected)return;const target=selected,box=$("akamesmp-toggle"),enabled=box.checked;box.disabled=true;$("akamesmp-message").textContent="Wird gespeichert …";const {error}=enabled?await db.from("akamesmp_members").insert({user_id:target}):await db.from("akamesmp_members").delete().eq("user_id",target);if(error){box.checked=!enabled;$("akamesmp-message").textContent="Fehler: "+error.message;}else{if(enabled)smpMembers.add(target);else smpMembers.delete(target);$("akamesmp-message").textContent="Gespeichert ✓";}box.disabled=false;});
 $("search").addEventListener("input",renderPeople);
 $("save-role").addEventListener("click",async()=>{
