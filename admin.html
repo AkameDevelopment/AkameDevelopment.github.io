@@ -8,7 +8,7 @@ a{color:#d3b6ff;text-decoration:none}a:hover{text-decoration:underline}button,in
 header{border-bottom:1px solid var(--line);background:#0c0915d9;position:sticky;top:0;z-index:10;backdrop-filter:blur(18px)}
 .top{max-width:1230px;min-height:73px;padding:12px 22px;margin:auto;display:flex;align-items:center;gap:18px;justify-content:space-between}
 .brand{font-size:19px;font-weight:850;color:#fff;letter-spacing:-.055em;white-space:nowrap}.brand b{color:#b990ff}
-.toplinks{display:flex;align-items:center;gap:16px}.toplinks a{white-space:nowrap}.toplinks button{border:1px solid #82609d;border-radius:10px;padding:8px 14px;background:#ffffff0a}
+.toplinks{display:flex;align-items:center;gap:16px}.toplinks a{white-space:nowrap}.toplinks button{border:1px solid #82609d;border-radius:10px;padding:8px 14px;background:#ffffff0a}.discord-account-link{display:inline-flex;align-items:center;gap:9px;padding:5px 12px 5px 5px;border:1px solid #82609d;border-radius:25px;background:#ffffff0a;color:#f5eaff;font-weight:700;max-width:230px}.discord-account-link[hidden]{display:none}.discord-account-link img{width:30px;height:30px;object-fit:cover;border-radius:50%}.discord-account-link span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .shell{max-width:1230px;margin:auto;padding:36px 22px 70px}.intro{margin-bottom:24px}
 .eyebrow{color:#b98eff;font-size:11px;font-weight:850;letter-spacing:.17em;text-transform:uppercase}
 h1{font-size:clamp(32px,5vw,48px);letter-spacing:-.06em;margin:10px 0 9px}h2{margin:0 0 14px;font-size:20px;letter-spacing:-.035em}
@@ -34,7 +34,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 .admin-profile-detail{margin:17px 0 22px;padding:17px;border:1px solid #aa84ec45;border-radius:13px;background:#ffffff06}.admin-profile-detail h3{margin:0 0 13px;font-size:17px}.admin-profile-detail .profile{margin-bottom:12px}.admin-profile-detail .profile div{min-width:0}.admin-profile-detail .profile strong,.admin-profile-detail .profile small{display:block;overflow-wrap:anywhere}.admin-profile-detail label{display:block;margin:12px 0 8px;font-weight:700;color:#e9d8ff}.admin-profile-detail textarea.input{resize:vertical;min-height:115px}.admin-profile-detail .controls{margin-top:11px}.admin-profile-detail .notice{overflow-wrap:anywhere}
 </style><link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261112-purple-anime-large-2"><link rel="shortcut icon" href="favicon.svg?v=20261112-purple-anime-large-2"></head>
 <body>
-<header><div class="top"><a href="index.html" class="brand">Akame<b>Development</b></a><div class="toplinks"><a href="index.html">← Startseite</a><button type="button" id="logout" hidden>Abmelden</button></div></div></header>
+<header><div class="top"><a href="index.html" class="brand">Akame<b>Development</b></a><div class="toplinks"><a href="index.html">← Startseite</a><a id="discord-account-link" class="discord-account-link" href="profile.html" hidden><img id="discord-account-avatar" alt="" referrerpolicy="no-referrer"><span id="discord-account-name">Discord</span></a></div></div></header>
 <main class="shell">
 <div class="intro"><span class="eyebrow">AkameDevelopment / Internal</span><h1>Mitarbeiter-Dashboard<span style="color:#b58cff">.</span></h1><p>Rollen, Beta-Freigaben und Community-Verwaltung.</p></div>
 <div id="status" class="state" role="status" aria-live="polite">Anmeldestatus wird überprüft …</div>
@@ -81,7 +81,7 @@ function show(section){for(const id of ["login-view","denied-view","dashboard"])
 function msg(text,error=false){$("edit-message").textContent=text;$("edit-message").className=error?"notice error":"notice success";}
 async function login(){status("Weiterleitung zu Discord …");const {error}=await db.auth.signInWithOAuth({provider:"discord",options:{redirectTo:"https://akamedevelopment.github.io/admin.html",scopes:"identify email"}});if(error)status("Anmeldung fehlgeschlagen: "+error.message);}
 $("login").addEventListener("click",login);
-$("logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(!error)location.replace("index.html");else status("Abmelden fehlgeschlagen: "+error.message)});
+
 function renderPeople(){
  const term=$("search").value.trim().toLowerCase(),root=$("people");root.replaceChildren();
  const filtered=people.filter(p=>(p.display_name||"").toLowerCase().includes(term)||p.user_id.toLowerCase().includes(term));
@@ -174,9 +174,9 @@ async function init(){
  if(error||!data?.user){status("Bitte melde dich mit Discord an.");show("login-view");return;}
  current=data.user;
  const {data:access,error:roleError}=await db.from("staff_access").select("role").eq("user_id",current.id).maybeSingle();
- if(roleError||!["owner","admin","staff"].includes(access?.role)){status("Keine Mitarbeiterberechtigung vorhanden.");show("denied-view");$("logout").hidden=false;return;}
- role=access.role;show("dashboard");$("logout").hidden=false;
- const meta=current.user_metadata||{};$("my-name").textContent=String(meta.full_name||meta.name||meta.user_name||"Discord-Benutzer");
+ if(roleError||!["owner","admin","staff"].includes(access?.role)){status("Keine Mitarbeiterberechtigung vorhanden.");show("denied-view");return;}
+ role=access.role;show("dashboard");
+ const meta=current.user_metadata||{};$("discord-account-link").hidden=false;$("discord-account-avatar").src=avatar(meta.avatar_url);$("discord-account-name").textContent=String(meta.full_name||meta.name||meta.user_name||"Discord");$("my-name").textContent=String(meta.full_name||meta.name||meta.user_name||"Discord-Benutzer");
  $("my-avatar").src=avatar(meta.avatar_url);$("my-role").textContent=role==="owner"?"Owner":role==="admin"?"Administrator":"Mitarbeiter";
  if(["owner","admin"].includes(role)){$("admin-controls").hidden=false;await loadDirectory();}
  else{status("Mitarbeiterzugriff bestätigt.");$("user-count").textContent="–";$("staff-count").textContent="–";$("beta-count").textContent="–";}
