@@ -87,9 +87,25 @@ db.auth.onAuthStateChange((_event,session)=>{if(!session?.user)showSignedOut()})
 
 
 async function setupGallery(){
- const panel=$("gallery-panel"),grid=$("gallery-grid"),msg=$("gallery-message");if(!panel||!grid)return;
- const {data:{user}}=await db.auth.getUser();if(!user)return;panel.hidden=false;
- async function render(){grid.replaceChildren();const {data,error}=await db.from("profile_gallery").select("slot,image_path").eq("user_id",user.id).order("slot");if(error){msg.textContent="Bilder konnten nicht geladen werden: "+error.message;return;}for(let slot=1;slot<=3;slot++){const entry=data?.find(x=>x.slot===slot);const cell=document.createElement("div");cell.style.cssText="border:1px solid #ffffff2c;border-radius:14px;padding:12px;min-height:190px;background:#ffffff08";const title=document.createElement("strong");title.textContent="Bild "+slot;cell.append(title);if(entry){const img=document.createElement("img");img.src=db.storage.from("profile-gallery").getPublicUrl(entry.image_path).data.publicUrl;img.alt="Profilbild "+slot;img.loading="lazy";img.style.cssText="width:100%;height:145px;object-fit:cover;border-radius:9px;display:block;margin:8px 0";cell.append(img);const remove=document.createElement("button");remove.type="button";remove.textContent="Bild entfernen";remove.className="ghost";remove.onclick=async()=>{remove.disabled=true;const res=await db.from("profile_gallery").delete().eq("user_id",user.id).eq("slot",slot);if(res.error){msg.textContent=res.error.message;remove.disabled=false;return;}await db.storage.from("profile-gallery").remove([entry.image_path]);msg.textContent="Bild entfernt.";await render();};cell.append(remove);}else{const input=document.createElement("input");input.type="file";input.accept="image/png,image/jpeg,image/webp";input.style.cssText="display:block;width:100%;margin:20px 0";const upload=document.createElement("button");upload.type="button";upload.textContent="Bild hochladen";upload.className="primary";upload.onclick=async()=>{const file=input.files?.[0];if(!file){msg.textContent="Bitte zuerst ein Bild auswählen.";return;}if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>5242880){msg.textContent="Nur PNG, JPG oder WebP bis 5 MB erlaubt.";return;}upload.disabled=true;const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg",path=user.id+"/"+crypto.randomUUID()+"."+ext;const result=await db.storage.from("profile-gallery").upload(path,file,{contentType:file.type});if(result.error){msg.textContent="Upload fehlgeschlagen: "+result.error.message;upload.disabled=false;return;}const saved=await db.from("profile_gallery").insert({user_id:user.id,slot,image_path:path});if(saved.error){await db.storage.from("profile-gallery").remove([path]);msg.textContent="Speichern fehlgeschlagen: "+saved.error.message;upload.disabled=false;return;}msg.textContent="Bild hochgeladen!";await render();};cell.append(input,upload);}grid.append(cell);}}
+ const panel=$("gallery-panel"),grid=$("gallery-grid"),message=$("gallery-message");
+ if(!panel||!grid)return;
+ const {data:{user}}=await db.auth.getUser();if(!user)return;
+ panel.hidden=false;
+ const validUrl=value=>{try{const u=new URL(value);return u.protocol==="https:"&&u.username===""&&u.password===""&&value.length<=2000;}catch{return false;}};
+ async function render(){
+  const {data,error}=await db.from("profile_gallery").select("slot,image_url").eq("user_id",user.id).order("slot");
+  grid.replaceChildren();if(error){message.textContent="Galerie konnte nicht geladen werden: "+error.message;return;}
+  for(let slot=1;slot<=3;slot++){
+   const entry=data?.find(x=>x.slot===slot),cell=document.createElement("div");
+   cell.style.cssText="border:1px solid #ffffff2c;border-radius:14px;padding:14px;background:#ffffff08";
+   const title=document.createElement("strong");title.textContent="Bild "+slot;cell.append(title);
+   if(entry){const img=document.createElement("img");img.src=entry.image_url;img.alt="Profilbild "+slot;img.loading="lazy";img.referrerPolicy="no-referrer";img.style.cssText="display:block;width:100%;height:145px;object-fit:cover;border-radius:10px;margin:10px 0";cell.append(img);}
+   const input=document.createElement("input");input.type="url";input.placeholder="https://beispiel.de/bild.png";input.value=entry?.image_url||"";input.maxLength=2000;input.setAttribute("aria-label","Bild-URL "+slot);input.style.cssText="display:block;width:100%;padding:10px;border-radius:9px;background:#0d0b12;color:white;border:1px solid #6b5684;margin:12px 0";cell.append(input);
+   const save=document.createElement("button");save.type="button";save.className="primary";save.textContent=entry?"Link ändern":"Link speichern";save.onclick=async()=>{const url=input.value.trim();if(!validUrl(url)){message.textContent="Bitte eine gültige öffentliche HTTPS-Bildadresse eingeben.";return;}save.disabled=true;const result=await db.from("profile_gallery").upsert({user_id:user.id,slot,image_url:url},{onConflict:"user_id,slot"});save.disabled=false;if(result.error){message.textContent="Speichern fehlgeschlagen: "+result.error.message;return;}message.textContent="Bild-Link gespeichert.";await render();};cell.append(save);
+   if(entry){const remove=document.createElement("button");remove.type="button";remove.className="secondary";remove.textContent="Entfernen";remove.style.marginLeft="8px";remove.onclick=async()=>{remove.disabled=true;const result=await db.from("profile_gallery").delete().eq("user_id",user.id).eq("slot",slot);if(result.error){message.textContent=result.error.message;remove.disabled=false;return;}message.textContent="Link entfernt.";await render();};cell.append(remove);}
+   grid.append(cell);
+  }
+ }
  await render();
 }
 void setupGallery();
