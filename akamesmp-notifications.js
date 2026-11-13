@@ -35,7 +35,7 @@ function render(){
  for(const item of visible){
   const card=document.createElement("div");card.className="akame-notify-item"+(item.read_at?"":" unread");
   const title=document.createElement("div");title.className="akame-notify-item-title";
-  if(item.source==="beta-feedback")title.textContent=tr("Antwort auf deine Beta-Einladung: ","Response to your beta invitation: ")+(betaNames[item.project_slug]||item.project_slug);
+  if(item.source==="beta-feedback")title.textContent=item.status==="accepted"?tr("Akzeptiert","Accepted"):tr("Abgelehnt","Declined");
   else if(item.source==="beta")title.textContent=tr("Beta-Einladung: ","Beta invitation: ")+(betaNames[item.project_slug]||item.project_slug);
   else title.textContent=item.source==="mod"?tr("Jemand hat auf deinen Kommentar geantwortet.","Someone replied to your comment."):item.kind==="like"?tr("Jemandem gefällt dein AkameSMP-Beitrag.","Someone liked your AkameSMP post."):tr("Dein AkameSMP-Beitrag hat einen neuen Kommentar.","Someone commented on your AkameSMP post.");
   const date=document.createElement("small");date.textContent=new Date(item.created_at).toLocaleString(localStorage.getItem("akame-lang")==="en"?"en-GB":"de-DE");
