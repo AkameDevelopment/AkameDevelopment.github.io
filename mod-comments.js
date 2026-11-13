@@ -73,7 +73,7 @@ if (root && slugs.has(slug)) {
       }
       return article;
     }
-    const fragment=document.createDocumentFragment();for(const item of roots)fragment.append(renderComment(item));list.replaceChildren(fragment);const targetId=new URLSearchParams(location.search).get("comment");if(targetId && /^\\d+$/.test(targetId)){const target=document.getElementById("comment-"+targetId);if(target){const details=target.closest(".akame-reply-disclosure");if(details)details.open=true;requestAnimationFrame(()=>{target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("akame-comment-target");});}}
+    const fragment=document.createDocumentFragment();for(const item of roots)fragment.append(renderComment(item));list.replaceChildren(fragment);const targetId=new URLSearchParams(location.search).get("comment");if(targetId && /^\d+$/.test(targetId)){const target=document.getElementById("comment-"+targetId);if(target){const details=target.closest(".akame-reply-disclosure");if(details)details.open=true;requestAnimationFrame(()=>{target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("akame-comment-target");});}}
   }
   function applyUser(user){currentUser=user;composer.hidden=!user;guest.hidden=!!user;}
   async function checkUser(){
