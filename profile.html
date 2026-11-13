@@ -59,7 +59,27 @@ html body main.page>.profile-back-link{
 html body main.page>.profile-back-link:hover{background:#a982ff28!important;border-color:#a982ff9c!important;color:#fff!important}
 html body main.page>.profile-back-link:focus-visible{outline:2px solid #c4a3ff!important;outline-offset:3px!important}
 html body main.page>.profile-back-link svg{flex:none!important}
-</style><style id="akame-profile-background-editor-style">.akame-appearance-editor{margin:18px 0!important}.akame-appearance-editor h3{margin:0 0 5px!important}.akame-appearance-editor p{margin:0 0 13px!important}.appearance-preview{min-height:154px;border-radius:15px;border:1px solid #a982ff55;display:flex;align-items:flex-end;padding:16px;margin:15px 0 18px;background:linear-gradient(110deg,#563485,#241734);background-size:cover;background-position:center}.appearance-preview span{font-size:12px;font-weight:700;color:#fff;background:#120b1d9c;border:1px solid #ffffff32;border-radius:8px;padding:6px 10px}.akame-appearance-editor select,.akame-appearance-editor input{display:block;width:100%;min-height:44px;border:1px solid #8f6bb170;border-radius:11px;background:#15101e;color:#eee1ff;padding:10px 12px;font:inherit;margin:0 0 16px}.appearance-url-row{display:flex;align-items:flex-start;gap:10px}.appearance-url-row input{flex:1;min-width:0}.appearance-url-row button{flex-shrink:0;min-height:44px}.akame-appearance-editor .appearance-hint{font-size:12px;color:#ac9bbf}.appearance-save-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.appearance-save-row [hidden]{display:none!important}#appearance-message{color:#d3b5fc;font-size:12px}@media(max-width:600px){.appearance-url-row{flex-direction:column;align-items:stretch}.appearance-url-row button{align-self:flex-start}}</style></head><body>
+</style><style id="akame-profile-background-editor-style">.akame-appearance-editor{margin:18px 0!important}.akame-appearance-editor h3{margin:0 0 5px!important}.akame-appearance-editor p{margin:0 0 13px!important}.appearance-preview{min-height:154px;border-radius:15px;border:1px solid #a982ff55;display:flex;align-items:flex-end;padding:16px;margin:15px 0 18px;background:linear-gradient(110deg,#563485,#241734);background-size:cover;background-position:center}.appearance-preview span{font-size:12px;font-weight:700;color:#fff;background:#120b1d9c;border:1px solid #ffffff32;border-radius:8px;padding:6px 10px}.akame-appearance-editor select,.akame-appearance-editor input{display:block;width:100%;min-height:44px;border:1px solid #8f6bb170;border-radius:11px;background:#15101e;color:#eee1ff;padding:10px 12px;font:inherit;margin:0 0 16px}.appearance-url-row{display:flex;align-items:flex-start;gap:10px}.appearance-url-row input{flex:1;min-width:0}.appearance-url-row button{flex-shrink:0;min-height:44px}.akame-appearance-editor .appearance-hint{font-size:12px;color:#ac9bbf}.appearance-save-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.appearance-save-row [hidden]{display:none!important}#appearance-message{color:#d3b5fc;font-size:12px}@media(max-width:600px){.appearance-url-row{flex-direction:column;align-items:stretch}.appearance-url-row button{align-self:flex-start}}</style><style id="akame-appearance-custom-color-ui">
+.akame-appearance-editor .appearance-color-choice{
+ display:flex;align-items:center;flex-wrap:wrap;gap:12px;
+ width:100%;padding:12px 14px;margin:0 0 18px;
+ border:1px solid #8f6bb170;border-radius:12px;background:#a982ff0b;
+ color:#e9d8ff;font-size:13px;font-weight:650;
+}
+.akame-appearance-editor .appearance-color-choice input[type="checkbox"]{
+ width:17px;height:17px;accent-color:#ad84f9;margin:0;flex-shrink:0;
+}
+.akame-appearance-editor .appearance-color-choice input[type="color"]{
+ width:48px;height:32px;min-height:32px;margin:0 0 0 auto;
+ padding:2px;cursor:pointer;border:1px solid #a982ff71;border-radius:8px;
+ background:#191221;
+}
+.akame-appearance-editor .appearance-color-choice input[type="color"]:disabled{opacity:.4;cursor:not-allowed}
+.akame-appearance-editor .appearance-preview{
+ min-height:180px;background-size:cover;background-position:center;
+}
+@media(max-width:620px){.akame-appearance-editor .appearance-preview{min-height:130px}}
+</style></head><body>
 <header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header>
 <main class="page"><a class="crumb profile-back-link" id="profile-back-link" href="user.html"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17h10a4 4 0 0 0 4-4V7M14 7h7v7"/><path d="M14 10 21 3"/></svg><span data-no-translate id="profile-back-label">Öffentliches Profil ansehen</span></a><div class="eyebrow">AkameDevelopment Account</div><h1 class="heading">Mein Profil</h1><p class="desc">Dein Discord-Konto und deine persönlichen AkameDevelopment-Einstellungen.</p>
 <div id="profile-loading">Profil wird geladen …</div>
@@ -83,4 +103,4 @@ html body main.page>.profile-back-link svg{flex:none!important}
 
 })();
 </script><script src="language.js?v=members-i18n-20261113" defer></script><script src="mobile-nav.js?v=home-about-20261113" defer></script><script type="module" src="profile.js?v=member-directory-opt-in-20261113"></script>
-<script type="module" src="profile-appearance.js?v=banners-20261113"></script><script src="page-share.js?v=3" defer></script></body></html>
+<script type="module" src="profile-appearance.js?v=custom-banner-colors-20261113b"></script><script src="page-share.js?v=3" defer></script></body></html>
