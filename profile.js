@@ -1,6 +1,7 @@
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);
+$("profile-copy-link").addEventListener("click",async()=>{const link=$("profile-public-link").href;try{await navigator.clipboard.writeText(link);$("profile-link-message").textContent="Link kopiert ✓";}catch(e){$("profile-link-message").textContent="Kopieren nicht möglich. Öffne den Link und kopiere die Adresse.";}});
 const labels={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud",info:"AkameInfos",admin:"Server Admin",zoom:"AkameZoom"};
 const modOptions=[["modcore","Core"],["chest","Chest"],["crosshair","Crosshair+"],["chunkloader","ChunkLoader"],["items","Items"],["hud","AkameHud+"],["info","AkameInfos"],["admin","Admin"],["zoom","Zoom"]];
 async function loadProfileMods(user){
@@ -35,6 +36,7 @@ function showSignedOut(){
 function showError(message){$("save-message").textContent=message;$("save-message").dataset.state="error"}
 function avatarUrl(user){const meta=user.user_metadata||{};const src=String(meta.avatar_url||"");return /^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(src)?src:null}
 async function showProfile(user){
+ $("profile-public-link").href="user.html?id="+encodeURIComponent(user.id);
  $("profile-loading").hidden=true;$("profile-guest").hidden=true;$("profile-content").hidden=false;
  const meta=user.user_metadata||{};
  const name=String(meta.full_name||meta.name||meta.user_name||"Discord User");
