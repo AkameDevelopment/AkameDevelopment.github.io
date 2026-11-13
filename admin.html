@@ -250,7 +250,7 @@ async function loadDirectory(){
  customNames=new Map((custom.data||[]).filter(x=>x.display_name).map(x=>[x.user_id,x.display_name]));people=p.data||[];invitations=inv.data||[];roles=new Map((r.data||[]).map(x=>[x.user_id,x.role]));betas=new Map();
  for(const record of b.data||[]){if(!betas.has(record.user_id))betas.set(record.user_id,new Set());betas.get(record.user_id).add(record.project_slug);}
  $("user-count").textContent=people.length;$("staff-count").textContent=roles.size;$("beta-count").textContent=(b.data||[]).length;
- renderPeople();status("Administratorzugriff bestätigt. Rollen und Beta-Freigaben werden sicher über Supabase geprüft.");
+ renderPeople();const requestedMember=new URLSearchParams(location.search).get("member");if(requestedMember&&/^[0-9a-f-]{36}$/i.test(requestedMember)){const match=people.find(p=>p.user_id===requestedMember);if(match){selected=match.user_id;renderPeople();renderSelection();$("selected").scrollIntoView({block:"start"});history.replaceState(null,"",location.pathname)}else status("Das Mitglied konnte in der Benutzerverwaltung nicht gefunden werden.");}status("Administratorzugriff bestätigt. Rollen und Beta-Freigaben werden sicher über Supabase geprüft.");
 }
 async function init(){
  const {data,error}=await db.auth.getUser();
