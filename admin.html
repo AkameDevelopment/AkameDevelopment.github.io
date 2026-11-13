@@ -57,7 +57,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
  <div class="controls"><button type="button" id="save-profile" class="primary">Profiländerungen speichern</button></div>
  <p id="profile-edit-message" class="notice" role="status" aria-live="polite"></p>
 </section>
-<div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Normaler Benutzer</option><option value="staff">Mitarbeiter</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
+<div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Community</option><option value="staff">Mitarbeiter</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
 <hr class="separator"><h2>Beta-Zugriffe</h2><p class="notice">Diese Auswahl wird pro Benutzer gespeichert. Die tatsächlichen Beta-Downloads werden später separat per RLS/Storage abgesichert.</p>
 <div id="beta-options" class="beta"></div>
 <p id="edit-message" class="notice" role="status" aria-live="polite"></p>
@@ -91,7 +91,7 @@ function renderPeople(){
  for(const p of filtered){
   const b=document.createElement("button");b.type="button";b.className="person"+(selected===p.user_id?" selected":"");
   const img=document.createElement("img");img.src=avatar(p.avatar_url);img.alt="";img.loading="lazy";
-  const wrap=document.createElement("span"),strong=document.createElement("b"),small=document.createElement("small");strong.textContent=customNames.get(p.user_id)||p.display_name;small.textContent="Discord: "+(discordNames.get(p.user_id)||p.display_name||"Unbekannt")+" · "+(roles.get(p.user_id)||"Benutzer");wrap.append(strong,small);b.append(img,wrap);
+  const wrap=document.createElement("span"),strong=document.createElement("b"),small=document.createElement("small");strong.textContent=customNames.get(p.user_id)||p.display_name;small.textContent="Discord: "+(discordNames.get(p.user_id)||p.display_name||"Unbekannt")+" · "+(roles.get(p.user_id)||"Community");wrap.append(strong,small);b.append(img,wrap);
   b.addEventListener("click",()=>{selected=p.user_id;renderPeople();renderSelection();$("close-selected").focus();});root.append(b);
  }
 }
