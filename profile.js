@@ -3,6 +3,8 @@ const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable
 const $=id=>document.getElementById(id);
 const labels={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud",info:"AkameInfos",admin:"Server Admin",zoom:"AkameZoom"};
 const fallback=$("profile-fallback"), avatar=$("profile-avatar");
+let savedProfileState={bio:"",showMemberSince:true};
+function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==savedProfileState.bio||$("profile-show-member-since").checked!==savedProfileState.showMemberSince;$("profile-save").hidden=!changed;if(changed){$("save-message").textContent="";delete $("save-message").dataset.state;}}
 function lang(){return window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang")||"de"}
 function showSignedOut(){
  $("profile-loading").hidden=true;$("profile-guest").hidden=false;$("profile-content").hidden=true;
@@ -28,6 +30,7 @@ async function showProfile(user){
  $("profile-name").textContent=existing?.display_name||name;
  $("profile-show-member-since").checked=existing?.show_member_since!==false;
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
+ savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked};updateSaveVisibility();
  const role=staff.data?.role;
  $("profile-role").textContent=role==="admin"?"Administrator":role==="staff"?"Team":"Community";
  const betas=beta.error?[]:(beta.data||[]);
@@ -44,6 +47,8 @@ $("profile-login").addEventListener("click",async()=>{
   if(error)throw error;
  }catch(e){$("profile-login").disabled=false;$("login-error").textContent=e.message||String(e)}
 });
+$("profile-bio").addEventListener("input",updateSaveVisibility);
+$("profile-show-member-since").addEventListener("change",updateSaveVisibility);
 $("profile-save").addEventListener("click",async()=>{
  const {data:{user},error:authError}=await db.auth.getUser();
  if(authError||!user){showError("Bitte zuerst anmelden.");return}
@@ -54,7 +59,7 @@ $("profile-save").addEventListener("click",async()=>{
  const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,show_member_since:showMemberSince,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  btn.disabled=false;
  if(error)showError("Speichern fehlgeschlagen: "+error.message);
- else{$("member-since-visibility-note").textContent=showMemberSince?"Für andere sichtbar":"Nur für dich und Administratoren sichtbar";$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
+ else{savedProfileState={bio,showMemberSince};updateSaveVisibility();$("member-since-visibility-note").textContent=showMemberSince?"Für andere sichtbar":"Nur für dich und Administratoren sichtbar";$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
 });
 $("profile-change-name").addEventListener("click",async()=>{
  const input=$("profile-display-name"),button=$("profile-change-name"),message=$("profile-name-message");
