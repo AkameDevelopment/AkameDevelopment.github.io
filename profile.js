@@ -46,7 +46,7 @@ $("profile-save").addEventListener("click",async()=>{
  if(authError||!user){showError("Bitte zuerst anmelden.");return}
  const bio=$("profile-bio").value.trim();
  const displayName=$("profile-display-name").value.trim();
- if(displayName.length>32||/[\\x00-\\x1F\\x7F]/.test(displayName)){showError("Ungültiger Anzeigename (max. 32 Zeichen).");return}
+ if(displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){showError("Ungültiger Anzeigename (max. 32 Zeichen).");return}
  if(bio.length>400){showError("Maximal 400 Zeichen.");return}
  const btn=$("profile-save");btn.disabled=true;
  const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,display_name:displayName,updated_at:new Date().toISOString()},{onConflict:"user_id"});
