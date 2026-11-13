@@ -63,7 +63,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
  <h3>Benutzerprofil</h3>
  <div class="profile"><img id="selected-avatar" alt="Discord-Profilbild" loading="lazy"><div><strong id="selected-profile-name">Benutzer</strong><small id="selected-discord-name" class="notice"></small><small id="selected-joined" class="notice"></small><small id="selected-joined-visibility" class="notice"></small></div></div>
  <p><a id="open-user-profile" href="#">↗ Richtiges Profil öffnen</a></p><p class="notice">Der originale Discord-Name bleibt für Administratoren immer sichtbar.</p><label for="selected-display-name">Anzeigename auf der Website</label><input id="selected-display-name" class="input" maxlength="32" placeholder="Discord-Namen verwenden">
- <label for="selected-bio">Profilbeschreibung (maximal 400 Zeichen)</label>
+ <label style="display:flex;align-items:center;gap:9px;margin:14px 0"><input type="checkbox" id="selected-member-visible"> In der Community-Mitgliederliste anzeigen</label><label for="selected-bio">Profilbeschreibung (maximal 400 Zeichen)</label>
  <textarea id="selected-bio" class="input" maxlength="400" rows="5" placeholder="Keine Profilbeschreibung vorhanden"></textarea>
  <div class="controls"><button type="button" id="save-profile" class="primary">Profiländerungen speichern</button></div>
  <p id="profile-edit-message" class="notice" role="status" aria-live="polite"></p>
@@ -108,25 +108,25 @@ function renderPeople(){
 }
 async function loadSelectedProfile(userId){
  const field=$("selected-bio"),message=$("profile-edit-message"),save=$("save-profile");
- field.value="";field.disabled=true;$("selected-display-name").value="";$("selected-display-name").disabled=true;save.disabled=true;message.textContent="Profil wird geladen …";
- const {data,error}=await db.from("user_profiles").select("bio,display_name,show_member_since").eq("user_id",userId).maybeSingle();
+ field.value="";field.disabled=true;$("selected-member-visible").checked=true;$("selected-member-visible").disabled=true;$("selected-display-name").value="";$("selected-display-name").disabled=true;save.disabled=true;message.textContent="Profil wird geladen …";
+ const {data,error}=await db.from("user_profiles").select("bio,display_name,show_member_since,show_in_member_list").eq("user_id",userId).maybeSingle();
  if(selected!==userId)return;
  if(error){message.textContent="Profil konnte nicht geladen werden: "+error.message;return;}
  $("selected-joined-visibility").textContent=data?.show_member_since===false?"Beitrittsdatum für andere ausgeblendet":"Beitrittsdatum öffentlich sichtbar";
- const protectedOwner=roles.get(userId)==="owner"&&role!=="owner";field.value=data?.bio||"";$("selected-display-name").value=data?.display_name||"";$("selected-profile-name").textContent=data?.display_name||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";field.disabled=protectedOwner;$("selected-display-name").disabled=protectedOwner;save.disabled=protectedOwner;
+ const protectedOwner=roles.get(userId)==="owner"&&role!=="owner";field.value=data?.bio||"";$("selected-member-visible").checked=data?.show_in_member_list!==false;$("selected-member-visible").disabled=protectedOwner;$("selected-display-name").value=data?.display_name||"";$("selected-profile-name").textContent=data?.display_name||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";field.disabled=protectedOwner;$("selected-display-name").disabled=protectedOwner;save.disabled=protectedOwner;
  message.textContent=data?"Profil bereit zur Bearbeitung.":"Noch keine Beschreibung gespeichert.";
 }
 $("save-profile").addEventListener("click",async()=>{
  if(!["owner","admin"].includes(role)||!selected||roles.get(selected)==="owner"&&role!=="owner")return;
  const userId=selected,field=$("selected-bio"),button=$("save-profile"),message=$("profile-edit-message");
- const value=field.value.trim(),displayName=$("selected-display-name").value.trim();
+ const value=field.value.trim(),displayName=$("selected-display-name").value.trim(),memberVisible=$("selected-member-visible").checked;
  if(displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){message.textContent="Ungültiger Anzeigename.";return;}
  if(value.length>400){message.textContent="Maximal 400 Zeichen erlaubt.";return;}
  if(!confirm("Profilbeschreibung dieses Benutzers wirklich ändern?"))return;
- button.disabled=true;field.disabled=true;$("selected-display-name").disabled=true;message.textContent="Änderungen werden gespeichert …";
- const {error}=await db.from("user_profiles").upsert({user_id:userId,bio:value,display_name:displayName,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ button.disabled=true;field.disabled=true;$("selected-member-visible").disabled=true;$("selected-display-name").disabled=true;message.textContent="Änderungen werden gespeichert …";
+ const {error}=await db.from("user_profiles").upsert({user_id:userId,bio:value,display_name:displayName,show_in_member_list:memberVisible,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  if(selected!==userId)return;
- button.disabled=false;field.disabled=false;$("selected-display-name").disabled=false;
+ button.disabled=false;field.disabled=false;$("selected-member-visible").disabled=false;$("selected-display-name").disabled=false;
  if(!error)$("selected-profile-name").textContent=displayName||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";
  message.textContent=error?(error.code==="23505"?"Dieser Anzeigename ist bereits vergeben.":"Speichern fehlgeschlagen: "+error.message):"Profiländerungen erfolgreich gespeichert.";
 });
