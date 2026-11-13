@@ -61,6 +61,9 @@ if(document.getElementById("profile-content")){
  function translate(){const t=strings[language()]||strings.de;panel.querySelector("#appearance-heading").textContent=t.heading;panel.querySelector("#appearance-description").textContent=t.description;panel.querySelector("#appearance-preview-label").textContent=t.preview;panel.querySelector("#appearance-theme-label").textContent=t.theme;panel.querySelector("#appearance-url-label").textContent=t.url;panel.querySelector("#appearance-hint").textContent=t.hint;input.placeholder=t.placeholder;panel.querySelector("#appearance-color-label").textContent=t.ownColor;panel.querySelector("#appearance-position-label").textContent=t.position;panel.querySelector("#appearance-horizontal-label").textContent=t.horizontal;panel.querySelector("#appearance-vertical-label").textContent=t.vertical;panel.querySelector("#appearance-zoom-label").textContent=t.zoom;panel.querySelector("#appearance-reset").textContent=t.reset;panel.querySelector("#appearance-drag-tip").textContent=t.drag;remove.textContent=t.remove;save.textContent=t.save;for(const option of select.options)option.textContent=t.colors[option.value]}
  function render(){
   const url=input.value.trim();
+  const themeLabel=panel.querySelector("#appearance-theme-label");
+  const colorChoice=panel.querySelector(".appearance-color-choice");
+  select.hidden=!!url;themeLabel.hidden=!!url;colorChoice.hidden=!!url;
   if(url)customEnabled.checked=false;customEnabled.disabled=!!url;
   const color=!url&&customEnabled.checked?customInput.value:"";customInput.disabled=!!url||!customEnabled.checked;
   framing.hidden=!url;
