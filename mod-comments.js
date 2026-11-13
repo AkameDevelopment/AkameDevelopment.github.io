@@ -24,16 +24,17 @@ if (root && slugs.has(slug)) {
   const q = (s) => root.querySelector(s);
   const list = q("#comment-list"), message = q("#comment-message"), composer = q("#comment-composer"), guest = q("#comment-guest");
   const textarea = q("#comment-body"), counter = q("#comment-count"), submit = q("#comment-submit");
-  let currentUser = null, moderator = false;
+  let currentUser = null, moderator = false, loadVersion = 0;
   const tr=(de,en)=>window.AkameLanguage?.get()==="en"?en:de;
   document.addEventListener("akame-language-change",()=>{submit.textContent=tr("Kommentar veröffentlichen","Post comment");void fetchComments();});
   function showMessage(text){message.textContent=text;}
   function timestamp(iso){return new Date(iso).toLocaleString(document.documentElement.lang==="en"?"en-GB":"de-DE",{dateStyle:"medium",timeStyle:"short"});}
   async function fetchComments(){
-    list.replaceChildren();
+    const version=++loadVersion;
     showMessage(tr("Kommentare werden geladen …","Loading comments …"));
     const {data,error} = await supabase.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at,parent_id").eq("project_slug",slug).order("created_at",{ascending:false}).limit(200);
-    if(error){showMessage(tr("Kommentare konnten nicht geladen werden: ","Could not load comments: ")+error.message);return;}
+    if(version!==loadVersion)return;
+    if(error){list.replaceChildren();showMessage(tr("Kommentare konnten nicht geladen werden: ","Could not load comments: ")+error.message);return;}
     const roots=data.filter(item=>item.parent_id==null);const replies=new Map();for(const item of data){if(item.parent_id!=null){const key=String(item.parent_id);if(!replies.has(key))replies.set(key,[]);replies.get(key).push(item);}}
     showMessage(roots.length ? (window.AkameLanguage?.get()==="en"?roots.length+" comment"+(roots.length===1?"":"s"):roots.length+" Kommentar"+(roots.length===1?"":"e")) : tr("Noch keine Kommentare. Sei die erste Person!","No comments yet. Be the first!"));
     function renderComment(item,isReply=false){
@@ -64,14 +65,14 @@ if (root && slugs.has(slug)) {
           const input=document.createElement("textarea");input.required=true;input.minLength=3;input.maxLength=1200;input.placeholder=tr("Deine Antwort …","Your reply …");input.setAttribute("aria-label",tr("Antwort schreiben","Write a reply"));
           const controls=document.createElement("div");controls.className="akame-ctrl";const cancel=document.createElement("button");cancel.type="button";cancel.textContent=tr("Abbrechen","Cancel");cancel.onclick=()=>form.remove();const send=document.createElement("button");send.type="submit";send.textContent=tr("Antwort veröffentlichen","Post reply");controls.append(cancel,send);form.append(input,controls);
           form.addEventListener("submit",async event=>{event.preventDefault();const body=input.value.trim();if(body.length<3||body.length>1200)return;send.disabled=true;const {error}=await supabase.from("mod_comments").insert({project_slug:slug,parent_id:item.id,body});if(error){showMessage(tr("Antwort konnte nicht gespeichert werden: ","Could not post reply: ")+error.message);send.disabled=false;return;}await fetchComments();});
-          actions.after(form);input.focus();
+          article.append(form);input.focus();
         });actions.append(replyButton);article.append(actions);
         const children=replies.get(String(item.id))||[];
         if(children.length){const thread=document.createElement("div");thread.className="akame-replies";children.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));for(const child of children)thread.append(renderComment(child,true));article.append(thread);}
       }
       return article;
     }
-    for(const item of roots)list.append(renderComment(item));
+    const fragment=document.createDocumentFragment();for(const item of roots)fragment.append(renderComment(item));list.replaceChildren(fragment);
   }
   function applyUser(user){currentUser=user;composer.hidden=!user;guest.hidden=!!user;}
   async function checkUser(){
