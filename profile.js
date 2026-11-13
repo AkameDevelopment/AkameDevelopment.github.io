@@ -77,12 +77,40 @@ async function showProfile(user){
  savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked,showDiscordName:$("profile-show-discord-name").checked,showInMemberList:$("profile-show-member-list").checked,spotifyTrack:$("profile-spotify-track").value.trim(),spotifyTrack2:$("profile-spotify-track-2").value.trim(),spotifyTrack3:$("profile-spotify-track-3").value.trim(),showSpotify:$("profile-show-spotify").checked};updateSaveVisibility();await updateNameCooldown();await loadProfileMods(user);
  const role=staff.data?.role;
  $("profile-role").textContent=role==="owner"?"Owner":role==="admin"?"Administrator":role==="staff"?"Team":"Community";
+ await loadBetaInvitations(user);
  const betas=beta.error?[]:(beta.data||[]);
  $("profile-beta-count").textContent=String(betas.length);
  const container=$("profile-beta-list");container.replaceChildren();
  if(beta.error){container.textContent="Beta-Zugänge konnten nicht geladen werden.";return}
  if(betas.length===0){container.textContent="Noch keine Beta-Freigaben.";return}
  for(const item of betas){const a=document.createElement("a");a.href="project.html?mod="+encodeURIComponent(item.project_slug);a.className="beta-pill";a.textContent=labels[item.project_slug]||item.project_slug;container.append(a)}
+}
+async function loadBetaInvitations(user){
+ const root=$("profile-beta-invitations"),message=$("profile-beta-invitation-message");
+ if(!root)return;
+ root.replaceChildren();message.textContent="";
+ const {data,error}=await db.from("beta_invitations").select("id,project_slug,status,created_at").eq("user_id",user.id).order("created_at",{ascending:false});
+ if(error){message.textContent="Beta-Einladungen konnten nicht geladen werden.";return;}
+ const pending=(data||[]).filter(x=>x.status==="pending");
+ if(!pending.length){root.textContent="Keine offenen Beta-Einladungen.";return;}
+ const title=document.createElement("h3");title.textContent="Offene Beta-Einladungen ("+pending.length+")";root.append(title);
+ for(const inv of pending){
+  const line=document.createElement("div");line.style.cssText="display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px;margin:9px 0;border:1px solid #ffffff26;border-radius:12px;background:#ffffff08";
+  const name=document.createElement("strong");name.textContent=labels[inv.project_slug]||inv.project_slug;name.style.flex="1";
+  const accept=document.createElement("button"),decline=document.createElement("button");
+  accept.type=decline.type="button";accept.textContent="Annehmen";decline.textContent="Ablehnen";
+  accept.className="action";decline.className="action secondary";
+  async function respond(yes){
+   accept.disabled=decline.disabled=true;message.textContent="Antwort wird gespeichert …";
+   const {error}=await db.rpc("respond_to_beta_invitation",{p_invitation_id:inv.id,p_accept:yes});
+   if(error){message.textContent="Fehler: "+error.message;accept.disabled=decline.disabled=false;return;}
+   message.textContent=yes?"Beta-Zugriff aktiviert! Lade die Seite neu, um ihn in deinen Downloads zu sehen.":"Einladung abgelehnt.";
+   line.remove();
+   if(yes){const count=$("profile-beta-count");count.textContent=String(Number(count.textContent||0)+1);const a=document.createElement("a");a.href="project.html?mod="+encodeURIComponent(inv.project_slug);a.className="beta-pill";a.textContent=labels[inv.project_slug]||inv.project_slug;const list=$("profile-beta-list");if(list.textContent==="Noch keine Beta-Freigaben.")list.replaceChildren();list.append(a);}
+  }
+  accept.addEventListener("click",()=>respond(true));decline.addEventListener("click",()=>respond(false));
+  line.append(name,accept,decline);root.append(line);
+ }
 }
 $("profile-login").addEventListener("click",async()=>{
  $("profile-login").disabled=true;
