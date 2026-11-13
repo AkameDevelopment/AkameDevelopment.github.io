@@ -31,6 +31,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 @media(min-width:811px){#dashboard>.layout{grid-template-columns:minmax(0,1fr) 340px!important;gap:20px!important;align-items:start!important}#admin-controls{width:340px!important;max-width:340px!important;justify-self:end!important}#people{max-height:420px!important}#selected{margin-top:0!important}#selected .separator{margin:20px 0!important}}
 [hidden]{display:none!important}@media(max-width:810px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.toplinks{gap:8px}.toplinks a{font-size:12px}}
 @media(max-width:480px){.grid{grid-template-columns:1fr}.beta{grid-template-columns:1fr}.top{padding:12px 15px}.shell{padding:25px 15px}.brand{font-size:15px}.panel{padding:17px}}
+.admin-profile-detail{margin:17px 0 22px;padding:17px;border:1px solid #aa84ec45;border-radius:13px;background:#ffffff06}.admin-profile-detail h3{margin:0 0 13px;font-size:17px}.admin-profile-detail .profile{margin-bottom:12px}.admin-profile-detail .profile div{min-width:0}.admin-profile-detail .profile strong,.admin-profile-detail .profile small{display:block;overflow-wrap:anywhere}.admin-profile-detail label{display:block;margin:12px 0 8px;font-weight:700;color:#e9d8ff}.admin-profile-detail textarea.input{resize:vertical;min-height:115px}.admin-profile-detail .controls{margin-top:11px}.admin-profile-detail .notice{overflow-wrap:anywhere}
 </style><link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261112-purple-anime-large-2"><link rel="shortcut icon" href="favicon.svg?v=20261112-purple-anime-large-2"></head>
 <body>
 <header><div class="top"><a href="index.html" class="brand">Akame<b>Development</b></a><div class="toplinks"><a href="index.html">← Startseite</a><button type="button" id="logout" hidden>Abmelden</button></div></div></header>
@@ -52,6 +53,15 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 <div id="people" class="people" aria-live="polite"></div>
 <hr class="separator">
 <div id="selected" hidden><h2 id="selected-name">Benutzer</h2><p id="selected-uid" class="notice"></p>
+<section class="admin-profile-detail" aria-label="Benutzerprofil">
+ <h3>Benutzerprofil</h3>
+ <div class="profile"><img id="selected-avatar" alt="Discord-Profilbild" loading="lazy"><div><strong id="selected-profile-name">Benutzer</strong><small id="selected-joined" class="notice"></small></div></div>
+ <p class="notice">Die Discord-Identität wird automatisch synchronisiert und ist hier nicht bearbeitbar.</p>
+ <label for="selected-bio">Profilbeschreibung (maximal 400 Zeichen)</label>
+ <textarea id="selected-bio" class="input" maxlength="400" rows="5" placeholder="Keine Profilbeschreibung vorhanden"></textarea>
+ <div class="controls"><button type="button" id="save-profile" class="primary">Profilbeschreibung speichern</button></div>
+ <p id="profile-edit-message" class="notice" role="status" aria-live="polite"></p>
+</section>
 <div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Normaler Benutzer</option><option value="staff">Mitarbeiter</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
 <hr class="separator"><h2>Beta-Zugriffe</h2><p class="notice">Diese Auswahl wird pro Benutzer gespeichert. Die tatsächlichen Beta-Downloads werden später separat per RLS/Storage abgesichert.</p>
 <div id="beta-options" class="beta"></div>
@@ -83,10 +93,35 @@ function renderPeople(){
   b.addEventListener("click",()=>{selected=p.user_id;renderPeople();renderSelection();});root.append(b);
  }
 }
+async function loadSelectedProfile(userId){
+ const field=$("selected-bio"),message=$("profile-edit-message"),save=$("save-profile");
+ field.value="";field.disabled=true;save.disabled=true;message.textContent="Profil wird geladen …";
+ const {data,error}=await db.from("user_profiles").select("bio").eq("user_id",userId).maybeSingle();
+ if(selected!==userId)return;
+ if(error){message.textContent="Profil konnte nicht geladen werden: "+error.message;return;}
+ field.value=data?.bio||"";field.disabled=false;save.disabled=false;
+ message.textContent=data?"Profil bereit zur Bearbeitung.":"Noch keine Beschreibung gespeichert.";
+}
+$("save-profile").addEventListener("click",async()=>{
+ if(role!=="admin"||!selected)return;
+ const userId=selected,field=$("selected-bio"),button=$("save-profile"),message=$("profile-edit-message");
+ const value=field.value.trim();
+ if(value.length>400){message.textContent="Maximal 400 Zeichen erlaubt.";return;}
+ if(!confirm("Profilbeschreibung dieses Benutzers wirklich ändern?"))return;
+ button.disabled=true;field.disabled=true;message.textContent="Änderungen werden gespeichert …";
+ const {error}=await db.from("user_profiles").upsert({user_id:userId,bio:value,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ if(selected!==userId)return;
+ button.disabled=false;field.disabled=false;
+ message.textContent=error?"Speichern fehlgeschlagen: "+error.message:"Profilbeschreibung erfolgreich gespeichert.";
+});
 function renderSelection(){
  const p=people.find(x=>x.user_id===selected);$("selected").hidden=!p;if(!p)return;
  $("selected-name").textContent=p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
  $("role-select").value=roles.get(p.user_id)||"";
+ $("selected-avatar").src=avatar(p.avatar_url);
+ $("selected-profile-name").textContent=p.display_name||"Discord-Benutzer";
+ $("selected-joined").textContent=p.created_at?"Bekannt seit "+new Date(p.created_at).toLocaleDateString("de-DE"):"";
+ void loadSelectedProfile(p.user_id);
  const grid=$("beta-options");grid.replaceChildren();
  for(const [key,value] of Object.entries(names)){
   const label=document.createElement("label"),input=document.createElement("input");input.type="checkbox";input.checked=betas.get(p.user_id)?.has(key)||false;
