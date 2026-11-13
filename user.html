@@ -677,6 +677,16 @@ html body main #content>.person::before{z-index:1!important;pointer-events:none!
 html body main #content>.person>img:not(.akame-banner-visual),
 html body main #content>.person>div:not(.akame-banner-visual):not(.akame-profile-actions){position:relative!important;z-index:3!important}
 html body main #content>.person>.akame-profile-actions{z-index:5!important}
+</style><style id="akame-banner-actions-top-align-20261113">
+@media(min-width:1050px){
+ html body main #content>.person>.akame-profile-actions{
+  position:absolute!important;
+  top:10px!important;right:20px!important;bottom:auto!important;
+  margin:0!important;transform:none!important;
+  display:flex!important;align-items:center!important;gap:9px!important;
+  z-index:8!important;
+ }
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
