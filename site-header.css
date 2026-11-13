@@ -437,3 +437,10 @@ html body header .akame-header-actions>.akame-account{
   width:min(270px,calc(100vw - 28px))!important;max-width:calc(100vw - 28px)!important;
  }
 }
+
+/* Consistent disclosure chevrons across all pages and browsers. */
+html body header>.akame-menu-panel summary{list-style:none!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;position:relative!important}
+html body header>.akame-menu-panel summary::-webkit-details-marker{display:none!important}
+html body header>.akame-menu-panel summary::marker{content:""!important}
+html body header>.akame-menu-panel summary::after{content:""!important;display:block!important;flex:none!important;width:8px!important;height:8px!important;border-right:2px solid #c9a9f2!important;border-bottom:2px solid #c9a9f2!important;transform:rotate(45deg)!important;transition:transform .18s ease!important;margin-right:4px!important}
+html body header>.akame-menu-panel details[open]>summary::after{transform:rotate(225deg)!important}
