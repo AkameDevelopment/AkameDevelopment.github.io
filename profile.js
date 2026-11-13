@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const labels={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud",info:"AkameInfos",admin:"Server Admin",zoom:"AkameZoom"};
 const fallback=$("profile-fallback"), avatar=$("profile-avatar");
 let savedProfileState={bio:"",showMemberSince:true};
-function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==savedProfileState.bio||$("profile-show-member-since").checked!==savedProfileState.showMemberSince;$("profile-save").hidden=!changed;if(changed){$("save-message").textContent="";delete $("save-message").dataset.state;}}
+function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==savedProfileState.bio||$("profile-show-member-since").checked!==savedProfileState.showMemberSince;$("profile-save").hidden=!changed;$("profile-save").style.display=changed?"inline-flex":"none";if(changed){$("save-message").textContent="";delete $("save-message").dataset.state;}}
 function lang(){return window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang")||"de"}
 function showSignedOut(){
  $("profile-loading").hidden=true;$("profile-guest").hidden=false;$("profile-content").hidden=true;
