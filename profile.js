@@ -3,7 +3,28 @@ const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable
 const $=id=>document.getElementById(id);
 const labels={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud",info:"AkameInfos",admin:"Server Admin",zoom:"AkameZoom"};
 const modOptions=[["modcore","ModCore"],["chest","ChestScout"],["crosshair","Crosshair+"],["chunkloader","ChunkLoader"],["items","AkameItems"],["hud","AkameHud+"],["info","AkameInfos"],["admin","Server Admin"],["zoom","AkameZoom"]];
-async function loadProfileMods(user){const list=$("profile-mod-list"),message=$("profile-mod-message"),counter=$("profile-mod-count");list.replaceChildren();message.textContent="";const {data,error}=await db.from("profile_mods").select("mod_slug").eq("user_id",user.id);if(error){message.textContent="Mods konnten nicht geladen werden: "+error.message;message.dataset.state="error";return}const selected=new Set((data||[]).map(m=>m.mod_slug));const updateCount=()=>counter.textContent=selected.size+" ausgewählt";updateCount();for(const [slug,name] of modOptions){const label=document.createElement("label");label.className="profile-mod-item";const check=document.createElement("input");check.type="checkbox";check.checked=selected.has(slug);const title=document.createElement("span");title.textContent=name;label.append(check,title);list.append(label);check.addEventListener("change",async()=>{const enabled=check.checked;check.disabled=true;message.textContent="Speichert …";delete message.dataset.state;const result=enabled?await db.from("profile_mods").insert({user_id:user.id,mod_slug:slug,source:"manual"}):await db.from("profile_mods").delete().eq("user_id",user.id).eq("mod_slug",slug);check.disabled=false;if(result.error){check.checked=!enabled;message.textContent="Speichern fehlgeschlagen: "+result.error.message;message.dataset.state="error";return}if(enabled)selected.add(slug);else selected.delete(slug);updateCount();message.textContent="Auswahl gespeichert.";message.dataset.state="success"})}}
+async function loadProfileMods(user){
+ const list=$("profile-mod-list"),message=$("profile-mod-message"),counter=$("profile-mod-count");list.replaceChildren();message.textContent="";
+ const [saved,visibility,beta,staff]=await Promise.all([
+ db.from("profile_mods").select("mod_slug").eq("user_id",user.id),
+ db.from("mod_visibility").select("project_slug,visibility,visible"),
+ db.from("beta_access").select("project_slug").eq("user_id",user.id),
+ db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle()
+ ]);
+ if(saved.error||visibility.error||beta.error||staff.error){message.textContent="Mod-Berechtigungen konnten nicht geladen werden. Bitte später erneut versuchen.";message.dataset.state="error";return}
+ const selected=new Set((saved.data||[]).map(m=>m.mod_slug)),allowedBeta=new Set((beta.data||[]).map(m=>m.project_slug));
+ const rules=new Map((visibility.data||[]).map(m=>[m.project_slug,m.visibility||(m.visible?"public":"hidden")]));
+ const isAdmin=["owner","admin"].includes(staff.data?.role);
+ const allowed=modOptions.filter(([slug])=>{const mode=rules.get(slug);return isAdmin||mode==="public"||(mode==="beta"&&allowedBeta.has(slug))});
+ const updateCount=()=>counter.textContent=allowed.filter(([slug])=>selected.has(slug)).length+" ausgewählt";updateCount();
+ if(!allowed.length){message.textContent="Für dich sind derzeit keine Mods freigeschaltet.";return}
+ for(const [slug,name] of allowed){const label=document.createElement("label");label.className="profile-mod-item";const check=document.createElement("input");check.type="checkbox";check.checked=selected.has(slug);const title=document.createElement("span");title.textContent=name;label.append(check,title);list.append(label);check.addEventListener("change",async()=>{
+ const enabled=check.checked;check.disabled=true;message.textContent="Speichert …";delete message.dataset.state;
+ const result=enabled?await db.from("profile_mods").insert({user_id:user.id,mod_slug:slug,source:"manual"}):await db.from("profile_mods").delete().eq("user_id",user.id).eq("mod_slug",slug);
+ check.disabled=false;if(result.error){check.checked=!enabled;message.textContent="Speichern fehlgeschlagen: "+result.error.message;message.dataset.state="error";return}
+ if(enabled)selected.add(slug);else selected.delete(slug);updateCount();message.textContent="Auswahl gespeichert.";message.dataset.state="success"
+ })}
+}
 const fallback=$("profile-fallback"), avatar=$("profile-avatar");
 let savedProfileState={bio:"",showMemberSince:true};
 function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==savedProfileState.bio||$("profile-show-member-since").checked!==savedProfileState.showMemberSince;$("profile-save").hidden=!changed;$("profile-save").style.display=changed?"inline-flex":"none";if(changed){$("save-message").textContent="";delete $("save-message").dataset.state;}}
