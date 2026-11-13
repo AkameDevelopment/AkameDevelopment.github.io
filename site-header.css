@@ -480,3 +480,10 @@ html body header>.akame-menu-panel details[open]>summary::after{transform:rotate
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button svg,
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span{pointer-events:none!important}
 }
+
+/* Keep the profile control above the open mobile drawer. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{position:relative!important;z-index:125!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{z-index:126!important}
+ html body header .akame-account-dropdown:not([hidden]){z-index:150!important}
+}
