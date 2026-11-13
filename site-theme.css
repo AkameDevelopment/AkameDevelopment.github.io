@@ -143,3 +143,57 @@ html[data-akame-theme="light"] body :is(.page-hero,.page-header,.section-hero,.p
 html[data-akame-theme="light"] body :is(.section,.panel,.card,.widget,.sidebar,.settings-card,.profile-card,.dashboard-card,.member-card,.feed-card,.post-card,.download-card,.project-card,.news-card){
  border-color:#d8c6ea!important;
 }
+
+/* Light mode polish: readable brand, coordinated header controls and account popover. */
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>a.brand>span{
+ color:#281a39!important;
+ -webkit-text-fill-color:#281a39!important;
+ background:none!important;
+ filter:none!important;
+ opacity:1!important;
+}
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>a.brand>span>b{
+ color:#8851c5!important;
+ -webkit-text-fill-color:#8851c5!important;
+}
+html[data-akame-theme="light"] body header{
+ background:linear-gradient(100deg,#f2e8fbeF,#eadbf7ef)!important;
+ border-bottom:1px solid #d6bee9!important;
+}
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share,
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.nav-action,
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages,
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger{
+ background:#f7f0fd!important;
+ color:#3e2956!important;
+ border-color:#c8a9df!important;
+ box-shadow:0 2px 9px #6e439112!important;
+}
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages>button{
+ background:transparent!important;color:#624a79!important;
+}
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages>button.active{
+ background:#d8c0f0!important;color:#4c2777!important;
+}
+html[data-akame-theme="light"] body :is(.akame-account-dropdown,.akame-account-menu,.akame-home-dropdown,.akame-home-submenu){
+ background:linear-gradient(155deg,#fffafd,#f2e7fb)!important;
+ border:1px solid #d2b7e8!important;
+ box-shadow:0 18px 48px #4e2b7028!important;
+ color:#352344!important;
+}
+html[data-akame-theme="light"] body :is(.akame-account-dropdown,.akame-account-menu,.akame-home-dropdown,.akame-home-submenu) :is(a,button,[role="menuitem"]){
+ color:#3c2b50!important;
+}
+html[data-akame-theme="light"] body :is(.akame-account-dropdown,.akame-account-menu,.akame-home-dropdown,.akame-home-submenu) :is(a,button,[role="menuitem"]):hover{
+ background:#e9d9f7!important;
+ color:#512781!important;
+}
+html[data-akame-theme="light"] body :is(.akame-account-dropdown,.akame-account-menu,.akame-home-dropdown,.akame-home-submenu) :is(svg,i){
+ color:#8956bd!important;
+}
+html[data-akame-theme="light"] body .hero{
+ background:radial-gradient(ellipse at 16% 24%,#cdb0e5b0,transparent 57%),radial-gradient(ellipse at 81% 38%,#d9c3eeb3,transparent 62%),linear-gradient(160deg,#eee1f9,#f5edfb 75%)!important;
+}
+html[data-akame-theme="light"] body :is(.homepage-intro,.homepage-sections,.home-sections){
+ background:transparent!important;
+}
