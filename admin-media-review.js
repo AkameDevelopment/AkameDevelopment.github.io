@@ -68,7 +68,7 @@ if(root){
  .media-review-confirm-actions button{border-radius:10px;padding:9px 14px}
  .media-review-confirm-actions .danger{background:#8b3455;color:white}
  `;document.head.append(styles);
- root.classList.add("media-review-popover");root.before(notification);notification.append(root);
+ root.classList.add("media-review-popover");const toolbarSlot=document.getElementById("admin-approvals-slot");if(toolbarSlot)toolbarSlot.append(notification);else root.before(notification);notification.append(root);
  function setOpen(open){root.hidden=!open;notificationButton.setAttribute("aria-expanded",String(open));notification.classList.toggle("is-open",open);if(open){const rect=notificationButton.getBoundingClientRect();root.style.setProperty("--review-menu-max-height",Math.max(240,window.innerHeight-rect.bottom-20)+"px")}}
  notificationButton.addEventListener("click",async()=>{const open=root.hidden;setOpen(open);if(open)await refresh()});
  document.addEventListener("pointerdown",event=>{if(!root.hidden&&!notification.contains(event.target))setOpen(false)});
