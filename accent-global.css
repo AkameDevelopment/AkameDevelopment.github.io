@@ -1,0 +1,8 @@
+/* User-selected accent shared across the website. */
+:root{--akame-user-accent:#a678ec;--akame-accent:var(--akame-user-accent)}
+html body :is(button.primary,.primary,.btn-primary,[type="submit"].primary){background-color:var(--akame-user-accent)!important;border-color:var(--akame-user-accent)!important}
+html body :is(button,a,[role="button"]):focus-visible{outline-color:var(--akame-user-accent)!important}
+html body :is(input[type="checkbox"],input[type="radio"],input[type="range"]){accent-color:var(--akame-user-accent)!important}
+html body :is(.tabs button.active,.tab.active,.nav-link.active,[aria-selected="true"],[aria-pressed="true"]){border-color:var(--akame-user-accent)!important}
+html body :is(.badge.active,.selected,.active-filter){border-color:var(--akame-user-accent)!important}
+html body :is(.settings-brand,.accent-text){color:var(--akame-user-accent)!important}
