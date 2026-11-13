@@ -57,9 +57,10 @@ function showResetToast(message){
  toast.textContent="✓ "+message;toast.style.opacity="1";toast.hidden=false;
  clearTimeout(showResetToast.timeout);showResetToast.timeout=setTimeout(()=>{toast.style.opacity="0";setTimeout(()=>{toast.hidden=true},220)},3200);
 }
-$("reset-settings").addEventListener("click",()=>{
+$("reset-settings").addEventListener("click",async()=>{
  const button=$("reset-settings");button.disabled=true;
  try{
+  await window.AkameAccent?.saveAccount?.(defaults.accent);
   for(const [k,v] of Object.entries(defaults))store.setItem(keys[k],String(v));
   store.removeItem("akame-site-theme");
   store.setItem("akame-lang-preference","auto");
