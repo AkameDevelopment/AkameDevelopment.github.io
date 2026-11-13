@@ -654,7 +654,30 @@ html body main #content>.person>.akame-profile-actions>.own-profile-edit{
 @media(min-width:650px) and (max-width:1049px){
  html body main #content>.person{min-height:285px!important}
 }
-</style><style id="akame-banner-crop-render-20261113">html body main #content>.person>.akame-banner-visual{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;border:0!important;pointer-events:none!important;object-fit:cover!important;z-index:0!important}html body main #content>.person>img:not(.akame-banner-visual){z-index:3!important}</style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
+</style><style id="akame-banner-crop-render-20261113">html body main #content>.person>.akame-banner-visual{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;border:0!important;pointer-events:none!important;object-fit:cover!important;z-index:0!important}html body main #content>.person>img:not(.akame-banner-visual){z-index:3!important}</style><style id="akame-banner-media-layout-fix-20261113">
+/* Banner image must never inherit avatar grid sizing or positioning. */
+html body main #content>.person{position:relative!important;overflow:hidden!important;isolation:isolate!important}
+html body main #content>.person>img.akame-banner-visual,
+html body main #content>.person>iframe.akame-banner-visual{
+ position:absolute!important;
+ inset:0!important;
+ top:0!important;left:0!important;right:0!important;bottom:0!important;
+ display:block!important;
+ grid-column:auto!important;grid-row:auto!important;
+ align-self:auto!important;justify-self:auto!important;
+ width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:none!important;max-height:none!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;object-fit:cover!important;
+ pointer-events:none!important;z-index:0!important;
+}
+html body main #content>.person::before{z-index:1!important;pointer-events:none!important}
+html body main #content>.person>img:not(.akame-banner-visual),
+html body main #content>.person>div:not(.akame-banner-visual):not(.akame-profile-actions){position:relative!important;z-index:3!important}
+html body main #content>.person>.akame-profile-actions{z-index:5!important}
+</style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 async function resolveShowcaseUrl(value){try{const u=new URL(value);if(!["tenor.com","www.tenor.com"].includes(u.hostname)||!/^\/[A-Za-z0-9_-]+\.gif\/?$/.test(u.pathname))return value;const endpoint="https://wycdpuzlbivtfxwtarzn.supabase.co/functions/v1/resolve-tenor-gif?url="+encodeURIComponent(value);const response=await fetch(endpoint);const data=await response.json();return response.ok&&data.url?data.url:value;}catch{return value;}}
