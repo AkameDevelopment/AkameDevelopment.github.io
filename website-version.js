@@ -17,7 +17,7 @@ try{
   const res=await fetch("website-version.json",{cache:"no-store"});
   if(!res.ok)throw new Error("Version unavailable");
   const data=await res.json();
-  if(!/^\\d+\\.\\d+\\.\\d+$/.test(data.version))throw new Error("Invalid version");
+  if(!/^[0-9]+[.][0-9]+[.][0-9]+$/.test(data.version))throw new Error("Invalid version");
   badge.textContent="AkameDevelopment · v"+data.version;
   badge.title=en?"Website version":"Website-Version";
  }catch{badge.textContent="AkameDevelopment · Version";badge.title=en?"Version information unavailable":"Versionsinformation derzeit nicht verfügbar"}
