@@ -285,6 +285,26 @@ font-size:13px!important;font-weight:700!important;white-space:nowrap!important;
 html body main #content>.person>.own-profile-edit .settings-mobile-label{display:inline!important;font-size:13px!important;line-height:1!important}
 html body main #content>.person>.profile-share-icon{right:148px!important}
 }
+</style><style id="akame-profile-background-20261113">
+/* Public profile only: richer, restrained purple atmosphere. */
+html body:has(main #content>.person){
+ background:
+ radial-gradient(ellipse 68% 42% at 52% 0%,rgba(112,61,183,.20) 0%,transparent 76%),
+ radial-gradient(ellipse 42% 52% at 100% 55%,rgba(71,37,122,.11) 0%,transparent 82%),
+ linear-gradient(160deg,#0c0a13 0%,#120e1d 50%,#0c0a12 100%)!important;
+ background-attachment:fixed!important;
+}
+html body main #content>.person{
+ background:
+ radial-gradient(ellipse 65% 110% at 92% 0%,rgba(147,89,221,.20) 0%,transparent 75%),
+ radial-gradient(ellipse 48% 100% at 5% 100%,rgba(103,64,173,.17) 0%,transparent 80%),
+ linear-gradient(120deg,#251a37 0%,#1c142b 52%,#21162f 100%)!important;
+ border:1px solid rgba(170,123,230,.26)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 16px 38px rgba(0,0,0,.16)!important;
+}
+@media(max-width:650px){
+ html body:has(main #content>.person){background-attachment:scroll!important}
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
