@@ -60,12 +60,9 @@ try{
  ]);
  if(commentsError)throw commentsError;
  let profile=null,community=null,role=null,smpMember=false;
- if(user){const results=await Promise.all([
- db.from("user_profiles").select("display_name,bio,show_member_since").eq("user_id",id).maybeSingle(),
- db.from("community_profiles").select("display_name,avatar_url,created_at").eq("user_id",id).maybeSingle(),
- db.from("staff_access").select("role").eq("user_id",id).maybeSingle(),
- db.from("akamesmp_members").select("user_id").eq("user_id",id).maybeSingle()
- ]);profile=results[0].data;community=results[1].data;role=results[2].data?.role;smpMember=!!results[3].data;}
+ const {data:publicRows,error:publicError}=await db.rpc("get_public_profile",{p_user_id:id});if(publicError)console.warn("Öffentliches Profil konnte nicht geladen werden",publicError);
+ const publicData=publicRows?.[0];if(publicData){profile={display_name:publicData.display_name,bio:publicData.bio,show_member_since:publicData.show_member_since};community={display_name:publicData.display_name,avatar_url:publicData.avatar_url,created_at:publicData.created_at};role=publicData.role;smpMember=publicData.smp_member;}
+
  if(profile?.display_name){const canonical="user.html?name="+encodeURIComponent(profile.display_name);if(location.search!=="?name="+encodeURIComponent(profile.display_name))history.replaceState(null,"",canonical);}else if(!requestedName&&location.search!=="?id="+encodeURIComponent(id))history.replaceState(null,"","user.html?id="+encodeURIComponent(id));
  const latest=comments?.[0];
  if(!latest&&!profile&&!community&&!(gallery?.length)&&!(mods?.length))throw Error("Für dieses Profil sind noch keine öffentlichen Informationen verfügbar.");
