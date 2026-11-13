@@ -16,6 +16,11 @@ input#profile-display-name:disabled{opacity:.65;cursor:not-allowed;border-color:
 .gallery-preview{height:auto!important;min-height:140px!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
 .gallery-preview img{display:block!important;width:100%!important;height:auto!important;max-height:420px!important;object-fit:contain!important;aspect-ratio:auto!important}
 .gallery-preview iframe{display:block!important;width:100%!important;height:260px!important;min-height:220px!important;border:0!important}
+
+/* Consistent Showcase previews, with no cropped GIFs. */
+.gallery-preview{height:180px!important;min-height:180px!important;max-height:180px!important;display:grid!important;place-items:center!important;overflow:hidden!important;background:#100d18!important}
+.gallery-preview img{display:block!important;width:100%!important;height:100%!important;max-height:100%!important;object-fit:contain!important}
+.gallery-preview iframe{display:block!important;width:100%!important;height:100%!important;min-height:0!important;border:0!important}
 </style><style>
 .profile-bottom-actions{margin-top:22px;justify-content:flex-end}.profile-bottom-actions>.actions{margin-top:0}.gallery-panel{margin-top:18px;padding:27px!important;overflow:hidden}
 .gallery-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px}
