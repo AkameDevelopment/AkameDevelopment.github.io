@@ -150,7 +150,7 @@ try{
  }else{
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))throw Error("Ungültiges Benutzerprofil.");
  const [{data:comments,error:commentsError},{data:gallery},{data:mods,error:modsError},{data:{user}}]=await Promise.all([
- db.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at").eq("author_id",id).order("created_at",{ascending:false}).limit(100),
+ db.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at,parent_id").eq("author_id",id).is("parent_id",null).order("created_at",{ascending:false}).limit(100),
  db.from("profile_gallery").select("slot,image_url").eq("user_id",id).order("slot"),
  db.from("profile_mods").select("mod_slug").eq("user_id",id),
  db.auth.getUser()
