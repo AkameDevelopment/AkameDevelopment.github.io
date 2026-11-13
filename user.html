@@ -324,6 +324,25 @@ html body main #content .person::before{
 }
 html body main #content .person>*{position:relative;z-index:1}
 @media(max-width:650px){html body{background-attachment:scroll!important}}
+</style><style id="akame-mobile-share-alignment-fix">
+/* Keep share aligned beside the settings icon on small screens. */
+@media(max-width:900px){
+ html body main #content>.person{position:relative!important}
+ html body main #content>.person>.own-profile-edit{
+  position:absolute!important;top:12px!important;right:12px!important;bottom:auto!important;left:auto!important;
+  width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+  margin:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  transform:none!important;z-index:4!important;
+ }
+ html body main #content>.person>.own-profile-edit .settings-mobile-label{display:none!important}
+ html body main #content>.person>.profile-share-icon{
+  position:absolute!important;top:12px!important;right:56px!important;bottom:auto!important;left:auto!important;
+  width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+  margin:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  transform:none!important;z-index:4!important;
+ }
+ html body main #content>.person>.profile-share-icon svg{width:18px!important;height:18px!important}
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
