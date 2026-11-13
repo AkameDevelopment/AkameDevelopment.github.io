@@ -36,7 +36,7 @@ function showSignedOut(){
 function showError(message){$("save-message").textContent=message;$("save-message").dataset.state="error"}
 function avatarUrl(user){const meta=user.user_metadata||{};const src=String(meta.avatar_url||"");return /^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(src)?src:null}
 async function showProfile(user){
- $("profile-public-link").href="user.html?id="+encodeURIComponent(user.id);
+ $("profile-public-link").href="user.html?id="+encodeURIComponent(user.id);if($("profile-badges-link"))$("profile-badges-link").href="user.html?id="+encodeURIComponent(user.id);
  $("profile-loading").hidden=true;$("profile-guest").hidden=true;$("profile-content").hidden=false;
  const meta=user.user_metadata||{};
  const name=String(meta.full_name||meta.name||meta.user_name||"Discord User");
