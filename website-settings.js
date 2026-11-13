@@ -16,8 +16,8 @@ function applyLocal(){document.documentElement.dataset.akameTheme=current("theme
 function sync(){applyLocal();for(const key of Object.keys(keys)){const el=$("setting-"+(key==="motion"?"motion":key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(!el)continue;if(el.type==="checkbox")el.checked=current(key)==="true";else el.value=current(key)}$("setting-language").value=store.getItem("akame-lang-preference")||"auto";renderLanguage();pendingAccent=null;previewAccent(current("accent"));updateAccentButton()}
 function save(key,value){store.setItem(keys[key],String(value));window.AkameWebsiteSettings?.apply?.();applyLocal();$("save-status").textContent=(words[lang()]||words.de).saved;document.dispatchEvent(new CustomEvent("akame-settings-change"))}
 for(const key of Object.keys(keys)){if(key==="accent")continue;const el=$("setting-"+(key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(el)el.addEventListener(el.type==="checkbox"?"change":"input",()=>save(key,el.type==="checkbox"?el.checked:el.value))}
-$("setting-accent").addEventListener("input",e=>{pendingAccent=e.target.value;previewAccent(pendingAccent);updateAccentButton()});
-$("save-accent").addEventListener("click",async()=>{
+$("setting-accent")?.addEventListener("input",e=>{pendingAccent=e.target.value;previewAccent(pendingAccent);updateAccentButton()});
+$("save-accent")?.addEventListener("click",async()=>{
  if(!pendingAccent||pendingAccent.toLowerCase()===current("accent").toLowerCase())return;
  const value=pendingAccent,button=$("save-accent");button.disabled=true;
  try{
