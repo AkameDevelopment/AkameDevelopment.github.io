@@ -582,3 +582,69 @@ html body header>.akame-menu-panel details[open]>summary::after{transform:rotate
   color:#fff!important;
  }
 }
+
+/* Unified desktop action controls (Share, GitHub, DE/EN, account). */
+@media(min-width:901px){
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  flex-wrap:nowrap!important;gap:9px!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share,
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.nav-action{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:8px!important;box-sizing:border-box!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  padding:0 15px!important;margin:0!important;
+  border:1px solid #765596!important;border-radius:12px!important;
+  background:#20172d!important;color:#f0e3ff!important;
+  font:700 12px/1 Inter,system-ui,sans-serif!important;
+  white-space:nowrap!important;vertical-align:middle!important;
+  box-shadow:inset 0 1px #ffffff08!important;
+  transition:background .16s,border-color .16s!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share:hover,
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.nav-action:hover{
+  background:#352246!important;border-color:#a97ce1!important;color:#fff!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share svg{
+  width:17px!important;height:17px!important;flex-shrink:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  gap:3px!important;padding:4px!important;margin:0!important;
+  background:#20172d!important;border:1px solid #765596!important;
+  border-radius:12px!important;box-sizing:border-box!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages>button{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  height:32px!important;min-height:32px!important;min-width:34px!important;
+  padding:0 8px!important;margin:0!important;border:0!important;border-radius:8px!important;
+  background:transparent!important;color:#baa9ce!important;font:750 11px/1 Inter,system-ui,sans-serif!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages>button.active{
+  background:#71509c!important;color:white!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  height:42px!important;min-height:42px!important;width:auto!important;margin:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;gap:9px!important;
+  width:auto!important;min-width:0!important;max-width:190px!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  padding:3px 13px 3px 4px!important;margin:0!important;
+  border:1px solid #765596!important;border-radius:999px!important;
+  background:#20172d!important;color:#f0e3ff!important;
+  font:700 12px/1 Inter,system-ui,sans-serif!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger:hover{
+  background:#352246!important;border-color:#a97ce1!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger>img,
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger>.akame-avatar-fallback{
+  width:32px!important;height:32px!important;min-width:32px!important;max-width:32px!important;
+  flex:0 0 32px!important;border-radius:50%!important;object-fit:cover!important;
+ }
+}
