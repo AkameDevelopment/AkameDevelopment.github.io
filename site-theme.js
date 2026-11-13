@@ -1,0 +1,1 @@
+(()=>{"use strict";const KEY="akame-site-theme";function apply(){let theme="dark";try{theme=localStorage.getItem(KEY)==="light"?"light":"dark"}catch{}document.documentElement.dataset.akameTheme=theme}apply();window.addEventListener("storage",e=>{if(!e.key||e.key===KEY)apply()});document.addEventListener("akame-settings-change",apply);window.AkameTheme={apply}})();
