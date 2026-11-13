@@ -55,11 +55,11 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 <div id="selected" hidden><h2 id="selected-name">Benutzer</h2><p id="selected-uid" class="notice"></p>
 <section class="admin-profile-detail" aria-label="Benutzerprofil">
  <h3>Benutzerprofil</h3>
- <div class="profile"><img id="selected-avatar" alt="Discord-Profilbild" loading="lazy"><div><strong id="selected-profile-name">Benutzer</strong><small id="selected-joined" class="notice"></small></div></div>
- <p class="notice">Die Discord-Identität wird automatisch synchronisiert und ist hier nicht bearbeitbar.</p>
+ <div class="profile"><img id="selected-avatar" alt="Discord-Profilbild" loading="lazy"><div><strong id="selected-profile-name">Benutzer</strong><small id="selected-discord-name" class="notice"></small><small id="selected-joined" class="notice"></small></div></div>
+ <p class="notice">Der originale Discord-Name bleibt für Administratoren immer sichtbar.</p><label for="selected-display-name">Anzeigename auf der Website</label><input id="selected-display-name" class="input" maxlength="32" placeholder="Discord-Namen verwenden">
  <label for="selected-bio">Profilbeschreibung (maximal 400 Zeichen)</label>
  <textarea id="selected-bio" class="input" maxlength="400" rows="5" placeholder="Keine Profilbeschreibung vorhanden"></textarea>
- <div class="controls"><button type="button" id="save-profile" class="primary">Profilbeschreibung speichern</button></div>
+ <div class="controls"><button type="button" id="save-profile" class="primary">Profiländerungen speichern</button></div>
  <p id="profile-edit-message" class="notice" role="status" aria-live="polite"></p>
 </section>
 <div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Normaler Benutzer</option><option value="staff">Mitarbeiter</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
@@ -95,23 +95,25 @@ function renderPeople(){
 }
 async function loadSelectedProfile(userId){
  const field=$("selected-bio"),message=$("profile-edit-message"),save=$("save-profile");
- field.value="";field.disabled=true;save.disabled=true;message.textContent="Profil wird geladen …";
- const {data,error}=await db.from("user_profiles").select("bio").eq("user_id",userId).maybeSingle();
+ field.value="";field.disabled=true;$("selected-display-name").value="";$("selected-display-name").disabled=true;save.disabled=true;message.textContent="Profil wird geladen …";
+ const {data,error}=await db.from("user_profiles").select("bio,display_name").eq("user_id",userId).maybeSingle();
  if(selected!==userId)return;
  if(error){message.textContent="Profil konnte nicht geladen werden: "+error.message;return;}
- field.value=data?.bio||"";field.disabled=false;save.disabled=false;
+ field.value=data?.bio||"";$("selected-display-name").value=data?.display_name||"";$("selected-profile-name").textContent=data?.display_name||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";field.disabled=false;$("selected-display-name").disabled=false;save.disabled=false;
  message.textContent=data?"Profil bereit zur Bearbeitung.":"Noch keine Beschreibung gespeichert.";
 }
 $("save-profile").addEventListener("click",async()=>{
  if(role!=="admin"||!selected)return;
  const userId=selected,field=$("selected-bio"),button=$("save-profile"),message=$("profile-edit-message");
- const value=field.value.trim();
+ const value=field.value.trim(),displayName=$("selected-display-name").value.trim();
+ if(displayName.length>32||/[\\x00-\\x1F\\x7F]/.test(displayName)){message.textContent="Ungültiger Anzeigename.";return;}
  if(value.length>400){message.textContent="Maximal 400 Zeichen erlaubt.";return;}
  if(!confirm("Profilbeschreibung dieses Benutzers wirklich ändern?"))return;
- button.disabled=true;field.disabled=true;message.textContent="Änderungen werden gespeichert …";
- const {error}=await db.from("user_profiles").upsert({user_id:userId,bio:value,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ button.disabled=true;field.disabled=true;$("selected-display-name").disabled=true;message.textContent="Änderungen werden gespeichert …";
+ const {error}=await db.from("user_profiles").upsert({user_id:userId,bio:value,display_name:displayName,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  if(selected!==userId)return;
- button.disabled=false;field.disabled=false;
+ button.disabled=false;field.disabled=false;$("selected-display-name").disabled=false;
+ if(!error)$("selected-profile-name").textContent=displayName||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";
  message.textContent=error?"Speichern fehlgeschlagen: "+error.message:"Profilbeschreibung erfolgreich gespeichert.";
 });
 function renderSelection(){
