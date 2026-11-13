@@ -14,7 +14,7 @@ try{
  const badge=document.createElement("div");badge.id="akame-website-build";badge.setAttribute("role","status");badge.style.cssText="position:fixed;left:12px;bottom:12px;z-index:1000;max-width:calc(100vw - 24px);padding:5px 9px;border:1px solid #a982ff40;border-radius:8px;background:#130e1be8;backdrop-filter:blur(9px);color:#a99ab9;font:500 10px/1.4 system-ui,sans-serif;letter-spacing:.015em;pointer-events:none;box-shadow:0 4px 20px #0003";badge.textContent="AkameDevelopment · Build …";document.body.append(badge);
  const en=(localStorage.getItem("akame-lang")||"de")==="en";
  try{
-  const res=await fetch("website-version.json",{cache:"no-store"});
+  const res=await fetch(new URL("website-version.json?refresh="+Date.now(),document.baseURI),{cache:"no-store",headers:{"Cache-Control":"no-cache"}});
   if(!res.ok)throw new Error("Version unavailable");
   const data=await res.json();
   if(!/^[0-9]+[.][0-9]+[.][0-9]+$/.test(data.version))throw new Error("Invalid version");
