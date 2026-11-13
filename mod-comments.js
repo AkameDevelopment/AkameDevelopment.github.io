@@ -16,6 +16,7 @@ if (root && slugs.has(slug)) {
   .akame-comment-meta{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}.akame-comment-identity{display:flex;align-items:center;gap:11px;min-width:0}.akame-comment-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#352344;flex:none;border:1px solid #a782cc55}.akame-comment-meta strong{color:#ead7ff}.akame-comment-profile{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:inherit;border-radius:9px}.akame-comment-profile:hover strong{text-decoration:underline;color:#caa7ff}.akame-comment-profile:focus-visible{outline:2px solid #bc93ff}
   .akame-comment-meta time{font-size:12px;color:#9f91af}.akame-comment p{white-space:pre-wrap;color:#ded2ec;margin:10px 0 0;max-width:none}
   .akame-comment-list .akame-delete{background:transparent;border:1px solid #84526a;color:#f4afc5;padding:5px 9px;font-size:12px}
+.akame-replies{display:grid;gap:10px;margin:12px 0 0 24px;padding-left:14px;border-left:2px solid #8e5bdb55}.akame-replies .akame-comment{padding:12px;background:#1e1729}.akame-reply-actions{margin-top:12px}.akame-reply-actions button{background:transparent;border:1px solid #a77bf255;color:#d7b9ff}.akame-reply-form{margin:12px 0 0}.akame-reply-form textarea{width:100%;min-height:72px;background:#120e1c;border:1px solid #9470c35c;border-radius:10px;color:#fff;padding:10px;font:inherit;resize:vertical}.akame-reply-form .akame-ctrl{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}@media(max-width:600px){.akame-replies{margin-left:7px;padding-left:9px}}
   .akame-comments [hidden]{display:none!important}.akame-comment-msg{color:#cbb5e7;font-size:13px}
   `;
   document.head.append(style);
@@ -31,10 +32,11 @@ if (root && slugs.has(slug)) {
   async function fetchComments(){
     list.replaceChildren();
     showMessage(tr("Kommentare werden geladen …","Loading comments …"));
-    const {data,error} = await supabase.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at").eq("project_slug",slug).order("created_at",{ascending:false}).limit(50);
+    const {data,error} = await supabase.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at,parent_id").eq("project_slug",slug).order("created_at",{ascending:false}).limit(200);
     if(error){showMessage(tr("Kommentare konnten nicht geladen werden: ","Could not load comments: ")+error.message);return;}
-    showMessage(data.length ? (window.AkameLanguage?.get()==="en"?data.length+" comment"+(data.length===1?"":"s")+" (up to 50 shown)":data.length+" Kommentar"+(data.length===1?"":"e")+" (maximal 50 angezeigt)") : tr("Noch keine Kommentare. Sei die erste Person!","No comments yet. Be the first!"));
-    for(const item of data){
+    const roots=data.filter(item=>item.parent_id==null);const replies=new Map();for(const item of data){if(item.parent_id!=null){const key=String(item.parent_id);if(!replies.has(key))replies.set(key,[]);replies.get(key).push(item);}}
+    showMessage(roots.length ? (window.AkameLanguage?.get()==="en"?roots.length+" comment"+(roots.length===1?"":"s"):roots.length+" Kommentar"+(roots.length===1?"":"e")) : tr("Noch keine Kommentare. Sei die erste Person!","No comments yet. Be the first!"));
+    function renderComment(item,isReply=false){
       const article=document.createElement("article");article.className="akame-comment";
       const meta=document.createElement("div");meta.className="akame-comment-meta";
       const name=document.createElement("strong");name.textContent=item.author_name||tr("Discord-Nutzer","Discord user");
@@ -51,8 +53,25 @@ if (root && slugs.has(slug)) {
         });meta.append(remove);
       }
       const body=document.createElement("p");body.textContent=item.body;
-      article.append(meta,body);list.append(article);
+      article.append(meta,body);
+      if(!isReply){
+        const actions=document.createElement("div");actions.className="akame-reply-actions";
+        const replyButton=document.createElement("button");replyButton.type="button";replyButton.textContent=tr("Antworten","Reply");
+        replyButton.addEventListener("click",()=>{
+          const existing=article.querySelector(".akame-reply-form");if(existing){existing.remove();return;}
+          if(!currentUser){showMessage(tr("Melde dich mit Discord an, um zu antworten.","Sign in with Discord to reply."));return;}
+          const form=document.createElement("form");form.className="akame-reply-form";
+          const input=document.createElement("textarea");input.required=true;input.minLength=3;input.maxLength=1200;input.placeholder=tr("Deine Antwort …","Your reply …");input.setAttribute("aria-label",tr("Antwort schreiben","Write a reply"));
+          const controls=document.createElement("div");controls.className="akame-ctrl";const cancel=document.createElement("button");cancel.type="button";cancel.textContent=tr("Abbrechen","Cancel");cancel.onclick=()=>form.remove();const send=document.createElement("button");send.type="submit";send.textContent=tr("Antwort veröffentlichen","Post reply");controls.append(cancel,send);form.append(input,controls);
+          form.addEventListener("submit",async event=>{event.preventDefault();const body=input.value.trim();if(body.length<3||body.length>1200)return;send.disabled=true;const {error}=await supabase.from("mod_comments").insert({project_slug:slug,parent_id:item.id,body});if(error){showMessage(tr("Antwort konnte nicht gespeichert werden: ","Could not post reply: ")+error.message);send.disabled=false;return;}await fetchComments();});
+          actions.after(form);input.focus();
+        });actions.append(replyButton);article.append(actions);
+        const children=replies.get(String(item.id))||[];
+        if(children.length){const thread=document.createElement("div");thread.className="akame-replies";children.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));for(const child of children)thread.append(renderComment(child,true));article.append(thread);}
+      }
+      return article;
     }
+    for(const item of roots)list.append(renderComment(item));
   }
   function applyUser(user){currentUser=user;composer.hidden=!user;guest.hidden=!!user;}
   async function checkUser(){
