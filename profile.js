@@ -139,8 +139,8 @@ async function setupGallery(){
  async function render(){
   const {data,error}=await db.from("profile_gallery").select("slot,image_url").eq("user_id",user.id).order("slot");
   grid.replaceChildren();if(error){message.textContent="Showcase konnte nicht geladen werden: "+error.message;return;}
-  const count=panel.querySelector(".gallery-count");if(count)count.textContent=(data?.length||0)+" / 3";
-  for(let slot=1;slot<=3;slot++){
+  const count=panel.querySelector(".gallery-count");if(count)count.textContent=(data?.length||0)+" / 4";
+  for(let slot=1;slot<=4;slot++){
    const entry=data?.find(x=>x.slot===slot),cell=document.createElement("div");cell.className="gallery-slot";
    const preview=document.createElement("div");preview.className="gallery-preview";
    if(entry){const embed=tenorEmbedUrl(entry.image_url);if(embed){const frame=document.createElement("iframe");frame.src=embed;frame.title="Tenor GIF "+slot;frame.loading="lazy";frame.referrerPolicy="no-referrer";frame.setAttribute("sandbox","allow-scripts allow-same-origin");frame.style.cssText="width:100%;height:100%;border:0";preview.append(frame);}else{const img=document.createElement("img");img.src=entry.image_url;img.alt="Profilbild "+slot;img.loading="lazy";img.referrerPolicy="no-referrer";img.onerror=()=>{preview.replaceChildren();const note=document.createElement("div");note.className="gallery-placeholder";note.textContent="Bild konnte nicht geladen werden";preview.append(note)};preview.append(img);}}
