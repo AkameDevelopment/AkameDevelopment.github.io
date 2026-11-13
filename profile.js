@@ -53,6 +53,7 @@ async function showProfile(user){
  $("profile-bio").value=profileError?"":(existing?.bio||"");
  $("profile-display-name").value=profileError?"":(existing?.display_name||"");
  $("profile-name").textContent=existing?.display_name||name;
+ if(existing?.display_name)$("profile-public-link").href="user.html?name="+encodeURIComponent(existing.display_name);
  $("profile-show-member-since").checked=existing?.show_member_since!==false;
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
  savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked};updateSaveVisibility();await loadProfileMods(user);
@@ -102,7 +103,7 @@ $("profile-change-name").addEventListener("click",async()=>{
  }
  button.disabled=false;
  if(error||!updated||updated.display_name!==displayName){message.textContent=error?.code==="23505"?"Dieser Name ist bereits vergeben. Bitte wähle einen anderen.":"Speichern fehlgeschlagen: "+(error?.message||"Keine Änderung in der Datenbank bestätigt.");return}
- $("profile-name").textContent=displayName;input.value=displayName;input.disabled=true;button.title="Namen bearbeiten";button.setAttribute("aria-label","Namen bearbeiten");$("profile-name-edit-icon").innerHTML='<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>';message.textContent="Anzeigename gespeichert ✓";
+ $("profile-name").textContent=displayName;$("profile-public-link").href="user.html?name="+encodeURIComponent(displayName);input.value=displayName;input.disabled=true;button.title="Namen bearbeiten";button.setAttribute("aria-label","Namen bearbeiten");$("profile-name-edit-icon").innerHTML='<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>';message.textContent="Anzeigename gespeichert ✓";
  } catch(e){message.textContent="Speichern fehlgeschlagen: "+(e?.message||String(e));} finally {button.disabled=false;}
 });
 
