@@ -38,5 +38,5 @@ reset();status(payload.published?tr("Beitrag veröffentlicht.","Post published."
 finally{$("news-save").disabled=false;}
 });
 document.addEventListener("akame-language-change",()=>{render();});
-(async()=>{const {data,error}=await db.auth.getUser();if(error||!data?.user)return;current=data.user;const access=await db.from("staff_access").select("role").eq("user_id",current.id).maybeSingle();if(access.error||access.data?.role!=="admin")return;root.hidden=false;reset();await load();})();
+(async()=>{const {data,error}=await db.auth.getUser();if(error||!data?.user)return;current=data.user;const access=await db.from("staff_access").select("role").eq("user_id",current.id).maybeSingle();if(access.error||!["owner","admin"].includes(access.data?.role))return;root.hidden=false;reset();await load();})();
 }
