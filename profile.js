@@ -89,7 +89,7 @@ $("profile-save").addEventListener("click",async()=>{
 });
 $("profile-change-name").addEventListener("click",async()=>{
  const input=$("profile-display-name"),button=$("profile-change-name"),message=$("profile-name-message");
- if(input.disabled){input.disabled=false;input.focus();input.select();button.title="Namen speichern";button.setAttribute("aria-label","Namen speichern");$("profile-name-edit-icon").innerHTML='<path d="M20 6 9 17l-5-5"/>';message.textContent="Neuen Namen eingeben und auf das Häkchen klicken.";return}
+ if(input.disabled){input.disabled=false;input.focus();input.setSelectionRange(input.value.length,input.value.length);button.title="Namen speichern";button.setAttribute("aria-label","Namen speichern");$("profile-name-edit-icon").innerHTML='<path d="M20 6 9 17l-5-5"/>';message.textContent="Neuen Namen eingeben und auf das Häkchen klicken.";return}
  const displayName=input.value.trim();
  if(!displayName||displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){message.textContent="Bitte 1–32 gültige Zeichen eingeben.";return}
  const {data:{user},error:authError}=await db.auth.getUser();
