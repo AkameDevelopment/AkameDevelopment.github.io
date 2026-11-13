@@ -16,7 +16,7 @@ const top=panel.querySelector("strong"),read=panel.querySelector(".akame-notify-
 function render(){
  label.textContent=tr("Benachrichtigungen","Notifications");
  top.textContent=tr("Benachrichtigungen","Notifications");
- read.textContent=tr("Alle als gelesen","Mark all read");
+ read.textContent=tr("Community als gelesen","Mark community read");
  const unread=items.filter(i=>!i.read_at).length;
  count.hidden=!unread;count.textContent=unread>99?"99+":String(unread);
  bell.setAttribute("aria-label",tr("Benachrichtigungen","Notifications")+(unread?" ("+unread+")":""));
