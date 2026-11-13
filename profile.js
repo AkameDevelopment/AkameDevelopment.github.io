@@ -86,6 +86,7 @@ catch(error){$("profile-loading").textContent="Profil konnte nicht geladen werde
 db.auth.onAuthStateChange((_event,session)=>{if(!session?.user)showSignedOut()});
 
 
+function tenorEmbedUrl(value){try{const u=new URL(value);if(!["tenor.com","www.tenor.com"].includes(u.hostname.toLowerCase()))return null;const m=u.pathname.match(/^\/view\/(?:[^/]*-)?(\d+)\/?$/);return m?"https://tenor.com/embed/"+m[1]:null;}catch{return null;}}
 async function setupGallery(){
  const panel=$("gallery-panel"),grid=$("gallery-grid"),message=$("gallery-message");
  if(!panel||!grid)return;
@@ -98,14 +99,14 @@ async function setupGallery(){
   for(let slot=1;slot<=3;slot++){
    const entry=data?.find(x=>x.slot===slot),cell=document.createElement("div");cell.className="gallery-slot";
    const preview=document.createElement("div");preview.className="gallery-preview";
-   if(entry){const img=document.createElement("img");img.src=entry.image_url;img.alt="Profilbild "+slot;img.loading="lazy";img.referrerPolicy="no-referrer";img.onerror=()=>{preview.replaceChildren();const note=document.createElement("div");note.className="gallery-placeholder";note.textContent="Bild konnte nicht geladen werden";preview.append(note)};preview.append(img);}
+   if(entry){const embed=tenorEmbedUrl(entry.image_url);if(embed){const frame=document.createElement("iframe");frame.src=embed;frame.title="Tenor GIF "+slot;frame.loading="lazy";frame.referrerPolicy="no-referrer";frame.setAttribute("sandbox","allow-scripts allow-same-origin");frame.style.cssText="width:100%;height:100%;border:0";preview.append(frame);}else{const img=document.createElement("img");img.src=entry.image_url;img.alt="Profilbild "+slot;img.loading="lazy";img.referrerPolicy="no-referrer";img.onerror=()=>{preview.replaceChildren();const note=document.createElement("div");note.className="gallery-placeholder";note.textContent="Bild konnte nicht geladen werden";preview.append(note)};preview.append(img);}}
    else{const empty=document.createElement("div");empty.className="gallery-placeholder";const icon=document.createElement("span");icon.textContent="▧";const caption=document.createElement("div");caption.textContent="Noch kein Bild";empty.append(icon,caption);preview.append(empty);}
    cell.append(preview);
    const body=document.createElement("div");body.className="gallery-slot-body";
    const top=document.createElement("div");top.className="gallery-slot-top";
    const title=document.createElement("strong");title.className="gallery-slot-title";title.textContent="Bild "+String(slot).padStart(2,"0");
    const state=document.createElement("span");state.className="gallery-slot-state";state.textContent=entry?"Hinzugefügt":"Leer";top.append(title,state);body.append(top);
-   const label=document.createElement("label");label.className="gallery-url-label";label.textContent="Bild-URL";const input=document.createElement("input");input.className="gallery-url-input";input.type="url";input.placeholder="https://.../bild.png";input.value=entry?.image_url||"";input.maxLength=2000;input.setAttribute("aria-label","Bild-URL "+slot);label.append(input);body.append(label);
+   const label=document.createElement("label");label.className="gallery-url-label";label.textContent="Bild-URL";const input=document.createElement("input");input.className="gallery-url-input";input.type="url";input.placeholder="Bild- oder Tenor-GIF-Link";input.value=entry?.image_url||"";input.maxLength=2000;input.setAttribute("aria-label","Bild-URL "+slot);label.append(input);body.append(label);
    const actions=document.createElement("div");actions.className="gallery-slot-actions";const save=document.createElement("button");save.type="button";save.textContent=entry?"Link aktualisieren":"Bild hinzufügen";
    save.onclick=async()=>{const url=input.value.trim();if(!validUrl(url)){message.textContent="Bitte eine gültige HTTPS-Bildadresse eingeben.";return;}save.disabled=true;const result=await db.from("profile_gallery").upsert({user_id:user.id,slot,image_url:url},{onConflict:"user_id,slot"});save.disabled=false;if(result.error){message.textContent="Speichern fehlgeschlagen: "+result.error.message;return;}message.textContent="Bildlink gespeichert.";await render();};actions.append(save);
    if(entry){const remove=document.createElement("button");remove.type="button";remove.className="gallery-remove";remove.textContent="Entfernen";remove.onclick=async()=>{remove.disabled=true;const result=await db.from("profile_gallery").delete().eq("user_id",user.id).eq("slot",slot);if(result.error){message.textContent=result.error.message;remove.disabled=false;return;}message.textContent="Bild entfernt.";await render();};actions.append(remove);}
