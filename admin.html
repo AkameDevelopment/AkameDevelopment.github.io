@@ -74,7 +74,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
  <div class="controls"><button type="button" id="save-profile" class="primary">Profiländerungen speichern</button></div>
  <p id="profile-edit-message" class="notice" role="status" aria-live="polite"></p>
 </section>
-<section class="admin-profile-detail" aria-label="Community-Beiträge"><div class="controls" style="justify-content:space-between"><h3>Community-Beiträge</h3><button type="button" id="selected-posts-refresh" class="ghost">Aktualisieren</button></div><div id="selected-posts-list" aria-live="polite"></div><p id="selected-posts-status" class="notice" role="status"></p></section><div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div id="role-quick-picker" class="controls" role="group" aria-label="Mitarbeiterrolle"><button type="button" class="ghost" data-role="">Community</button><button type="button" class="ghost" data-role="staff">Mitarbeiter</button><button type="button" class="ghost" data-role="developer">Developer</button><button type="button" class="ghost" data-role="admin">Administrator</button></div><p id="role-quick-status" class="notice" role="status"></p>
+<section class="admin-profile-detail" aria-label="Community-Beiträge"><div class="controls" style="justify-content:space-between"><h3 data-posts-de="Community-Beiträge" data-posts-en="Community posts">Community-Beiträge</h3><button type="button" id="selected-posts-toggle" class="ghost" aria-expanded="false" aria-controls="selected-posts-panel">Beiträge anzeigen</button></div><div id="selected-posts-panel" hidden><div class="controls"><button type="button" id="selected-posts-refresh" class="ghost">Aktualisieren</button></div><div id="selected-posts-list" aria-live="polite" style="display:grid;gap:10px"></div><p id="selected-posts-status" class="notice" role="status"></p></div></section><div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div id="role-quick-picker" class="controls" role="group" aria-label="Mitarbeiterrolle"><button type="button" class="ghost" data-role="">Community</button><button type="button" class="ghost" data-role="staff">Mitarbeiter</button><button type="button" class="ghost" data-role="developer">Developer</button><button type="button" class="ghost" data-role="admin">Administrator</button></div><p id="role-quick-status" class="notice" role="status"></p>
 <hr class="separator"><section class="beta-manager"><div class="beta-manager-heading"><div><h2>Beta-Einladung senden</h2><p class="notice">Mods auswählen und eine Einladung verschicken. Das Mitglied kann sie annehmen oder ablehnen.</p></div><span id="beta-selected-count" class="beta-selection-count">0 ausgewählt</span></div><div class="beta-select-tools"><button type="button" class="ghost" id="beta-mode-toggle" aria-pressed="false">Beta-Zugriff entfernen</button><button type="button" class="ghost" id="beta-select-all">Alle auswählen</button><button type="button" class="ghost" id="beta-clear-all">Auswahl aufheben</button></div><div id="beta-options" class="beta"></div><div class="beta-manager-actions"><button type="button" class="primary" id="beta-invite-selected" disabled>Einladung senden</button></div><p id="beta-invite-summary" class="notice"></p><details class="beta-advanced"><summary>Weitere Beta-Verwaltung</summary><p class="notice">Direkten Zugriff vergeben, Zugänge entziehen oder offene Einladungen zurückziehen.</p><div class="controls"><button type="button" class="ghost" id="beta-direct-selected">Direkt freischalten</button><button type="button" class="ghost" id="beta-cancel-selected">Einladung zurückziehen</button></div></details></section>
 <p id="edit-message" class="notice" role="status" aria-live="polite"></p>
 </div></div></div>
@@ -135,12 +135,14 @@ $("save-profile").addEventListener("click",async()=>{
  if(!error)$("selected-profile-name").textContent=displayName||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";
  message.textContent=error?(error.code==="23505"?"Dieser Anzeigename ist bereits vergeben.":"Speichern fehlgeschlagen: "+error.message):"Profiländerungen erfolgreich gespeichert.";
 });
-function closeSelected(){selected=null;$("selected").hidden=true;renderPeople();}
+function closeSelected(){selected=null;resetSelectedPosts();$("selected").hidden=true;renderPeople();}
 $("close-selected").addEventListener("click",closeSelected);
 $("selected").addEventListener("click",e=>{if(e.target===$("selected"))closeSelected();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("selected").hidden)closeSelected();});
+function resetSelectedPosts(){const panel=$("selected-posts-panel"),toggle=$("selected-posts-toggle");panel.hidden=true;toggle.setAttribute("aria-expanded","false");toggle.textContent=document.documentElement.lang==="en"?"Show posts":"Beiträge anzeigen";$("selected-posts-list").replaceChildren();$("selected-posts-status").textContent="";}
+$("selected-posts-toggle").addEventListener("click",()=>{const panel=$("selected-posts-panel"),open=panel.hidden;panel.hidden=!open;$("selected-posts-toggle").setAttribute("aria-expanded",String(open));$("selected-posts-toggle").textContent=document.documentElement.lang==="en"?(open?"Hide posts":"Show posts"):(open?"Beiträge ausblenden":"Beiträge anzeigen");if(open&&selected)void loadSelectedPosts(selected)});
 async function loadSelectedPosts(userId){
- const list=$("selected-posts-list"),status=$("selected-posts-status");if(!list)return;
+ const list=$("selected-posts-list"),status=$("selected-posts-status");if(!list||$("selected-posts-panel").hidden)return;
  list.replaceChildren();status.textContent="Beiträge werden geladen …";
  const {data,error}=await db.from("akamesmp_posts").select("id,author_id,body,image_url,created_at").eq("author_id",userId).order("created_at",{ascending:false}).limit(100);
  if(selected!==userId)return;
@@ -168,7 +170,7 @@ function renderSelection(skipDetails=false){
  $("selected-avatar").src=avatar(p.avatar_url);
  $("selected-profile-name").textContent=customNames.get(p.user_id)||p.display_name||"Discord-Benutzer";$("selected-discord-name").textContent="Discord: "+(discordNames.get(p.user_id)||"Nicht verfügbar");
  $("selected-joined").textContent=p.created_at?"Bekannt seit "+new Date(p.created_at).toLocaleDateString("de-DE"):"";
- if(!skipDetails){void loadSelectedProfile(p.user_id);void loadSelectedPosts(p.user_id)}
+ if(!skipDetails){resetSelectedPosts();void loadSelectedProfile(p.user_id)}
  const grid=$("beta-options");grid.replaceChildren();
  renderBetaInvitationSummary();
  for(const [key,value] of Object.entries(names)){
