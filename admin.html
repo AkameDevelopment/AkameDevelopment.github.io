@@ -49,7 +49,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 #beta-options label.beta-already-accepted input[data-accepted="true"]::after{content:"✓";position:absolute;inset:-3px 0 0;text-align:center;font-size:15px;font-weight:900;color:#e4fff0}
 .beta-manager.beta-remove-mode #beta-options label.beta-already-accepted{opacity:1;filter:none;cursor:pointer}
 .beta-manager.beta-remove-mode #beta-options label.beta-already-accepted input[data-accepted="true"]:not(:disabled){appearance:auto;-webkit-appearance:checkbox;accent-color:#a678ec}
-</style><link rel="stylesheet" href="accent-global.css?v=1"><script src="accent-global.js?v=1"></script></head>
+</style><link rel="stylesheet" href="accent-global.css?v=1"><script src="accent-global.js?v=1"></script><script src="site-toast.js?v=1" defer></script></head>
 <body>
 <header><div class="top"><a href="index.html" class="brand">Akame<b>Development</b></a><div class="toplinks"><a href="index.html">← Startseite</a><a href="settings.html">⚙ Website-Einstellungen</a><div id="discord-account" class="discord-account" hidden><button type="button" id="discord-account-toggle" class="discord-account-link" aria-expanded="false" aria-controls="discord-account-menu"><img id="discord-account-avatar" alt="" referrerpolicy="no-referrer"><span id="discord-account-name">Discord</span></button><div id="discord-account-menu" class="discord-account-menu" hidden><a href="user.html">Mein Profil</a><button type="button" id="discord-account-logout">Abmelden</button></div></div></div></div></header>
 <main class="shell">
@@ -153,8 +153,8 @@ async function loadSelectedPosts(userId){
  const view=document.createElement("a");view.href="community.html?post="+encodeURIComponent(post.id)+"#community-social-feed";view.textContent="Beitrag ansehen";view.className="ghost";
  const edit=document.createElement("button");edit.type="button";edit.className="ghost";edit.textContent="Bearbeiten";
  const del=document.createElement("button");del.type="button";del.className="ghost";del.textContent="Löschen";
- edit.onclick=async()=>{const replacement=prompt("Beitrag bearbeiten:",post.body);if(replacement===null)return;const text=replacement.trim();if(!text||text.length>2000){status.textContent="Beitrag muss 1–2000 Zeichen enthalten.";return}edit.disabled=true;const {error}=await db.from("akamesmp_posts").update({body:text}).eq("id",post.id).select("id");edit.disabled=false;if(error){status.textContent=error.message;return}await loadSelectedPosts(userId)};
- del.onclick=async()=>{if(!confirm("Diesen Community-Beitrag endgültig löschen?"))return;del.disabled=true;const {error}=await db.from("akamesmp_posts").delete().eq("id",post.id).select("id");if(error){status.textContent=error.message;del.disabled=false;return}await loadSelectedPosts(userId)};
+ edit.onclick=async()=>{const replacement=prompt("Beitrag bearbeiten:",post.body);if(replacement===null)return;const text=replacement.trim();if(!text||text.length>2000){status.textContent="Beitrag muss 1–2000 Zeichen enthalten.";return}edit.disabled=true;const {error}=await db.from("akamesmp_posts").update({body:text}).eq("id",post.id).select("id");edit.disabled=false;if(error){status.textContent=error.message;window.AkameToast?.(error.message,"error");return}await loadSelectedPosts(userId);window.AkameToast?.("Community-Beitrag gespeichert.")};
+ del.onclick=async()=>{if(!confirm("Diesen Community-Beitrag endgültig löschen?"))return;del.disabled=true;const {error}=await db.from("akamesmp_posts").delete().eq("id",post.id).select("id");if(error){status.textContent=error.message;window.AkameToast?.(error.message,"error");del.disabled=false;return}await loadSelectedPosts(userId);window.AkameToast?.("Community-Beitrag gelöscht.")};
  actions.append(view,edit,del);card.append(date,body);if(post.image_url){const image=document.createElement("img");image.src=post.image_url;image.alt="Beitragsbild";image.loading="lazy";image.referrerPolicy="no-referrer";image.style.cssText="display:block;max-width:100%;max-height:220px;object-fit:contain;border-radius:10px;margin:10px 0";card.append(image)}card.append(actions);list.append(card)}
 }
 $("selected-posts-refresh").addEventListener("click",()=>{if(selected)void loadSelectedPosts(selected)});
@@ -183,7 +183,7 @@ function renderSelection(){
   input.addEventListener("change",updateBetaSelection);
   label.append(input,document.createTextNode(value));
   if(accepted){const badge=document.createElement("span");badge.className="beta-access-state accepted";badge.textContent="Angenommen";badge.title="Beta-Einladung wurde vom Mitglied angenommen";label.append(badge)}
-  else if(pending||direct){const badge=document.createElement("span");badge.className="beta-access-state";badge.textContent=pending?"Eingeladen":"Direkt freigeschaltet";label.append(badge)}
+  else if(pending||direct){const badge=document.createElement("span");badge.className="beta-access-state";badge.textContent=pending?"⏳ Offen – wartet auf Antwort":"Direkt freigeschaltet";label.append(badge)}
   grid.append(label);
  }
  $("beta-mode-toggle").setAttribute("aria-pressed",String(betaRemoveMode));$("beta-mode-toggle").textContent=betaRemoveMode?"← Zurück zu Einladungen":"Beta-Zugriff entfernen";document.querySelector(".beta-manager").classList.toggle("beta-remove-mode",betaRemoveMode);$("beta-invite-selected").textContent=betaRemoveMode?"Ausgewählte Beta-Zugänge entfernen":"Einladung senden";updateBetaSelection();msg("");
