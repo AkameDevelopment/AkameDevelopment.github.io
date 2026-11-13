@@ -785,56 +785,70 @@ html body main #content>.person>.akame-profile-actions{z-index:5!important}
  }
 }
 </style><style id="akame-profile-top-identity-bottom-bio-20261113">
+/* Desktop profile hero: avatar + identity at top, bio and counts in footer.
+   The bio row is a DIRECT child of .person, not a child of identity-info. */
 @media(min-width:1050px){
  html body main #content>.person{
   display:grid!important;
   grid-template-columns:108px minmax(0,1fr)!important;
   grid-template-rows:auto minmax(90px,1fr) auto!important;
-  align-items:start!important;
-  padding:26px 32px 26px!important;
-  min-height:390px!important;
-  column-gap:20px!important;
+  align-items:start!important;align-content:stretch!important;
+  column-gap:20px!important;row-gap:0!important;
+  min-height:390px!important;padding:26px 32px 26px!important;
  }
  html body main #content>.person>img:not(.akame-banner-visual){
   grid-column:1!important;grid-row:1!important;
   align-self:start!important;justify-self:start!important;
   margin:0!important;
  }
- html body main #content>.person>div:not(.akame-profile-actions):not(.akame-tenor-banner):not(.profile-bio-stats-row){
-  grid-column:2!important;grid-row:1 / 4!important;
-  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
-  grid-template-rows:auto auto auto minmax(90px,1fr) auto!important;
-  justify-items:start!important;align-content:stretch!important;
-  gap:6px!important;align-self:stretch!important;
-  height:100%!important;min-height:0!important;
-  width:100%!important;max-width:100%!important;
-  padding:0 185px 0 0!important;
-  box-sizing:border-box!important;
+ html body main #content>.person>.profile-identity-info{
+  grid-column:2!important;grid-row:1!important;
+  position:relative!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:flex-start!important;justify-content:flex-start!important;
+  align-self:start!important;justify-self:start!important;
+  gap:6px!important;
+  width:auto!important;max-width:calc(100% - 165px)!important;
+  height:auto!important;min-height:0!important;
+  margin:0!important;padding:2px 0 0!important;
+  z-index:3!important;
  }
- html body main #content>.person>div:not(.akame-profile-actions)>h1{
-  grid-row:1!important;align-self:start!important;
+ html body main #content>.person>.profile-identity-info>h1{
+  margin:0!important;line-height:1.15!important;
+ }
+ html body main #content>.person>.profile-identity-info>.profile-joined-header{
   margin:0!important;
  }
- html body main #content>.person .profile-joined-header{
-  grid-row:2!important;margin:0!important;
+ html body main #content>.person>.profile-identity-info>.profile-badges{
+  margin:2px 0 0!important;
  }
- html body main #content>.person .profile-badges{
-  grid-row:3!important;margin:0!important;
- }
- html body main #content>.person .profile-bio-stats-row{
-  grid-row:5!important;grid-column:1!important;
+ html body main #content>.person>.profile-bio-stats-row{
+  grid-column:1 / -1!important;grid-row:3!important;
+  position:relative!important;z-index:3!important;
+  display:flex!important;align-items:center!important;
   align-self:end!important;justify-self:stretch!important;
-  margin:0!important;max-width:100%!important;
-  padding:12px 0 0!important;
+  width:100%!important;max-width:none!important;min-width:0!important;
+  gap:20px!important;margin:0!important;padding:13px 0 0!important;
   border-top:1px solid rgba(230,208,255,.30)!important;
  }
- html body main #content>.person .profile-bio-stats-row>.profile-hero-stats{
-  border-top:0!important;
+ html body main #content>.person>.profile-bio-stats-row>.profile-hero-bio{
+  flex:1 1 auto!important;min-width:0!important;max-width:none!important;
+  margin:0!important;padding:0!important;
+ }
+ html body main #content>.person>.profile-bio-stats-row>.profile-hero-stats{
+  flex:0 0 auto!important;width:auto!important;max-width:none!important;
+  margin:0!important;padding:0 0 0 18px!important;
+  border-top:0!important;border-left:1px solid rgba(230,208,255,.3)!important;
+ }
+ html body main #content>.person>.akame-profile-actions{
+  position:absolute!important;top:10px!important;right:20px!important;
+  grid-column:auto!important;grid-row:auto!important;z-index:8!important;
  }
 }
-@media(min-width:1050px) and (max-width:1250px){
- html body main #content>.person>div:not(.akame-profile-actions):not(.akame-tenor-banner):not(.profile-bio-stats-row){
-  padding-right:130px!important;
+@media(min-width:750px) and (max-width:1049px){
+ html body main #content>.person>.profile-bio-stats-row{
+  grid-column:1/-1!important;grid-row:3!important;
+  align-self:end!important;
  }
 }
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
