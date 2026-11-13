@@ -18,11 +18,13 @@ async function showProfile(user){
  const url=avatarUrl(user);
  avatar.hidden=!url;fallback.hidden=!!url;if(url)avatar.src=url;
  const [saved,beta,staff]=await Promise.all([
-  db.from("user_profiles").select("bio").eq("user_id",user.id).maybeSingle(),
+  db.from("user_profiles").select("bio,display_name").eq("user_id",user.id).maybeSingle(),
   db.from("beta_access").select("project_slug").eq("user_id",user.id),
   db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle()
  ]);
  $("profile-bio").value=saved.error?"":(saved.data?.bio||"");
+ $("profile-display-name").value=saved.error?"":(saved.data?.display_name||"");
+ $("profile-name").textContent=saved.data?.display_name||name;
  const role=staff.data?.role;
  $("profile-role").textContent=role==="admin"?"Administrator":role==="staff"?"Team":"Community";
  const betas=beta.error?[]:(beta.data||[]);
@@ -43,12 +45,14 @@ $("profile-save").addEventListener("click",async()=>{
  const {data:{user},error:authError}=await db.auth.getUser();
  if(authError||!user){showError("Bitte zuerst anmelden.");return}
  const bio=$("profile-bio").value.trim();
+ const displayName=$("profile-display-name").value.trim();
+ if(displayName.length>32||/[\\x00-\\x1F\\x7F]/.test(displayName)){showError("Ungültiger Anzeigename (max. 32 Zeichen).");return}
  if(bio.length>400){showError("Maximal 400 Zeichen.");return}
  const btn=$("profile-save");btn.disabled=true;
- const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,display_name:displayName,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  btn.disabled=false;
  if(error)showError("Speichern fehlgeschlagen: "+error.message);
- else{$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
+ else{$("profile-name").textContent=displayName||String(user.user_metadata?.full_name||user.user_metadata?.name||user.user_metadata?.user_name||"Discord User");$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
 });
 $("profile-logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showError(error.message);else showSignedOut()});
 try{const {data,error}=await db.auth.getUser();if(error||!data.user)showSignedOut();else await showProfile(data.user)}
