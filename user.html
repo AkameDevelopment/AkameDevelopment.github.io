@@ -59,6 +59,17 @@ main{margin-top:26px!important}
 .profile-tab{padding:9px 12px!important;border-radius:10px!important;font-size:12px!important}
 .person>.own-profile-edit{width:36px!important;height:36px!important;min-width:36px!important;right:16px!important;top:16px!important}
 @media(max-width:650px){main{margin-top:18px!important;padding:0 16px!important}.person{grid-template-columns:56px minmax(0,1fr)!important;padding:15px!important;gap:11px!important}.person>img{width:56px!important;height:56px!important;border-radius:12px!important}.person>div{padding-right:30px!important}.person h1{font-size:21px!important}.profile-joined-header{font-size:11px!important}.profile-hero-stats{gap:16px!important}.profile-hero-bio{font-size:12px!important}.person>.own-profile-edit{right:12px!important;top:12px!important;width:32px!important;height:32px!important;min-width:32px!important}.profile-section{padding:16px!important}.profile-tabs{gap:7px!important}.profile-tab{padding:9px 8px!important}}
+
+/* Profile hero final compact alignment */
+.person{align-items:start!important;box-shadow:0 10px 32px #0002!important}
+.person>div{padding-right:43px!important}
+.profile-hero-bio{margin-top:10px!important;padding:0!important;color:#d2c4de!important}
+.profile-hero-stats{margin-top:12px!important;padding-top:11px!important;gap:22px!important;border-top:1px solid #a480d52a!important}
+.profile-tabs{max-width:460px!important;gap:8px!important}
+.profile-tab{flex:1!important;min-height:38px!important;padding:9px 12px!important;border-radius:11px!important;font-size:13px!important}
+.profile-badges{margin-top:8px!important;gap:6px!important}
+.akame-badge{min-width:30px!important;min-height:30px!important;padding:5px 8px!important}
+@media(max-width:650px){.person{padding:15px!important;gap:11px!important}.person>div{padding-right:34px!important}.profile-hero-stats{gap:14px!important}.profile-hero-stats span{font-size:11px!important}.profile-tabs{max-width:none!important}.profile-tab{min-height:40px!important}.profile-hero-bio{margin-top:9px!important}}
 </style><link rel="stylesheet" href="site-header.css?v=chevrons-unified-3"></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">AKAMEDEVELOPMENT · BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
