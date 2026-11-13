@@ -791,6 +791,28 @@ html body main #content>.person>.profile-identity-info>h1>.profile-discord-name{
   top:2px!important;
  }
 }
+</style><style id="akame-badges-readable-translucent-20261113">
+/* Glassy, translucent badge backgrounds keep the symbols legible over animated banners. */
+html body main #content>.person .profile-badges .akame-badge{
+ background:rgba(15,10,27,.37)!important;
+ border:1px solid color-mix(in srgb,var(--badge-color) 58%,transparent)!important;
+ backdrop-filter:blur(5px)!important;
+ -webkit-backdrop-filter:blur(5px)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html body main #content>.person .profile-badges .akame-badge-icon{
+ color:var(--badge-color)!important;
+ opacity:.94!important;
+ text-shadow:0 1px 4px rgba(0,0,0,.5)!important;
+}
+html body main #content>.person .profile-badges .akame-badge-name{
+ color:#f3eafa!important;
+}
+@media(max-width:650px){
+ html body main #content>.person .profile-badges .akame-badge{
+  background:rgba(15,10,27,.48)!important;
+ }
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
