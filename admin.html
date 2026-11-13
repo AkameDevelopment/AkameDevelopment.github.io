@@ -100,11 +100,11 @@ async function loadSelectedProfile(userId){
  if(selected!==userId)return;
  if(error){message.textContent="Profil konnte nicht geladen werden: "+error.message;return;}
  $("selected-joined-visibility").textContent=data?.show_member_since===false?"Beitrittsdatum für andere ausgeblendet":"Beitrittsdatum öffentlich sichtbar";
- field.value=data?.bio||"";$("selected-display-name").value=data?.display_name||"";$("selected-profile-name").textContent=data?.display_name||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";field.disabled=false;$("selected-display-name").disabled=false;save.disabled=false;
+ const protectedOwner=roles.get(userId)==="owner"&&role!=="owner";field.value=data?.bio||"";$("selected-display-name").value=data?.display_name||"";$("selected-profile-name").textContent=data?.display_name||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";field.disabled=protectedOwner;$("selected-display-name").disabled=protectedOwner;save.disabled=protectedOwner;
  message.textContent=data?"Profil bereit zur Bearbeitung.":"Noch keine Beschreibung gespeichert.";
 }
 $("save-profile").addEventListener("click",async()=>{
- if(role!=="admin"||!selected)return;
+ if(!["owner","admin"].includes(role)||!selected||roles.get(selected)==="owner"&&role!=="owner")return;
  const userId=selected,field=$("selected-bio"),button=$("save-profile"),message=$("profile-edit-message");
  const value=field.value.trim(),displayName=$("selected-display-name").value.trim();
  if(displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){message.textContent="Ungültiger Anzeigename.";return;}
@@ -120,7 +120,7 @@ $("save-profile").addEventListener("click",async()=>{
 function renderSelection(){
  const p=people.find(x=>x.user_id===selected);$("selected").hidden=!p;if(!p)return;
  $("selected-name").textContent=p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
- $("role-select").value=roles.get(p.user_id)||"";
+ $("role-select").value=roles.get(p.user_id)||"";$("role-select").disabled=p.user_id===current?.id||roles.get(p.user_id)==="owner";$("save-role").disabled=$("role-select").disabled;
  $("selected-avatar").src=avatar(p.avatar_url);
  $("selected-profile-name").textContent=p.display_name||"Discord-Benutzer";
  $("selected-joined").textContent=p.created_at?"Bekannt seit "+new Date(p.created_at).toLocaleDateString("de-DE"):"";
@@ -143,7 +143,7 @@ $("search").addEventListener("input",renderPeople);
 $("save-role").addEventListener("click",async()=>{
  if(!selected)return;
  if(selected===current.id){msg("Die eigene Administratorrolle kann hier nicht geändert werden.",true);return;}
- const next=$("role-select").value;
+ if(selected===current?.id||roles.get(selected)==="owner"){msg("Diese Rolle ist geschützt.",true);return;} const next=$("role-select").value;
  $("save-role").disabled=true;msg("Rolle wird gespeichert …");
  const {error}=next?await db.from("staff_access").upsert({user_id:selected,role:next},{onConflict:"user_id"}):await db.from("staff_access").delete().eq("user_id",selected);
  $("save-role").disabled=false;
@@ -172,8 +172,8 @@ async function init(){
  if(roleError||!["admin","staff"].includes(access?.role)){status("Keine Mitarbeiterberechtigung vorhanden.");show("denied-view");$("logout").hidden=false;return;}
  role=access.role;show("dashboard");$("logout").hidden=false;
  const meta=current.user_metadata||{};$("my-name").textContent=String(meta.full_name||meta.name||meta.user_name||"Discord-Benutzer");
- $("my-avatar").src=avatar(meta.avatar_url);$("my-role").textContent=role==="admin"?"Administrator":"Mitarbeiter";
- if(role==="admin"){$("admin-controls").hidden=false;await loadDirectory();}
+ $("my-avatar").src=avatar(meta.avatar_url);$("my-role").textContent=["owner","admin"].includes(role)?"Administrator":"Mitarbeiter";
+ if(["owner","admin"].includes(role)){$("admin-controls").hidden=false;await loadDirectory();}
  else{status("Mitarbeiterzugriff bestätigt.");$("user-count").textContent="–";$("staff-count").textContent="–";$("beta-count").textContent="–";}
 }
 await init();
