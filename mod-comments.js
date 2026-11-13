@@ -18,7 +18,7 @@ if (root && slugs.has(slug)) {
   .akame-comment-list .akame-delete{background:transparent;border:1px solid #84526a;color:#f4afc5;padding:5px 9px;font-size:12px}
 .akame-replies{display:grid;gap:10px;margin:12px 0 0 24px;padding-left:14px;border-left:2px solid #8e5bdb55}.akame-replies .akame-comment{padding:12px;background:#1e1729}.akame-reply-actions{margin-top:12px}.akame-reply-actions button{background:transparent;border:1px solid #a77bf255;color:#d7b9ff}.akame-reply-form{margin:12px 0 0}.akame-reply-form textarea{width:100%;min-height:72px;background:#120e1c;border:1px solid #9470c35c;border-radius:10px;color:#fff;padding:10px;font:inherit;resize:vertical}.akame-reply-form .akame-ctrl{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}@media(max-width:600px){.akame-replies{margin-left:7px;padding-left:9px}}
 .akame-reply-disclosure{margin-top:12px}.akame-reply-disclosure>summary{display:inline-flex;align-items:center;gap:7px;cursor:pointer;list-style:none;color:#caa4ff;font-size:13px;font-weight:650;padding:6px 0;user-select:none}.akame-reply-disclosure>summary::-webkit-details-marker{display:none}.akame-reply-disclosure>summary:before{content:"▸";font-size:15px;transition:transform .15s ease}.akame-reply-disclosure[open]>summary:before{transform:rotate(90deg)}.akame-reply-disclosure>summary:focus-visible{outline:2px solid #bc93ff;outline-offset:3px;border-radius:4px}
-  .akame-comments [hidden]{display:none!important}.akame-comment-msg{color:#cbb5e7;font-size:13px}
+  .akame-comment{scroll-margin-top:100px}.akame-comment-target{outline:2px solid #bd8aff!important;outline-offset:4px!important;border-radius:12px}\n  .akame-comments [hidden]{display:none!important}.akame-comment-msg{color:#cbb5e7;font-size:13px}
   `;
   document.head.append(style);
   const supabase = createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
@@ -39,7 +39,7 @@ if (root && slugs.has(slug)) {
     const roots=data.filter(item=>item.parent_id==null);const replies=new Map();for(const item of data){if(item.parent_id!=null){const key=String(item.parent_id);if(!replies.has(key))replies.set(key,[]);replies.get(key).push(item);}}
     showMessage(roots.length ? (window.AkameLanguage?.get()==="en"?roots.length+" comment"+(roots.length===1?"":"s"):roots.length+" Kommentar"+(roots.length===1?"":"e")) : tr("Noch keine Kommentare. Sei die erste Person!","No comments yet. Be the first!"));
     function renderComment(item,isReply=false){
-      const article=document.createElement("article");article.className="akame-comment";
+      const article=document.createElement("article");article.className="akame-comment";article.id="comment-"+item.id;
       const meta=document.createElement("div");meta.className="akame-comment-meta";
       const name=document.createElement("strong");name.textContent=item.author_name||tr("Discord-Nutzer","Discord user");
       const time=document.createElement("time");time.dateTime=item.created_at;time.textContent=timestamp(item.created_at);
@@ -73,7 +73,7 @@ if (root && slugs.has(slug)) {
       }
       return article;
     }
-    const fragment=document.createDocumentFragment();for(const item of roots)fragment.append(renderComment(item));list.replaceChildren(fragment);
+    const fragment=document.createDocumentFragment();for(const item of roots)fragment.append(renderComment(item));list.replaceChildren(fragment);const targetId=new URLSearchParams(location.search).get("comment");if(targetId && /^\\d+$/.test(targetId)){const target=document.getElementById("comment-"+targetId);if(target){const details=target.closest(".akame-reply-disclosure");if(details)details.open=true;requestAnimationFrame(()=>{target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("akame-comment-target");});}}
   }
   function applyUser(user){currentUser=user;composer.hidden=!user;guest.hidden=!!user;}
   async function checkUser(){
