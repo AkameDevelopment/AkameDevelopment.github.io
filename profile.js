@@ -66,7 +66,7 @@ $("profile-change-name").addEventListener("click",async()=>{
  button.disabled=true;
  const {error}=await db.from("user_profiles").update({display_name:displayName,updated_at:new Date().toISOString()}).eq("user_id",user.id);
  button.disabled=false;
- if(error){message.textContent="Fehler: "+error.message;return}
+ if(error){message.textContent=error.code==="23505"?"Dieser Name ist bereits vergeben. Bitte wähle einen anderen.":"Fehler: "+error.message;return}
  $("profile-name").textContent=displayName;input.value=displayName;input.readOnly=true;button.textContent="Namen ändern";message.textContent="Anzeigename gespeichert ✓";
 });
 $("profile-logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showError(error.message);else showSignedOut()});
