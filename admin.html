@@ -55,7 +55,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 <div id="selected" hidden><h2 id="selected-name">Benutzer</h2><p id="selected-uid" class="notice"></p>
 <section class="admin-profile-detail" aria-label="Benutzerprofil">
  <h3>Benutzerprofil</h3>
- <div class="profile"><img id="selected-avatar" alt="Discord-Profilbild" loading="lazy"><div><strong id="selected-profile-name">Benutzer</strong><small id="selected-discord-name" class="notice"></small><small id="selected-joined" class="notice"></small></div></div>
+ <div class="profile"><img id="selected-avatar" alt="Discord-Profilbild" loading="lazy"><div><strong id="selected-profile-name">Benutzer</strong><small id="selected-discord-name" class="notice"></small><small id="selected-joined" class="notice"></small><small id="selected-joined-visibility" class="notice"></small></div></div>
  <p class="notice">Der originale Discord-Name bleibt für Administratoren immer sichtbar.</p><label for="selected-display-name">Anzeigename auf der Website</label><input id="selected-display-name" class="input" maxlength="32" placeholder="Discord-Namen verwenden">
  <label for="selected-bio">Profilbeschreibung (maximal 400 Zeichen)</label>
  <textarea id="selected-bio" class="input" maxlength="400" rows="5" placeholder="Keine Profilbeschreibung vorhanden"></textarea>
@@ -96,9 +96,10 @@ function renderPeople(){
 async function loadSelectedProfile(userId){
  const field=$("selected-bio"),message=$("profile-edit-message"),save=$("save-profile");
  field.value="";field.disabled=true;$("selected-display-name").value="";$("selected-display-name").disabled=true;save.disabled=true;message.textContent="Profil wird geladen …";
- const {data,error}=await db.from("user_profiles").select("bio,display_name").eq("user_id",userId).maybeSingle();
+ const {data,error}=await db.from("user_profiles").select("bio,display_name,show_member_since").eq("user_id",userId).maybeSingle();
  if(selected!==userId)return;
  if(error){message.textContent="Profil konnte nicht geladen werden: "+error.message;return;}
+ $("selected-joined-visibility").textContent=data?.show_member_since===false?"Beitrittsdatum für andere ausgeblendet":"Beitrittsdatum öffentlich sichtbar";
  field.value=data?.bio||"";$("selected-display-name").value=data?.display_name||"";$("selected-profile-name").textContent=data?.display_name||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";field.disabled=false;$("selected-display-name").disabled=false;save.disabled=false;
  message.textContent=data?"Profil bereit zur Bearbeitung.":"Noch keine Beschreibung gespeichert.";
 }
