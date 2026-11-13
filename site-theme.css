@@ -54,3 +54,20 @@ html[data-akame-theme="light"] body header .brand b{color:#8051bd!important}
 html[data-akame-theme="light"] body header .navlinks a{color:#493b5a!important}
 html[data-akame-theme="light"] body header .navlinks a:hover{color:#6b3ca4!important}
 html[data-akame-theme="light"] body header .nav-action{background:#f2eafa!important;color:#4c2b72!important}
+
+/* Light mode beta — cohesive lavender atmosphere rather than flat white. */
+html[data-akame-theme="light"]{color-scheme:light;--bg:#eee8f7;--surface:#faf7ff;--surface2:#f1eafa;--text:#251832;--muted:#635471;--border:#d9c9eb}
+html[data-akame-theme="light"] body{background:radial-gradient(ellipse 75% 46% at 83% 9%,#d6c0f2 0%,transparent 72%),radial-gradient(ellipse 58% 45% at 5% 62%,#e0d2f2 0%,transparent 74%),linear-gradient(165deg,#f6f0fd 0%,#eee6f8 53%,#e9dff5 100%)!important;background-attachment:fixed!important}
+html[data-akame-theme="light"] body .hero{background:radial-gradient(ellipse 55% 75% at 85% 47%,#c9abea8c 0%,transparent 80%),radial-gradient(ellipse 60% 85% at 12% 15%,#d8c6ee 0%,transparent 78%),linear-gradient(115deg,#f1e9fa,#eee5f8)!important}
+html[data-akame-theme="light"] body .hero:before{background:radial-gradient(circle at 80% 45%,#b08bdf45,transparent 48%),radial-gradient(circle at 8% 5%,#c5a5e735,transparent 44%)!important}
+html[data-akame-theme="light"] body :is(.homepage-intro-inner,.shortcut,.project,.feature,.roadmap-card,.community-highlight-inner,.category-tab,.category-placeholder,.settings-card,.card,.panel){background:linear-gradient(140deg,#fffdfefa,#f5effcfa)!important;border:1px solid #d8c8e9!important;box-shadow:0 10px 30px #50306c12!important}
+html[data-akame-theme="light"] body :is(.homepage-intro-inner,.shortcut,.project,.feature,.roadmap-card,.community-highlight-inner):hover{border-color:#b58bdc!important}
+html[data-akame-theme="light"] body :is(.hero .btn.primary,.btn.primary,button.primary){background:linear-gradient(115deg,#a875e3,#8751ca)!important;color:#fff!important;border-color:#8f5ecb!important;box-shadow:0 9px 24px #8c56bf30!important}
+html[data-akame-theme="light"] body :is(.hero .btn.ghost,.btn.ghost){background:#ffffffb5!important;border-color:#cfb9e7!important;color:#50336b!important}
+html[data-akame-theme="light"] body :is(.hero-foot span,.hero-foot strong){color:#49345f!important}
+html[data-akame-theme="light"] body :is(.overline,.eyebrow,.shortcut-top,.project-top,.section-head .overline){color:#7040a6!important}
+html[data-akame-theme="light"] body :is(.navlinks a,.navlinks a:visited){color:#4c385e!important}
+html[data-akame-theme="light"] body :is(.brand,.brand span){color:#261731!important}
+html[data-akame-theme="light"] body :is(.brand b){color:#8954c4!important}
+html[data-akame-theme="light"] body :is(.category-tab.active,.filter.active,.tabs button.active){background:#e9d9f8!important;border-color:#af88d6!important;color:#512c7a!important}
+html[data-akame-theme="light"] body :is(.akame-home-dropdown,.akame-home-submenu,.akame-account-dropdown,.akame-menu-panel,.notification-panel,.notification-dropdown,dialog){background:linear-gradient(145deg,#fff,#f5eefb)!important;color:#281b36!important;border-color:#d6c4e8!important}
