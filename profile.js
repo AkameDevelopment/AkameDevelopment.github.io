@@ -130,7 +130,7 @@ catch(error){$("profile-loading").textContent="Profil konnte nicht geladen werde
 db.auth.onAuthStateChange((_event,session)=>{if(!session?.user)showSignedOut()});
 
 
-function tenorEmbedUrl(value){try{const u=new URL(value);if(!["tenor.com","www.tenor.com"].includes(u.hostname.toLowerCase()))return null;const m=u.pathname.match(/^\/(?:view\/(?:[^/]*-)?|embed\/)(\d+)\/?$/);if(m)return "https://tenor.com/embed/"+m[1];return null;}catch{return null;}}
+function tenorEmbedUrl(value){try{const u=new URL(value);if(!["tenor.com","www.tenor.com"].includes(u.hostname.toLowerCase()))return null;const m=u.pathname.match(/^\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?(?:view\/(?:[^/]*-)?|embed\/)(\d+)\/?$/);if(m)return "https://tenor.com/embed/"+m[1];return null;}catch{return null;}}
 async function setupGallery(){
  const panel=$("gallery-panel"),grid=$("gallery-grid"),message=$("gallery-message");
  if(!panel||!grid)return;
