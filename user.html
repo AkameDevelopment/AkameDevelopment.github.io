@@ -174,6 +174,12 @@ main{box-sizing:border-box!important;width:100%!important;max-width:1180px!impor
 .profile-share-icon{position:absolute;top:11px;right:59px;display:grid;place-items:center;width:36px;height:36px;padding:0;border:1px solid #a982ff3b;border-radius:10px;background:#a982ff0b;color:#cdb3ed;cursor:pointer;transition:background .18s,border-color .18s,color .18s}
 .profile-share-icon:hover,.profile-share-icon.copied{background:#a982ff25;border-color:#a982ff88;color:#fff}
 @media(max-width:650px){.profile-share-icon{top:8px;right:53px;width:34px;height:34px}}
+
+/* Match share and settings controls exactly on desktop and mobile. */
+.person .profile-share-icon{top:12px!important;right:52px!important;width:32px!important;height:32px!important;min-width:32px!important;border-radius:10px!important;background:#191326!important;border:1px solid #69488f!important;color:#c5a1f5!important;z-index:3}
+.person .profile-share-icon:hover,.person .profile-share-icon:focus-visible{background:#36204f!important;border-color:#ad7bf1!important;color:#e5d0ff!important}
+.person .profile-share-icon svg{width:17px;height:17px}
+@media(max-width:650px){.person .profile-share-icon{top:12px!important;right:52px!important}}
 </style><link rel="stylesheet" href="site-header.css?v=profile-menu-fix-20261113"></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
