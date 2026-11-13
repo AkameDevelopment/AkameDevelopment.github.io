@@ -384,6 +384,46 @@ html body main #content>.person>.akame-profile-actions>.own-profile-edit{
  html body main #content>.person>.akame-profile-actions>.own-profile-edit{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;padding:0!important}
  html body main #content>.person>.akame-profile-actions>.own-profile-edit .settings-mobile-label{display:none!important}
 }
+</style><style id="akame-profile-wide-sidebar-20261113">
+/* Desktop: wider public profile with a dedicated right mods column. */
+@media(min-width:1050px){
+ html body main{
+  width:min(1540px,calc(100% - clamp(48px,6vw,128px)))!important;
+  max-width:1540px!important;padding:0!important;margin:34px auto 75px!important;
+ }
+ html body main #content{width:100%!important;max-width:none!important}
+ html body main #content>.profile-layout{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(280px,340px)!important;
+  gap:20px!important;align-items:start!important;width:100%!important;
+ }
+ html body main #content>.profile-layout>.profile-main{
+  display:flex!important;flex-direction:column!important;min-width:0!important;width:100%!important;
+  gap:18px!important;grid-column:1!important;
+ }
+ html body main #content>.profile-layout>.profile-side{
+  display:flex!important;flex-direction:column!important;gap:16px!important;
+  min-width:0!important;width:100%!important;grid-column:2!important;grid-row:1!important;
+ }
+ html body main #content>.profile-layout>.profile-side>.profile-section{
+  width:100%!important;max-width:none!important;margin:0!important;padding:20px!important;
+ }
+ html body main #content>.profile-layout>.profile-side .public-mod-grid{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;
+ }
+ html body main #content>.profile-layout>.profile-side .public-mod-card{
+  min-height:42px!important;padding:10px 12px!important;
+  font-size:12px!important;overflow-wrap:anywhere!important;
+ }
+}
+@media(max-width:1049px){
+ html body main #content>.profile-layout{display:flex!important;flex-direction:column!important;gap:16px!important}
+ html body main #content>.profile-layout>.profile-main,
+ html body main #content>.profile-layout>.profile-side{
+  display:flex!important;flex-direction:column!important;gap:16px!important;width:100%!important;
+  min-width:0!important;grid-row:auto!important;grid-column:auto!important;
+ }
+ html body main #content>.profile-layout>.profile-side>.profile-section{width:100%!important;margin:0!important}
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
@@ -438,7 +478,7 @@ const modsSection=el("section","","profile-section");modsSection.append(el("h2",
  const tabs=el("div","","profile-tabs");tabs.setAttribute("role","tablist");const postsTab=el("button","Beiträge","profile-tab"),commentsTab=el("button","Kommentare","profile-tab");postsTab.type=commentsTab.type="button";postsTab.setAttribute("role","tab");commentsTab.setAttribute("role","tab");postsTab.id="profile-posts-tab";commentsTab.id="profile-comments-tab";tabs.append(postsTab,commentsTab);mainColumn.prepend(tabs);const postsSection=el("section","","profile-section profile-tab-panel");postsSection.id="profile-posts-panel";postsSection.setAttribute("role","tabpanel");postsSection.setAttribute("aria-labelledby",postsTab.id);postsSection.append(el("h2","Beiträge"),el("p","Noch keine Beiträge vorhanden.","profile-empty"));mainColumn.append(postsSection);for(const galleryCard of [...mainColumn.children].filter(node=>node.classList?.contains("profile-section")&&node.querySelector("h2")?.textContent==="Showcase")){postsSection.insertBefore(galleryCard,postsSection.firstChild);galleryCard.classList.add("profile-gallery-in-posts");if(!gallery?.length)galleryCard.hidden=true;}const commentsSection=el("section","","profile-section profile-tab-panel");commentsSection.id="profile-comments-panel";commentsSection.setAttribute("role","tabpanel");commentsSection.setAttribute("aria-labelledby",commentsTab.id);function selectProfileTab(which){const showPosts=which==="posts";postsTab.setAttribute("aria-selected",String(showPosts));commentsTab.setAttribute("aria-selected",String(!showPosts));postsSection.hidden=!showPosts;commentsSection.hidden=showPosts;}postsTab.addEventListener("click",()=>selectProfileTab("posts"));commentsTab.addEventListener("click",()=>selectProfileTab("comments"));selectProfileTab("posts");const heading=el("h2",tr("Kommentare (","Comments (")+(comments?.length||0)+")");heading.dataset.commentHeading="";commentsSection.append(heading);mainColumn.append(commentsSection);
  if(!comments?.length)commentsSection.append(el("p",tr("Dieser Benutzer hat noch keine Kommentare geschrieben.","This member has not written any comments yet."),"profile-empty"));
  else{const list=el("div","","user-comments");for(const comment of comments){const item=el("article","","user-comment");const head=el("div","","user-comment-head");const authorRow=el("div","","user-comment-author");const commentAvatar=document.createElement("img");commentAvatar.className="user-comment-avatar";commentAvatar.src=avatar.src;commentAvatar.alt="Profilbild";commentAvatar.loading="lazy";authorRow.append(commentAvatar,el("strong",profile?.display_name||community?.display_name||latest?.author_name||"Mitglied"));item.append(authorRow);const link=el("a",names[comment.project_slug]||comment.project_slug);link.href="project.html?mod="+encodeURIComponent(comment.project_slug)+"&comment="+encodeURIComponent(comment.id)+"#mod-comments";const time=el("time",new Date(comment.created_at).toLocaleString(tr("de-DE","en-GB"),{dateStyle:"medium",timeStyle:"short"}),"muted");time.dateTime=comment.created_at;head.append(link,time);const body=el("p",comment.body,"bio");const open=el("a",tr("Zur Diskussion","View discussion"));open.href=link.href;open.className="comment-open";item.append(head,body,open);list.append(item);}commentsSection.append(list);}
- mainColumn.append(modsSection);
+ sideColumn.append(modsSection);
  document.addEventListener("akame-language-change",()=>{heading.textContent=tr("Kommentare (","Comments (")+(comments?.length||0)+")";const empty=commentsSection.querySelector(".profile-empty");if(empty)empty.textContent=tr("Dieser Benutzer hat noch keine Kommentare geschrieben.","This member has not written any comments yet.");for(const a of commentsSection.querySelectorAll(".comment-open"))a.textContent=tr("Zur Diskussion","View discussion");for(const t of commentsSection.querySelectorAll("time"))t.textContent=new Date(t.dateTime).toLocaleString(tr("de-DE","en-GB"),{dateStyle:"medium",timeStyle:"short"});});
 }}catch(e){root.textContent=e.message||"Profil konnte nicht geladen werden."}
 </script><script src="language.js?v=browser-default-20261113" defer></script><script src="mobile-nav.js?v=home-about-20261113" defer></script></body></html>
