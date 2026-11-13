@@ -81,6 +81,14 @@ main{margin-top:26px!important}
 .person .profile-hero-bio{grid-column:1 / -1!important;grid-row:2!important;margin:15px 0 0!important;padding:0!important}
 .person .profile-hero-stats{grid-column:1 / -1!important;grid-row:3!important;margin-top:13px!important}
 @media(max-width:650px){.person{grid-template-columns:56px minmax(0,1fr)!important;column-gap:11px!important}.person .profile-joined-header{margin-top:31px!important}.person .profile-badges{margin-top:59px!important}.person .profile-hero-bio{margin-top:14px!important}}
+
+/* Showcase: preserve the original proportions of GIFs and images. */
+.gallery-public{display:columns!important;columns:3!important;column-gap:12px!important}
+.gallery-tile{display:block!important;width:100%!important;height:auto!important;aspect-ratio:auto!important;margin:0 0 12px!important;break-inside:avoid!important;overflow:hidden!important}
+.gallery-tile img{display:block!important;width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;aspect-ratio:auto!important}
+.gallery-tile iframe{display:block!important;width:100%!important;height:260px!important;min-height:220px!important;aspect-ratio:auto!important;pointer-events:none!important}
+@media(max-width:650px){.gallery-public{columns:2!important;column-gap:8px!important}.gallery-tile{margin-bottom:8px!important}.gallery-tile iframe{height:210px!important;min-height:180px!important}}
+@media(max-width:380px){.gallery-public{columns:1!important}.gallery-tile iframe{height:260px!important}}
 </style><link rel="stylesheet" href="site-header.css?v=unified-header-5"></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">AKAMEDEVELOPMENT · BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
