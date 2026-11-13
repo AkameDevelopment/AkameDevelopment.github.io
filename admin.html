@@ -128,7 +128,7 @@ function renderSelection(){
  $("selected-name").textContent=customNames.get(p.user_id)||p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
  $("role-select").value=roles.get(p.user_id)||"";$("role-select").disabled=p.user_id===current?.id||roles.get(p.user_id)==="owner";$("save-role").disabled=$("role-select").disabled;
  $("akamesmp-toggle").checked=smpMembers.has(p.user_id);$("akamesmp-toggle").disabled=false;$("akamesmp-message").textContent="";
- $("open-user-profile").href="user.html?id="+encodeURIComponent(p.user_id);
+ $("open-user-profile").href=customNames.get(p.user_id)?"user.html?name="+encodeURIComponent(customNames.get(p.user_id)):"user.html?id="+encodeURIComponent(p.user_id);
  $("selected-avatar").src=avatar(p.avatar_url);
  $("selected-profile-name").textContent=customNames.get(p.user_id)||p.display_name||"Discord-Benutzer";$("selected-discord-name").textContent="Discord: "+(discordNames.get(p.user_id)||"Nicht verfügbar");
  $("selected-joined").textContent=p.created_at?"Bekannt seit "+new Date(p.created_at).toLocaleDateString("de-DE"):"";
