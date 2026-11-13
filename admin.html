@@ -106,7 +106,7 @@ $("save-profile").addEventListener("click",async()=>{
  if(role!=="admin"||!selected)return;
  const userId=selected,field=$("selected-bio"),button=$("save-profile"),message=$("profile-edit-message");
  const value=field.value.trim(),displayName=$("selected-display-name").value.trim();
- if(displayName.length>32||/[\\x00-\\x1F\\x7F]/.test(displayName)){message.textContent="Ungültiger Anzeigename.";return;}
+ if(displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){message.textContent="Ungültiger Anzeigename.";return;}
  if(value.length>400){message.textContent="Maximal 400 Zeichen erlaubt.";return;}
  if(!confirm("Profilbeschreibung dieses Benutzers wirklich ändern?"))return;
  button.disabled=true;field.disabled=true;$("selected-display-name").disabled=true;message.textContent="Änderungen werden gespeichert …";
