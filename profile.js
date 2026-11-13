@@ -2,7 +2,7 @@ import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);
 const labels={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud",info:"AkameInfos",admin:"Server Admin",zoom:"AkameZoom"};
-const modOptions=[["modcore","ModCore"],["chest","ChestScout"],["crosshair","Crosshair+"],["chunkloader","ChunkLoader"],["items","AkameItems"],["hud","AkameHud+"],["info","AkameInfos"],["admin","Server Admin"],["zoom","AkameZoom"]];
+const modOptions=[["modcore","Core"],["chest","Chest"],["crosshair","Crosshair+"],["chunkloader","ChunkLoader"],["items","Items"],["hud","AkameHud+"],["info","AkameInfos"],["admin","Admin"],["zoom","Zoom"]];
 async function loadProfileMods(user){
  const list=$("profile-mod-list"),message=$("profile-mod-message"),counter=$("profile-mod-count");list.replaceChildren();message.textContent="";
  const [saved,visibility,beta,staff]=await Promise.all([
