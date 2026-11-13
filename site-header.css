@@ -488,12 +488,17 @@ html body header>.akame-menu-panel details[open]>summary::after{transform:rotate
  html body header .akame-account-dropdown:not([hidden]){z-index:150!important}
 }
 
-/* Compact Home hover menu (desktop only). Navigation on mobile is unchanged. */
+/* Desktop dropdown: continuous hover zone from Home to menu. */
 @media(min-width:851px){
+ html body header,
+ html body header>.wrap.nav.akame-site-nav,
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  overflow:visible!important;
+ }
  html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-duplicate{display:none!important}
  html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown{
-  display:inline-flex!important;position:relative!important;align-items:center!important;align-self:stretch!important;
-  flex:0 0 auto!important;width:auto!important;min-width:0!important;overflow:visible!important;
+  display:inline-flex!important;position:relative!important;align-items:center!important;
+  align-self:stretch!important;flex:0 0 auto!important;width:auto!important;overflow:visible!important;
  }
  html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{
   display:inline-flex!important;align-items:center!important;gap:7px!important;white-space:nowrap!important;
@@ -504,21 +509,23 @@ html body header>.akame-menu-panel details[open]>summary::after{transform:rotate
   border:solid currentColor!important;border-width:0 1.5px 1.5px 0!important;
   transform:translateY(-2px) rotate(45deg)!important;opacity:.75!important;
  }
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown:is(:hover,:focus-within)>.akame-home-trigger{
-  color:#fff!important;
+ /* Hover bridge extends below the dropdown anchor so there is no dead gap. */
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown::after{
+  content:""!important;position:absolute!important;left:-12px!important;right:-12px!important;
+  top:100%!important;height:18px!important;background:transparent!important;pointer-events:auto!important;
  }
  html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu{
-  position:absolute!important;z-index:1000!important;top:calc(50% + 18px)!important;left:-10px!important;
+  position:absolute!important;z-index:1000!important;top:calc(100% - 4px)!important;left:-10px!important;
   display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:2px!important;
   width:154px!important;min-width:154px!important;height:auto!important;min-height:0!important;
-  padding:6px!important;margin:0!important;
-  background:#191224f7!important;backdrop-filter:blur(14px)!important;
-  border:1px solid #7d5b9d7d!important;border-radius:11px!important;box-shadow:0 12px 32px #0008!important;
-  opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(4px)!important;
-  transition:opacity .13s ease,transform .13s ease,visibility .13s ease!important;
+  padding:6px!important;margin:0!important;background:#191224f7!important;
+  backdrop-filter:blur(14px)!important;border:1px solid #7d5b9d7d!important;
+  border-radius:11px!important;box-shadow:0 12px 32px #0008!important;
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+  transform:translateY(0)!important;transition:opacity .14s ease,visibility .14s ease!important;
  }
  html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown:is(:hover,:focus-within)>.akame-home-submenu{
-  opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translateY(0)!important;
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
  }
  html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu>a{
   display:flex!important;align-items:center!important;justify-content:flex-start!important;
