@@ -1,8 +1,11 @@
-/* User-selected accent shared across the website. */
-:root{--akame-user-accent:#a678ec;--akame-accent:var(--akame-user-accent)}
-html body :is(button.primary,.primary,.btn-primary,[type="submit"].primary){background-color:var(--akame-user-accent)!important;border-color:var(--akame-user-accent)!important}
-html body :is(button,a,[role="button"]):focus-visible{outline-color:var(--akame-user-accent)!important}
+/* Shared beta accent: interactive highlights, never destructive/status colors. */
+:root{--akame-user-accent:#a678ec;--akame-accent:var(--akame-user-accent);--akame-accent-soft:color-mix(in srgb,var(--akame-user-accent) 16%,transparent);--akame-accent-line:color-mix(in srgb,var(--akame-user-accent) 45%,transparent)}
+html body :is(button.primary,.primary,.btn-primary,[type="submit"].primary):not(:disabled):not(.danger):not(.delete):not(.destructive){background-color:var(--akame-user-accent)!important;border-color:var(--akame-user-accent)!important;color:#100c18!important}
+html body :is(button,a,[role="button"],input,select,textarea):focus-visible{outline:2px solid var(--akame-user-accent)!important;outline-offset:2px}
 html body :is(input[type="checkbox"],input[type="radio"],input[type="range"]){accent-color:var(--akame-user-accent)!important}
-html body :is(.tabs button.active,.tab.active,.nav-link.active,[aria-selected="true"],[aria-pressed="true"]){border-color:var(--akame-user-accent)!important}
-html body :is(.badge.active,.selected,.active-filter){border-color:var(--akame-user-accent)!important}
-html body :is(.settings-brand,.accent-text){color:var(--akame-user-accent)!important}
+html body :is(.tabs button.active,.tab.active,.nav-link.active,.navlinks a[aria-current="page"],[role="tab"][aria-selected="true"],.filter.active,.active-filter){border-color:var(--akame-accent-line)!important;background-color:var(--akame-accent-soft)!important}
+html body :is(.badge.active,.selected,.active-filter):not(.danger):not(.error){border-color:var(--akame-accent-line)!important}
+html body :is(.accent-text,.eyebrow,.brand b,.akame-site-nav .brand b){color:var(--akame-user-accent)!important}
+html body :is(.nav-action,.akame-menu-button,.akame-account):not(.danger):hover{border-color:var(--akame-accent-line)!important}
+html body :is(.section,.panel,.card):focus-within{--akame-focus-accent:var(--akame-accent-line)}
+html body ::selection{background:var(--akame-accent-line);color:#fff}
