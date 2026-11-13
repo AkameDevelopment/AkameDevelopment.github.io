@@ -155,7 +155,8 @@ $("profile-change-name").addEventListener("click",async()=>{
 
 try{const {data,error}=await db.auth.getUser();if(error||!data.user)showSignedOut();else await showProfile(data.user)}
 catch(error){$("profile-loading").textContent="Profil konnte nicht geladen werden.";console.error(error)}
-db.auth.onAuthStateChange((_event,session)=>{if(!session?.user)showSignedOut()});
+db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT")showSignedOut();else if(event==="SIGNED_IN"&&session?.user&&$("profile-guest").hidden===false){void showProfile(session.user)}});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState!=="visible")return;void db.auth.getSession().then(({data,error})=>{if(!error&&data?.session?.user&&$("profile-guest").hidden===false)void showProfile(data.session.user)}).catch(()=>{});});
 
 
 function tenorEmbedUrl(value){try{const u=new URL(value);if(!["tenor.com","www.tenor.com"].includes(u.hostname.toLowerCase()))return null;const m=u.pathname.match(/^\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?(?:view\/(?:[^/]*-)?|embed\/)(\d+)\/?$/);if(m)return "https://tenor.com/embed/"+m[1];return null;}catch{return null;}}
