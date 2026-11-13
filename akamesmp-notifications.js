@@ -74,11 +74,11 @@ async function refresh(){
  const [smp,mod,beta,sent]=await Promise.all([
   client.from("akamesmp_notifications").select("id,kind,actor_id,post_id,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50),
   client.from("mod_comment_notifications").select("id,actor_id,project_slug,comment_id,reply_id,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50),
-  client.from("beta_invitations").select("id,project_slug,status,invited_by,created_at,responded_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50),
+  client.from("beta_invitations").select("id,project_slug,status,invited_by,created_at,responded_at,recipient_read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50),
   client.from("beta_invitations").select("id,project_slug,status,user_id,created_at,responded_at,sender_read_at").eq("invited_by",user.id).neq("user_id",user.id).in("status",["accepted","declined"]).order("responded_at",{ascending:false}).limit(50)
  ]);
  if(smp.error&&mod.error&&beta.error&&sent.error)return;
- items=[...(smp.data||[]).map(i=>({...i,source:"smp"})),...(mod.data||[]).map(i=>({...i,source:"mod"})),...(beta.data||[]).map(i=>({...i,source:"beta",read_at:i.status==="pending"?null:i.responded_at||i.created_at})),...(sent.data||[]).map(i=>({...i,source:"beta-feedback",read_at:i.sender_read_at}))].sort((a,b)=>new Date(b.responded_at||b.created_at)-new Date(a.responded_at||a.created_at)).slice(0,100);
+ items=[...(smp.data||[]).map(i=>({...i,source:"smp"})),...(mod.data||[]).map(i=>({...i,source:"mod"})),...(beta.data||[]).map(i=>({...i,source:"beta",read_at:i.recipient_read_at||(i.status==="pending"?null:i.responded_at||i.created_at)})),...(sent.data||[]).map(i=>({...i,source:"beta-feedback",read_at:i.sender_read_at}))].sort((a,b)=>new Date(b.responded_at||b.created_at)-new Date(a.responded_at||a.created_at)).slice(0,100);
  await fetchProfiles();render();
 }
 function closeNotifications(){panel.hidden=true;backdrop.hidden=true;document.documentElement.classList.remove("akame-notifications-open");bell.setAttribute("aria-expanded","false")}
@@ -114,7 +114,8 @@ bell.addEventListener("click",()=>{if(panel.hidden)openNotifications();else clos
  const tasks=[
   client.from("akamesmp_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
   client.from("mod_comment_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
-  client.from("beta_invitations").update({sender_read_at:now}).eq("invited_by",user.id).in("status",["accepted","declined"]).is("sender_read_at",null).select("id")
+  client.from("beta_invitations").update({sender_read_at:now}).eq("invited_by",user.id).in("status",["accepted","declined"]).is("sender_read_at",null).select("id"),
+  client.from("beta_invitations").update({recipient_read_at:now}).eq("user_id",user.id).is("recipient_read_at",null).select("id")
  ];
  const results=await Promise.allSettled(tasks);
  const errors=results.filter(r=>r.status==="rejected"||r.value.error).map(r=>r.status==="rejected"?String(r.reason):r.value.error.message);
