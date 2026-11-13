@@ -931,4 +931,4 @@ const modsSection=el("section","","profile-section");modsSection.append(el("h2",
  sideColumn.append(modsSection);
  document.addEventListener("akame-language-change",()=>{heading.textContent=tr("Kommentare (","Comments (")+(comments?.length||0)+")";const empty=commentsSection.querySelector(".profile-empty");if(empty)empty.textContent=tr("Dieser Benutzer hat noch keine Kommentare geschrieben.","This member has not written any comments yet.");for(const a of commentsSection.querySelectorAll(".comment-open"))a.textContent=tr("Zur Diskussion","View discussion");for(const t of commentsSection.querySelectorAll("time"))t.textContent=new Date(t.dateTime).toLocaleString(tr("de-DE","en-GB"),{dateStyle:"medium",timeStyle:"short"});});
 }}catch(e){root.textContent=e.message||"Profil konnte nicht geladen werden."}
-</script><script src="language.js?v=browser-default-20261113" defer></script><script src="mobile-nav.js?v=home-about-20261113" defer></script></body></html>
+</script><script src="language.js?v=full-i18n-20261113" defer></script><script src="mobile-nav.js?v=home-about-20261113" defer></script></body></html>
