@@ -17,6 +17,7 @@ if (root && slugs.has(slug)) {
   .akame-comment-meta time{font-size:12px;color:#9f91af}.akame-comment p{white-space:pre-wrap;color:#ded2ec;margin:10px 0 0;max-width:none}
   .akame-comment-list .akame-delete{background:transparent;border:1px solid #84526a;color:#f4afc5;padding:5px 9px;font-size:12px}
 .akame-replies{display:grid;gap:10px;margin:12px 0 0 24px;padding-left:14px;border-left:2px solid #8e5bdb55}.akame-replies .akame-comment{padding:12px;background:#1e1729}.akame-reply-actions{margin-top:12px}.akame-reply-actions button{background:transparent;border:1px solid #a77bf255;color:#d7b9ff}.akame-reply-form{margin:12px 0 0}.akame-reply-form textarea{width:100%;min-height:72px;background:#120e1c;border:1px solid #9470c35c;border-radius:10px;color:#fff;padding:10px;font:inherit;resize:vertical}.akame-reply-form .akame-ctrl{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}@media(max-width:600px){.akame-replies{margin-left:7px;padding-left:9px}}
+.akame-reply-disclosure{margin-top:12px}.akame-reply-disclosure>summary{display:inline-flex;align-items:center;gap:7px;cursor:pointer;list-style:none;color:#caa4ff;font-size:13px;font-weight:650;padding:6px 0;user-select:none}.akame-reply-disclosure>summary::-webkit-details-marker{display:none}.akame-reply-disclosure>summary:before{content:"▸";font-size:15px;transition:transform .15s ease}.akame-reply-disclosure[open]>summary:before{transform:rotate(90deg)}.akame-reply-disclosure>summary:focus-visible{outline:2px solid #bc93ff;outline-offset:3px;border-radius:4px}
   .akame-comments [hidden]{display:none!important}.akame-comment-msg{color:#cbb5e7;font-size:13px}
   `;
   document.head.append(style);
@@ -68,7 +69,7 @@ if (root && slugs.has(slug)) {
           article.append(form);input.focus();
         });actions.append(replyButton);article.append(actions);
         const children=replies.get(String(item.id))||[];
-        if(children.length){const thread=document.createElement("div");thread.className="akame-replies";children.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));for(const child of children)thread.append(renderComment(child,true));article.append(thread);}
+        if(children.length){const disclosure=document.createElement("details");disclosure.className="akame-reply-disclosure";const summary=document.createElement("summary");summary.textContent=tr(children.length===1?"1 Antwort anzeigen":children.length+" Antworten anzeigen",children.length===1?"Show 1 reply":"Show "+children.length+" replies");disclosure.append(summary);const thread=document.createElement("div");thread.className="akame-replies";children.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));for(const child of children)thread.append(renderComment(child,true));disclosure.append(thread);disclosure.addEventListener("toggle",()=>{summary.textContent=disclosure.open?tr("Antworten ausblenden","Hide replies"):tr(children.length===1?"1 Antwort anzeigen":children.length+" Antworten anzeigen",children.length===1?"Show 1 reply":"Show "+children.length+" replies");});article.append(disclosure);}
       }
       return article;
     }
