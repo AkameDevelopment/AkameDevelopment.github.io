@@ -575,7 +575,7 @@ html body main #content>.person>.akame-profile-actions>.own-profile-edit{
 @media(max-width:649px){
  html body main #content>.person{min-height:190px!important}
 }
-</style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
+</style><style id="akame-tenor-banner-layer">html body main #content>.person>.akame-tenor-banner{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;pointer-events:none!important;z-index:0!important}html body main #content>.person>.akame-profile-actions,html body main #content>.person>img,html body main #content>.person>div:not(.akame-tenor-banner){position:relative;z-index:2}</style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 async function resolveShowcaseUrl(value){try{const u=new URL(value);if(!["tenor.com","www.tenor.com"].includes(u.hostname)||!/^\/[A-Za-z0-9_-]+\.gif\/?$/.test(u.pathname))return value;const endpoint="https://wycdpuzlbivtfxwtarzn.supabase.co/functions/v1/resolve-tenor-gif?url="+encodeURIComponent(value);const response=await fetch(endpoint);const data=await response.json();return response.ok&&data.url?data.url:value;}catch{return value;}}
@@ -631,6 +631,13 @@ try{
    person.style.setProperty("background-image",background,"important");
    person.style.setProperty("background-position","center","important");
    person.style.setProperty("background-size","cover","important");
+   const tenorHost=(()=>{try{const u=new URL(image);if(!["tenor.com","www.tenor.com"].includes(u.hostname))return null;const m=u.pathname.match(/^\\/(?:[a-z]{2}(?:-[a-z]{2})?\\/)?(?:view\\/(?:[^/]*-)?|embed\\/)(\\d+)\\/?$/);return m?"https://tenor.com/embed/"+m[1]:null;}catch{return null;}})();
+   if(tenorHost){
+    const frame=document.createElement("iframe");frame.className="akame-tenor-banner";frame.src=tenorHost;frame.loading="lazy";frame.title="Animated Tenor banner";frame.referrerPolicy="no-referrer";frame.setAttribute("sandbox","allow-scripts allow-same-origin");frame.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;z-index:0";person.insertBefore(frame,person.firstChild);person.style.setProperty("background-image","linear-gradient(120deg,"+first+","+second+")","important");
+   }else if(/^https:\\/\\/(?:www\\.)?tenor\\.com\\/[A-Za-z0-9_-]+\\.gif\\/?$/i.test(image)){
+    resolveShowcaseUrl(image).then(resolved=>{if(resolved!==image){person.style.setProperty("background-image",'linear-gradient(90deg,rgba(10,7,19,.68),rgba(11,7,19,.26)),url("'+resolved+'")',"important");}});
+   }
+
   }
  }catch(e){console.warn("Profile appearance unavailable",e);}
 
