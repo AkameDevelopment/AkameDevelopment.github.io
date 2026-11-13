@@ -64,6 +64,21 @@ if(document.getElementById("profile-content")){
   save.hidden=!changed;save.style.display=changed?"inline-flex":"none";message.textContent="";
  }
 
+ let dragStart=null;
+ preview.addEventListener("pointerdown",event=>{
+  if(!input.value.trim()||event.button!==0)return;
+  dragStart={x:event.clientX,y:event.clientY,px:Number(xInput.value),py:Number(yInput.value)};
+  preview.setPointerCapture(event.pointerId);
+ });
+ preview.addEventListener("pointermove",event=>{
+  if(!dragStart)return;
+  const box=preview.getBoundingClientRect();
+  xInput.value=Math.min(100,Math.max(0,Math.round(dragStart.px+(event.clientX-dragStart.x)*100/box.width)));
+  yInput.value=Math.min(100,Math.max(0,Math.round(dragStart.py+(event.clientY-dragStart.y)*100/box.height)));
+  render();
+ });
+ const endDrag=()=>{dragStart=null;};
+ preview.addEventListener("pointerup",endDrag);preview.addEventListener("pointercancel",endDrag);
  select.addEventListener("change",render);customEnabled.addEventListener("change",render);customInput.addEventListener("input",render);input.addEventListener("input",render);for(const el of [xInput,yInput,zoomInput])el.addEventListener("input",render);panel.querySelector("#appearance-reset").addEventListener("click",()=>{xInput.value=50;yInput.value=50;zoomInput.value=100;render()});remove.addEventListener("click",()=>{input.value="";render()});
  translate();document.addEventListener("akame-language-change",translate);
  const publicLink=container.querySelector(".profile-public-link");if(publicLink)publicLink.after(panel);else container.prepend(panel);
