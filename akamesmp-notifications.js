@@ -73,7 +73,7 @@ function render(){
    card.append(actions);
   }else{
    const a=document.createElement("a");a.className="akame-notify-open";
-   a.href=item.source==="mod"?"project.html?mod="+encodeURIComponent(item.project_slug)+"&comment="+encodeURIComponent(item.reply_id)+"#mod-comments":"akamesmp.html#smp-gallery";
+   a.href=item.source==="mod"?"project.html?mod="+encodeURIComponent(item.project_slug)+"&comment="+encodeURIComponent(item.reply_id)+"#mod-comments":"community.html?post="+encodeURIComponent(item.post_id)+"#community-social-feed";
    a.textContent=tr("Ansehen","View");
    a.addEventListener("click",()=>{if(!item.read_at)void client.from(item.source==="mod"?"mod_comment_notifications":"akamesmp_notifications").update({read_at:new Date().toISOString()}).eq("id",item.id).eq("recipient_id",user.id)});
    card.append(a);
