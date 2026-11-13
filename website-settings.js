@@ -57,25 +57,35 @@ function showResetToast(message){
  toast.textContent="✓ "+message;toast.style.opacity="1";toast.hidden=false;
  clearTimeout(showResetToast.timeout);showResetToast.timeout=setTimeout(()=>{toast.style.opacity="0";setTimeout(()=>{toast.hidden=true},220)},3200);
 }
-$("reset-settings").addEventListener("click",async()=>{
- const button=$("reset-settings");button.disabled=true;
+$("reset-settings").addEventListener("click",()=>{
+ const button=$("reset-settings"),browser=(navigator.languages?.[0]||navigator.language||"en").toLowerCase().startsWith("de")?"de":"en";
+ button.disabled=true;
  try{
-  let accountSyncError=null;
-  try{await window.AkameAccent?.saveAccount?.(defaults.accent)}catch(error){accountSyncError=error;console.warn("Account accent reset failed",error)}
-  for(const [k,v] of Object.entries(defaults))store.setItem(keys[k],String(v));
-  store.removeItem("akame-site-theme");
+  // Reset locally FIRST. Account sync must never block the UI or the reset.
+  for(const [key,value] of Object.entries(defaults))store.setItem(keys[key],String(value));
+  store.setItem("akame-site-theme","dark");
   store.setItem("akame-lang-preference","auto");
-  const browser=(navigator.languages?.[0]||navigator.language||"en").toLowerCase().startsWith("de")?"de":"en";
   store.setItem("akame-lang",browser);
+  pendingAccent=null;
   sync();
   window.AkameWebsiteSettings?.apply?.();
+  window.AkameTheme?.apply?.();
+  window.AkameAccent?.apply?.();
   document.dispatchEvent(new CustomEvent("akame-settings-change"));
-  const message=(words[browser]||words.de).restored+(accountSyncError?(browser==="en"?" (account accent could not sync)":" (Konto-Akzentfarbe konnte nicht synchronisiert werden)"):"");
-  $("save-status").textContent=message;showResetToast(message);
-  // Set language last so a language change cannot interrupt resetting other preferences.
-  try{window.AkameLanguage?.set?.(browser)}catch(error){console.warn("Language reset:",error)}
- }catch(error){console.error("Settings reset failed:",error);showResetToast(lang()==="en"?"Could not restore defaults.":"Standardeinstellungen konnten nicht wiederhergestellt werden.")}
- finally{button.disabled=false}
+  const message=(words[browser]||words.de).restored;
+  $("save-status").textContent=message;
+  showResetToast(message);
+  try{window.AkameLanguage?.set?.(browser)}catch(error){console.warn("Language reset",error)}
+  // Keep the reset successful even if account syncing is offline or fails.
+  Promise.resolve().then(()=>window.AkameAccent?.saveAccount?.(defaults.accent)).catch(error=>{
+   console.warn("Default accent could not sync to account",error);
+   const note=browser==="en"?" Default accent could not sync to your account.":" Standard-Akzentfarbe konnte nicht mit deinem Konto synchronisiert werden.";
+   $("save-status").textContent=message+note;
+  });
+ }catch(error){
+  console.error("Settings reset failed",error);
+  showResetToast(browser==="en"?"Could not restore defaults.":"Standardeinstellungen konnten nicht wiederhergestellt werden.");
+ }finally{button.disabled=false}
 });
 
 document.addEventListener("akame-language-change",renderLanguage);window.addEventListener("storage",()=>{sync();applyLocal()});window.matchMedia?.("(prefers-reduced-motion: reduce)").addEventListener?.("change",renderLanguage);sync();selectTab(location.hash.slice(1)||"appearance",false);
