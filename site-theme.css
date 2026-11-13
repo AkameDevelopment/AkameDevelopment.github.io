@@ -32,3 +32,25 @@ html[data-akame-theme="light"] :is(.toast,#akame-settings-reset-toast){backgroun
 html[data-akame-theme="light"] dialog::backdrop{background:#23153080}
 html[data-akame-theme="light"] :is(.akame-menu-panel,.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu) :is(svg,path){stroke:currentColor}
 html[data-akame-theme="light"] :is(.akame-menu-panel,.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu) :is(.active,[aria-current="page"],[aria-selected="true"]){background:var(--akame-accent-soft,#eee4f9)!important;color:#42245d!important}
+
+/* Home page: replace legacy dark gradients and !important overrides in light mode. */
+html[data-akame-theme="light"]{--surface:#fff;--surface2:#f4effa;--border:#ded4ea;--muted:#655a72;--text:#241a32}
+html[data-akame-theme="light"] body :is(.homepage-intro-inner,.shortcut,.project,.feature,.roadmap-card,.community-highlight-inner,.category-tab,.category-placeholder,.search,.mockshot){background:#fff!important;background-image:none!important;border-color:#ded5e9!important;color:#241a32!important;box-shadow:0 9px 30px #2a19300b!important}
+html[data-akame-theme="light"] body :is(.homepage-intro-inner,.shortcut,.project,.feature,.roadmap-card,.community-highlight-inner,.category-tab,.category-placeholder) :is(h2,h3,h4,strong){color:#241a32!important}
+html[data-akame-theme="light"] body :is(.homepage-intro-inner,.shortcut,.project,.feature,.roadmap-card,.community-highlight-inner,.category-placeholder) p{color:#62566f!important}
+html[data-akame-theme="light"] body :is(.homepage-intro-inner,.shortcut,.project,.feature,.roadmap-card,.community-highlight-inner) :is(.overline,.shortcut-top,.details){color:#6c3ca5!important}
+html[data-akame-theme="light"] body .hero{background:#f6f3fc!important;color:#241a32!important}
+html[data-akame-theme="light"] body .hero:before{background:radial-gradient(ellipse at 76% 38%,#b9a1e03a,transparent 55%),radial-gradient(ellipse at 18% 12%,#d9c7f142,transparent 44%)!important}
+html[data-akame-theme="light"] body .hero-copy,html[data-akame-theme="light"] body .hero-foot{color:#5b5068!important}
+html[data-akame-theme="light"] body .hero-foot strong{color:#30213f!important}
+html[data-akame-theme="light"] body .hero .eyebrow{color:#60329d!important;background:#eadff9!important;border-color:#d7c3f1!important}
+html[data-akame-theme="light"] body .hero h1 span{background:linear-gradient(100deg,#7445b8,#9854d1,#b450a5);background-clip:text;-webkit-background-clip:text;color:transparent!important}
+html[data-akame-theme="light"] body :is(.category-tab,.filter,.tag,.side-badge,.status-chip){color:#533773!important;background:#f0e8f9!important;border-color:#d8c5ea!important}
+html[data-akame-theme="light"] body :is(.category-tab.active,.filter.active){background:#e9d9f9!important;color:#4d2876!important}
+html[data-akame-theme="light"] body :is(.search input,.search input::placeholder){color:#51445f!important}
+html[data-akame-theme="light"] body :is(.btn.ghost,.btn:not(.primary),.details){color:#4d2d73!important}
+html[data-akame-theme="light"] body header .brand,html[data-akame-theme="light"] body header .brand span{color:#23172e!important}
+html[data-akame-theme="light"] body header .brand b{color:#8051bd!important}
+html[data-akame-theme="light"] body header .navlinks a{color:#493b5a!important}
+html[data-akame-theme="light"] body header .navlinks a:hover{color:#6b3ca4!important}
+html[data-akame-theme="light"] body header .nav-action{background:#f2eafa!important;color:#4c2b72!important}
