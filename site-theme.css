@@ -122,3 +122,24 @@ html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav :is(.akame-a
  border-color:#d2bde7!important;
  color:#322042!important;
 }
+
+/* Consistent lavender canvas for all secondary pages and their content sections. */
+html[data-akame-theme="light"] body{
+ --bg:#efe7f8;--background:#efe7f8;--page-bg:#efe7f8;
+ background:radial-gradient(ellipse 72% 56% at 86% 8%,#d3b9efb8 0%,transparent 75%),radial-gradient(ellipse 60% 55% at 9% 70%,#d9c4f1a8 0%,transparent 75%),linear-gradient(150deg,#f5effd 0%,#eee4f9 60%,#e7dbf5 100%)!important;
+ background-attachment:fixed!important;
+}
+html[data-akame-theme="light"] body :is(main,#main,.main,.page,.page-content,.site-main,.content-area,.content-wrap,.community-main,.profile-main,.dashboard-main,.downloads-main,.settings-main,.project-main,.news-main,.smp-main){
+ background-color:transparent!important;
+}
+html[data-akame-theme="light"] body :is(.page-hero,.page-header,.section-hero,.profile-hero,.community-hero,.dashboard-hero,.news-hero,.project-hero,.downloads-hero,.smp-hero){
+ background:linear-gradient(130deg,#f6f0fded,#e8d9f7e8)!important;
+ border-color:#d6c3e9!important;
+ color:#2b1c39!important;
+}
+html[data-akame-theme="light"] body :is(.page-hero,.page-header,.section-hero,.profile-hero,.community-hero,.dashboard-hero,.news-hero,.project-hero,.downloads-hero,.smp-hero) :is(h1,h2,h3,p){
+ color:#2e2040!important;
+}
+html[data-akame-theme="light"] body :is(.section,.panel,.card,.widget,.sidebar,.settings-card,.profile-card,.dashboard-card,.member-card,.feed-card,.post-card,.download-card,.project-card,.news-card){
+ border-color:#d8c6ea!important;
+}
