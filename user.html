@@ -242,6 +242,22 @@ html body main #content .profile-main .public-mod-grid{grid-template-columns:rep
 html body header .akame-header-actions{align-items:center!important}
 html body header .akame-header-actions>.nav-action,html body header .akame-header-actions>.akame-account .akame-account-trigger{min-height:40px!important;box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
 }
+</style><style id="akame-profile-desktop-alignment">
+@media(min-width:901px){
+html body main #content>.person{display:grid!important;grid-template-columns:100px minmax(0,1fr)!important;grid-template-rows:auto!important;align-items:center!important;min-height:0!important;gap:22px!important;padding:24px 28px!important;overflow:visible!important}
+html body main #content>.person>img{grid-column:1!important;grid-row:1!important;width:100px!important;height:100px!important;align-self:start!important}
+html body main #content>.person>div{grid-column:2!important;grid-row:1!important;align-self:center!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:7px!important;padding:0 100px 0 0!important;margin:0!important;min-height:100px!important}
+html body main #content>.person>div>h1{display:flex!important;align-items:center!important;gap:10px!important;margin:0!important;font-size:30px!important;line-height:1.25!important}
+html body main #content>.person .profile-joined-header,html body main #content>.person .profile-badges,html body main #content>.person .profile-hero-bio,html body main #content>.person .profile-hero-stats{margin:0!important;padding:0!important;position:static!important;transform:none!important}
+html body main #content>.person .profile-joined-header{display:flex!important;gap:7px!important;font-size:12px!important}
+html body main #content>.person .profile-badges{display:flex!important;flex-wrap:wrap!important;gap:7px!important}
+html body main #content>.person .profile-hero-bio{font-size:13px!important;line-height:1.5!important}
+html body main #content>.person .profile-hero-stats{display:flex!important;flex-wrap:wrap!important;gap:24px!important;width:100%!important;max-width:650px!important;border-top:1px solid #a480d52a!important;padding-top:10px!important;margin-top:5px!important}
+html body main #content>.person .profile-hero-stats span{display:inline-flex!important;align-items:baseline!important;gap:6px!important}
+html body main #content>.person .profile-hero-stats strong{font-size:16px!important}
+html body main #content .profile-main .profile-tab-panel{min-height:0!important}
+html body main #content .profile-main .profile-gallery-in-posts{margin:0 0 16px!important}
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
