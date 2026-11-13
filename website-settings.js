@@ -77,7 +77,7 @@ $("reset-settings").addEventListener("click",()=>{
   showResetToast(message);
   try{window.AkameLanguage?.set?.(browser)}catch(error){console.warn("Language reset",error)}
   // Keep the reset successful even if account syncing is offline or fails.
-  Promise.resolve().then(()=>window.AkameAccent?.saveAccount?.(defaults.accent)).catch(error=>{
+  Promise.resolve().then(()=>window.AkameAccent?.reset?.()??window.AkameAccent?.saveAccount?.(defaults.accent)).catch(error=>{
    console.warn("Default accent could not sync to account",error);
    const note=browser==="en"?" Default accent could not sync to your account.":" Standard-Akzentfarbe konnte nicht mit deinem Konto synchronisiert werden.";
    $("save-status").textContent=message+note;
