@@ -68,7 +68,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
  <div class="controls"><button type="button" id="save-profile" class="primary">Profiländerungen speichern</button></div>
  <p id="profile-edit-message" class="notice" role="status" aria-live="polite"></p>
 </section>
-<section class="admin-profile-detail" aria-label="Community-Beiträge"><div class="controls" style="justify-content:space-between"><h3>Community-Beiträge</h3><button type="button" id="selected-posts-refresh" class="ghost">Aktualisieren</button></div><div id="selected-posts-list" aria-live="polite"></div><p id="selected-posts-status" class="notice" role="status"></p></section><div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Community</option><option value="staff">Mitarbeiter</option><option value="developer">Developer</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
+<section class="admin-profile-detail" aria-label="Community-Beiträge"><div class="controls" style="justify-content:space-between"><h3>Community-Beiträge</h3><button type="button" id="selected-posts-refresh" class="ghost">Aktualisieren</button></div><div id="selected-posts-list" aria-live="polite"></div><p id="selected-posts-status" class="notice" role="status"></p></section><div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div id="role-quick-picker" class="controls" role="group" aria-label="Mitarbeiterrolle"><button type="button" class="ghost" data-role="">Community</button><button type="button" class="ghost" data-role="staff">Mitarbeiter</button><button type="button" class="ghost" data-role="developer">Developer</button><button type="button" class="ghost" data-role="admin">Administrator</button></div><p id="role-quick-status" class="notice" role="status"></p>
 <hr class="separator"><section class="beta-manager"><div class="beta-manager-heading"><div><h2>Beta-Einladung senden</h2><p class="notice">Mods auswählen und eine Einladung verschicken. Das Mitglied kann sie annehmen oder ablehnen.</p></div><span id="beta-selected-count" class="beta-selection-count">0 ausgewählt</span></div><div class="beta-select-tools"><button type="button" class="ghost" id="beta-mode-toggle" aria-pressed="false">Beta-Zugriff entfernen</button><button type="button" class="ghost" id="beta-select-all">Alle auswählen</button><button type="button" class="ghost" id="beta-clear-all">Auswahl aufheben</button></div><div id="beta-options" class="beta"></div><div class="beta-manager-actions"><button type="button" class="primary" id="beta-invite-selected" disabled>Einladung senden</button></div><p id="beta-invite-summary" class="notice"></p><details class="beta-advanced"><summary>Weitere Beta-Verwaltung</summary><p class="notice">Direkten Zugriff vergeben, Zugänge entziehen oder offene Einladungen zurückziehen.</p><div class="controls"><button type="button" class="ghost" id="beta-direct-selected">Direkt freischalten</button><button type="button" class="ghost" id="beta-cancel-selected">Einladung zurückziehen</button></div></details></section>
 <p id="edit-message" class="notice" role="status" aria-live="polite"></p>
 </div></div></div>
@@ -156,7 +156,7 @@ let betaRemoveMode=false;
 function renderSelection(){
  const p=people.find(x=>x.user_id===selected);$("selected").hidden=!p;if(!p)return;
  $("selected-name").textContent=customNames.get(p.user_id)||p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
- $("role-select").value=roles.get(p.user_id)||"";$("role-select").disabled=p.user_id===current?.id||roles.get(p.user_id)==="owner";$("save-role").disabled=$("role-select").disabled;
+ renderRolePicker(p.user_id);
  $("akamesmp-toggle").checked=smpMembers.has(p.user_id);$("akamesmp-toggle").disabled=false;$("akamesmp-message").textContent="";
  $("open-user-profile").href=customNames.get(p.user_id)?"user.html?name="+encodeURIComponent(customNames.get(p.user_id)):"user.html?id="+encodeURIComponent(p.user_id);
  $("selected-avatar").src=avatar(p.avatar_url);
@@ -226,17 +226,29 @@ $("beta-direct-selected").addEventListener("click",()=>manageBetaInvitations("di
 $("beta-cancel-selected").addEventListener("click",()=>manageBetaInvitations("cancel"));
 $("akamesmp-toggle").addEventListener("change",async()=>{if(!selected)return;const target=selected,box=$("akamesmp-toggle"),enabled=box.checked;box.disabled=true;$("akamesmp-message").textContent="Wird gespeichert …";const {error}=enabled?await db.from("akamesmp_members").insert({user_id:target}):await db.from("akamesmp_members").delete().eq("user_id",target);if(error){box.checked=!enabled;$("akamesmp-message").textContent="Fehler: "+error.message;}else{if(enabled)smpMembers.add(target);else smpMembers.delete(target);$("akamesmp-message").textContent="Gespeichert ✓";}box.disabled=false;});
 $("search").addEventListener("input",renderPeople);
-$("save-role").addEventListener("click",async()=>{
- if(!selected)return;
- if(selected===current.id){msg("Die eigene Administratorrolle kann hier nicht geändert werden.",true);return;}
- if(selected===current?.id||roles.get(selected)==="owner"){msg("Diese Rolle ist geschützt.",true);return;} const next=$("role-select").value;
- $("save-role").disabled=true;msg("Rolle wird gespeichert …");
- const {error}=next?await db.from("staff_access").upsert({user_id:selected,role:next},{onConflict:"user_id"}):await db.from("staff_access").delete().eq("user_id",selected);
- $("save-role").disabled=false;
- if(error){$("role-select").value=roles.get(selected)||"";msg("Fehler: "+error.message,true);return;}
- if(next)roles.set(selected,next);else roles.delete(selected);
- $("staff-count").textContent=roles.size;renderPeople();msg("Rolle erfolgreich gespeichert.");
-});
+let roleSaving=false;
+function renderRolePicker(id){
+ const active=roles.get(id)||"",locked=id===current?.id||active==="owner"||!["owner","admin"].includes(role);
+ document.querySelectorAll("#role-quick-picker [data-role]").forEach(b=>{
+ const checked=b.dataset.role===active;
+ b.textContent=(checked?"✓  ":"")+({staff:"Mitarbeiter",developer:"Developer",admin:"Administrator"}[b.dataset.role]||"Community");
+ b.setAttribute("aria-pressed",String(checked));b.disabled=locked||roleSaving;
+ b.style.borderColor=checked?"#b58cff":"";b.style.background=checked?"#69439b55":"";b.style.color=checked?"#f6eaff":"";
+ });
+}
+document.querySelectorAll("#role-quick-picker [data-role]").forEach(b=>b.addEventListener("click",async()=>{
+ if(roleSaving||!selected||!["owner","admin"].includes(role))return;
+ const id=selected,old=roles.get(id)||"",next=b.dataset.role;
+ if(id===current?.id||old==="owner"||next===old)return;
+ roleSaving=true;renderRolePicker(id);$("role-quick-status").textContent="Wird gespeichert …";
+ try{
+ const {error}=next?await db.from("staff_access").upsert({user_id:id,role:next},{onConflict:"user_id"}):await db.from("staff_access").delete().eq("user_id",id);
+ if(error)throw error;
+ if(next)roles.set(id,next);else roles.delete(id);
+ $("staff-count").textContent=roles.size;renderPeople();$("role-quick-status").textContent="✓ Rolle gespeichert";
+ }catch(e){$("role-quick-status").textContent="Fehler: "+e.message;}
+ finally{roleSaving=false;if(selected)renderRolePicker(selected);}
+}));
 async function loadDirectory(){
  status("Benutzer und Freigaben werden geladen …");
  const [p,r,b,smp,dn,custom,inv]=await Promise.all([
