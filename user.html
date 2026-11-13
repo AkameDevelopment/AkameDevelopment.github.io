@@ -654,7 +654,7 @@ html body main #content>.person>.akame-profile-actions>.own-profile-edit{
 @media(min-width:650px) and (max-width:1049px){
  html body main #content>.person{min-height:285px!important}
 }
-</style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
+</style><style id="akame-banner-crop-render-20261113">html body main #content>.person>.akame-banner-visual{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;border:0!important;pointer-events:none!important;object-fit:cover!important;z-index:0!important}html body main #content>.person>img:not(.akame-banner-visual){z-index:3!important}</style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 async function resolveShowcaseUrl(value){try{const u=new URL(value);if(!["tenor.com","www.tenor.com"].includes(u.hostname)||!/^\/[A-Za-z0-9_-]+\.gif\/?$/.test(u.pathname))return value;const endpoint="https://wycdpuzlbivtfxwtarzn.supabase.co/functions/v1/resolve-tenor-gif?url="+encodeURIComponent(value);const response=await fetch(endpoint);const data=await response.json();return response.ok&&data.url?data.url:value;}catch{return value;}}
@@ -698,7 +698,7 @@ try{
  if(user?.id===id){const edit=el("a","","own-profile-edit");edit.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l-1.8 1.8a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-2.6v-1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-1.8-1.8A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H5.4v-2.6h1A1.7 1.7 0 0 0 8 10.4a1.7 1.7 0 0 0-.3-1.9l1.8-1.8a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-1H15v1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l1.8 1.8a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1H22v2.6h-1a1.7 1.7 0 0 0-1.6 1Z" transform="translate(-1.7 -0.7) scale(.99)"/></svg>';edit.insertAdjacentHTML("beforeend",'<span class="settings-mobile-label">'+tr("Einstellungen","Settings")+'</span>');edit.setAttribute("aria-label",tr("Einstellungen öffnen","Open settings"));edit.href="profile.html";edit.title=tr("Einstellungen","Settings");person.append(edit);}person.append(avatar,info);root.append(person);
  /* Profile header appearance is public; ownership is enforced on writes by RLS. */
  try{
-  const appearance=await db.from("profile_appearance").select("theme,banner_url,custom_color").eq("user_id",id).maybeSingle();
+  const appearance=await db.from("profile_appearance").select("theme,banner_url,custom_color,banner_position_x,banner_position_y,banner_zoom").eq("user_id",id).maybeSingle();
   if(!appearance.error){
    const themes={violet:["#563485","#241734","#b981ff"],midnight:["#26365c","#101728","#8ca7ec"],rose:["#713a66","#271429","#f2a8d9"],ocean:["#205b74","#112836","#91d7f1"],emerald:["#276259","#112e2b","#83e4ba"]};
    const [first,second,accent]=themes[appearance.data?.theme]||themes.violet;
@@ -710,12 +710,22 @@ try{
    person.style.setProperty("background-image",background,"important");
    person.style.setProperty("background-position","center","important");
    person.style.setProperty("background-size","cover","important");
-   const tenorHost=(()=>{try{const u=new URL(image);if(!["tenor.com","www.tenor.com"].includes(u.hostname))return null;const m=u.pathname.match(/^\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?(?:view\/(?:[^/]*-)?|embed\/)(\d+)\/?$/);return m?"https://tenor.com/embed/"+m[1]:null;}catch{return null;}})();
-   if(tenorHost){
-    const frame=document.createElement("iframe");frame.className="akame-tenor-banner";frame.src=tenorHost;frame.loading="lazy";frame.title="Animated Tenor banner";frame.referrerPolicy="no-referrer";frame.setAttribute("sandbox","allow-scripts allow-same-origin");frame.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;z-index:0";person.insertBefore(frame,person.firstChild);person.style.setProperty("background-image","linear-gradient(120deg,"+first+","+second+")","important");
-   }else if(/^https:\/\/(?:www\.)?tenor\.com\/[A-Za-z0-9_-]+\.gif\/?$/i.test(image)){
-    resolveShowcaseUrl(image).then(resolved=>{if(resolved!==image){person.style.setProperty("background-image",'linear-gradient(90deg,rgba(10,7,19,.68),rgba(11,7,19,.26)),url("'+resolved+'")',"important");}});
+   const frameX=Math.min(100,Math.max(0,Number(appearance.data?.banner_position_x??50)));
+   const frameY=Math.min(100,Math.max(0,Number(appearance.data?.banner_position_y??50)));
+   const frameZoom=Math.min(200,Math.max(100,Number(appearance.data?.banner_zoom??100)));
+   const tenorHost=(()=>{try{const u=new URL(image);if(!["tenor.com","www.tenor.com"].includes(u.hostname))return null;const m=u.pathname.match(/^\\/(?:[a-z]{2}(?:-[a-z]{2})?\\/)?(?:view\\/(?:[^/]*-)?|embed\\/)(\\d+)\\/?$/);return m?"https://tenor.com/embed/"+m[1]:null;}catch{return null;}})();
+   function insertBannerMedia(url,asIframe=false){
+    const media=document.createElement(asIframe?"iframe":"img");media.className="akame-banner-visual";
+    media.src=url;if(asIframe){media.title="Animated Tenor banner";media.referrerPolicy="no-referrer";media.setAttribute("sandbox","allow-scripts allow-same-origin");}else{media.alt="";media.referrerPolicy="no-referrer";}
+    media.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;object-fit:cover;z-index:0";
+    media.style.objectPosition=frameX+"% "+frameY+"%";media.style.transformOrigin=frameX+"% "+frameY+"%";media.style.transform="scale("+(frameZoom/100)+")";
+    person.insertBefore(media,person.firstChild);
+    person.style.setProperty("background-image","none","important");
    }
+   if(tenorHost)insertBannerMedia(tenorHost,true);
+   else if(/^https:\\/\\/(?:www\\.)?tenor\\.com\\/[A-Za-z0-9_-]+\\.gif\\/?$/i.test(image)){
+    resolveShowcaseUrl(image).then(resolved=>{if(resolved!==image)insertBannerMedia(resolved,false);});
+   }else if(image)insertBannerMedia(image,false);
 
   }
  }catch(e){console.warn("Profile appearance unavailable",e);}
