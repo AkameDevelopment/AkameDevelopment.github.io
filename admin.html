@@ -183,7 +183,7 @@ function renderSelection(skipDetails=false){
   input.addEventListener("change",updateBetaSelection);
   label.append(input,document.createTextNode(value));
   if(accepted){const badge=document.createElement("span");badge.className="beta-access-state accepted";badge.textContent="Angenommen";badge.title="Beta-Einladung wurde vom Mitglied angenommen";label.append(badge)}
-  else if(pending||direct){const badge=document.createElement("span");badge.className="beta-access-state";badge.textContent=pending?"⏳ Offen – wartet auf Antwort":"Direkt freigeschaltet";label.append(badge)}
+  else if(pending||direct){const badge=document.createElement("span");badge.className="beta-access-state";badge.textContent=pending?(document.documentElement.lang==="en"?"Sent":"Gesendet"):(document.documentElement.lang==="en"?"Direct access":"Direkt freigeschaltet");label.append(badge)}
   grid.append(label);
  }
  $("beta-mode-toggle").setAttribute("aria-pressed",String(betaRemoveMode));$("beta-mode-toggle").textContent=betaRemoveMode?"← Zurück zu Einladungen":"Beta-Zugriff entfernen";document.querySelector(".beta-manager").classList.toggle("beta-remove-mode",betaRemoveMode);$("beta-invite-selected").textContent=betaRemoveMode?"Ausgewählte Beta-Zugänge entfernen":"Einladung senden";updateBetaSelection();msg("");
