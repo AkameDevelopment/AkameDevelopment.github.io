@@ -45,8 +45,8 @@ async function updateNameCooldown(){
   if(message.textContent.startsWith("Namensänderung gesperrt."))message.textContent="";
  }
 }
-let savedProfileState={bio:"",showMemberSince:true,showDiscordName:false};
-function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==savedProfileState.bio||$("profile-show-member-since").checked!==savedProfileState.showMemberSince||$("profile-show-discord-name").checked!==savedProfileState.showDiscordName;$("profile-save").hidden=!changed;$("profile-save").style.display=changed?"inline-flex":"none";if(changed){$("save-message").textContent="";delete $("save-message").dataset.state;}}
+let savedProfileState={bio:"",showMemberSince:true,showDiscordName:false,spotifyTrack:"",showSpotify:false};
+function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==savedProfileState.bio||$("profile-show-member-since").checked!==savedProfileState.showMemberSince||$("profile-show-discord-name").checked!==savedProfileState.showDiscordName||$("profile-spotify-track").value.trim()!==savedProfileState.spotifyTrack||$("profile-show-spotify").checked!==savedProfileState.showSpotify;$("profile-save").hidden=!changed;$("profile-save").style.display=changed?"inline-flex":"none";if(changed){$("save-message").textContent="";delete $("save-message").dataset.state;}}
 function lang(){return window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang")||"de"}
 function showSignedOut(){
  $("profile-loading").hidden=true;$("profile-guest").hidden=false;$("profile-content").hidden=true;
@@ -62,8 +62,8 @@ async function showProfile(user){
  $("profile-created").textContent=new Date(user.created_at).toLocaleDateString(lang()==="de"?"de-DE":"en-US",{day:"2-digit",month:"long",year:"numeric"});
  const url=avatarUrl(user);
  avatar.hidden=!url;fallback.hidden=!!url;if(url)avatar.src=url;
- let {data:existing,error:profileError}=await db.from("user_profiles").select("bio,display_name,show_member_since,show_discord_name").eq("user_id",user.id).maybeSingle();
- if(!profileError&&!existing){const created=await db.from("user_profiles").insert({user_id:user.id}).select("bio,display_name,show_member_since,show_discord_name").single();existing=created.data;profileError=created.error;if(profileError?.code==="23505"){const retry=await db.from("user_profiles").select("bio,display_name,show_member_since,show_discord_name").eq("user_id",user.id).single();existing=retry.data;profileError=retry.error;}}
+ let {data:existing,error:profileError}=await db.from("user_profiles").select("bio,display_name,show_member_since,show_discord_name,favorite_spotify_track,show_favorite_spotify").eq("user_id",user.id).maybeSingle();
+ if(!profileError&&!existing){const created=await db.from("user_profiles").insert({user_id:user.id}).select("bio,display_name,show_member_since,show_discord_name,favorite_spotify_track,show_favorite_spotify").single();existing=created.data;profileError=created.error;if(profileError?.code==="23505"){const retry=await db.from("user_profiles").select("bio,display_name,show_member_since,show_discord_name,favorite_spotify_track,show_favorite_spotify").eq("user_id",user.id).single();existing=retry.data;profileError=retry.error;}}
  const [beta,staff]=await Promise.all([
   db.from("beta_access").select("project_slug").eq("user_id",user.id),
   db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle()
@@ -72,9 +72,9 @@ async function showProfile(user){
  $("profile-display-name").value=profileError?"":(existing?.display_name||"");
  $("profile-name").textContent=existing?.display_name||name;
  if(existing?.display_name)$("profile-public-link").href="user.html?name="+encodeURIComponent(existing.display_name);
- $("profile-show-member-since").checked=existing?.show_member_since!==false; $("profile-show-discord-name").checked=existing?.show_discord_name===true;
+ $("profile-show-member-since").checked=existing?.show_member_since!==false; $("profile-show-discord-name").checked=existing?.show_discord_name===true; $("profile-spotify-track").value=existing?.favorite_spotify_track||""; $("profile-show-spotify").checked=existing?.show_favorite_spotify===true;
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
- savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked,showDiscordName:$("profile-show-discord-name").checked};updateSaveVisibility();await updateNameCooldown();await loadProfileMods(user);
+ savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked,showDiscordName:$("profile-show-discord-name").checked,spotifyTrack:$("profile-spotify-track").value.trim(),showSpotify:$("profile-show-spotify").checked};updateSaveVisibility();await updateNameCooldown();await loadProfileMods(user);
  const role=staff.data?.role;
  $("profile-role").textContent=role==="owner"?"Owner":role==="admin"?"Administrator":role==="staff"?"Team":"Community";
  const betas=beta.error?[]:(beta.data||[]);
@@ -92,18 +92,18 @@ $("profile-login").addEventListener("click",async()=>{
  }catch(e){$("profile-login").disabled=false;$("login-error").textContent=e.message||String(e)}
 });
 $("profile-bio").addEventListener("input",updateSaveVisibility);
-$("profile-show-member-since").addEventListener("change",updateSaveVisibility);$("profile-show-discord-name").addEventListener("change",updateSaveVisibility);
+$("profile-show-member-since").addEventListener("change",updateSaveVisibility);$("profile-show-discord-name").addEventListener("change",updateSaveVisibility);$("profile-spotify-track").addEventListener("input",updateSaveVisibility);$("profile-show-spotify").addEventListener("change",updateSaveVisibility);
 $("profile-save").addEventListener("click",async()=>{
  const {data:{user},error:authError}=await db.auth.getUser();
  if(authError||!user){showError("Bitte zuerst anmelden.");return}
  const bio=$("profile-bio").value.trim();
- const showMemberSince=$("profile-show-member-since").checked; const showDiscordName=$("profile-show-discord-name").checked;
+ const showMemberSince=$("profile-show-member-since").checked; const showDiscordName=$("profile-show-discord-name").checked; const spotifyInput=$("profile-spotify-track").value.trim(); const spotifyMatch=spotifyInput.match(/^https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]{22})(?:[/?#].*)?$/);if(spotifyInput&&!spotifyMatch){showError("Bitte einen gültigen Spotify-Songlink einfügen.");return}const spotifyTrack=spotifyMatch?"https://open.spotify.com/track/"+spotifyMatch[1]:"";const showSpotify=$("profile-show-spotify").checked;if(showSpotify&&!spotifyTrack){showError("Bitte zuerst einen Spotify-Song auswählen.");return}
  if(bio.length>400){showError("Maximal 400 Zeichen.");return}
  const btn=$("profile-save");btn.disabled=true;
- const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,show_member_since:showMemberSince,show_discord_name:showDiscordName,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,show_member_since:showMemberSince,show_discord_name:showDiscordName,favorite_spotify_track:spotifyTrack||null,show_favorite_spotify:showSpotify,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  btn.disabled=false;
  if(error)showError("Speichern fehlgeschlagen: "+error.message);
- else{savedProfileState={bio,showMemberSince,showDiscordName};updateSaveVisibility();$("member-since-visibility-note").textContent=showMemberSince?"Für andere sichtbar":"Nur für dich und Administratoren sichtbar";$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
+ else{$("profile-spotify-track").value=spotifyTrack;savedProfileState={bio,showMemberSince,showDiscordName,spotifyTrack,showSpotify};updateSaveVisibility();$("member-since-visibility-note").textContent=showMemberSince?"Für andere sichtbar":"Nur für dich und Administratoren sichtbar";$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
 });
 $("profile-change-name").addEventListener("click",async()=>{
  const input=$("profile-display-name"),button=$("profile-change-name"),message=$("profile-name-message");
