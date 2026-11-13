@@ -27,12 +27,12 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 .ghost{background:#ffffff0b;border:1px solid #ffffff29;border-radius:10px;padding:10px 13px}
 .beta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:16px 0}.beta label{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid #ffffff21;border-radius:10px;background:#ffffff06;cursor:pointer;font-size:13px}.beta input{accent-color:#af84f0;width:16px;height:16px}.beta label:has(input:checked){border-color:#ad88e9;background:#9e78ef22}
 .notice{font-size:12px;color:#bfb3cb;margin:10px 0}.error{color:#ffb7ca}.success{color:#c7a6ff}
-/* Wiederhergestellte Benutzerverwaltung: breites linkes Profil, schmale rechte Nutzerliste. */
-@media(min-width:811px){#dashboard>.layout{grid-template-columns:minmax(0,1fr) 340px!important;gap:20px!important;align-items:start!important}#admin-controls{width:340px!important;max-width:340px!important;justify-self:end!important}#people{max-height:420px!important}#selected{margin-top:0!important}#selected .separator{margin:20px 0!important}}
+/* Benutzerverwaltung als eigene Sektion; Bearbeitung im Dialog ohne Layout-Verschiebung. */
+
 [hidden]{display:none!important}@media(max-width:810px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.toplinks{gap:8px}.toplinks a{font-size:12px}}
 @media(max-width:480px){.grid{grid-template-columns:1fr}.beta{grid-template-columns:1fr}.top{padding:12px 15px}.shell{padding:25px 15px}.brand{font-size:15px}.panel{padding:17px}}
 .admin-profile-detail{margin:17px 0 22px;padding:17px;border:1px solid #aa84ec45;border-radius:13px;background:#ffffff06}.admin-profile-detail h3{margin:0 0 13px;font-size:17px}.admin-profile-detail .profile{margin-bottom:12px}.admin-profile-detail .profile div{min-width:0}.admin-profile-detail .profile strong,.admin-profile-detail .profile small{display:block;overflow-wrap:anywhere}.admin-profile-detail label{display:block;margin:12px 0 8px;font-weight:700;color:#e9d8ff}.admin-profile-detail textarea.input{resize:vertical;min-height:115px}.admin-profile-detail .controls{margin-top:11px}.admin-profile-detail .notice{overflow-wrap:anywhere}
-</style><link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261112-purple-anime-large-2"><link rel="shortcut icon" href="favicon.svg?v=20261112-purple-anime-large-2"></head>
+#admin-controls{margin:0 0 22px}#admin-controls .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-height:300px;overflow:auto}#admin-controls .person{width:100%;text-align:left}#admin-controls>.separator{display:none}#selected{position:fixed;inset:0;z-index:200;background:#05030bd9;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(8px)}#selected .selected-dialog{width:min(680px,100%);max-height:min(90vh,950px);overflow:auto;padding:25px;background:#1c1428;border:1px solid #ad83e36e;border-radius:20px;box-shadow:0 30px 90px #000b}#selected .selected-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px}#selected .selected-dialog-head h2{margin:0}#selected .admin-profile-detail{margin:18px 0}#selected .separator{margin:20px 0}@media(max-width:600px){#selected{padding:10px}#selected .selected-dialog{padding:17px;max-height:94vh}#admin-controls .people{grid-template-columns:1fr}} </style><link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261112-purple-anime-large-2"><link rel="shortcut icon" href="favicon.svg?v=20261112-purple-anime-large-2"></head>
 <body>
 <header><div class="top"><a href="index.html" class="brand">Akame<b>Development</b></a><div class="toplinks"><a href="index.html">← Startseite</a><div id="discord-account" class="discord-account" hidden><button type="button" id="discord-account-toggle" class="discord-account-link" aria-expanded="false" aria-controls="discord-account-menu"><img id="discord-account-avatar" alt="" referrerpolicy="no-referrer"><span id="discord-account-name">Discord</span></button><div id="discord-account-menu" class="discord-account-menu" hidden><a href="profile.html">Mein Profil</a><button type="button" id="discord-account-logout">Abmelden</button></div></div></div></div></header>
 <main class="shell">
@@ -42,17 +42,12 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 <section id="denied-view" class="panel" hidden><h2>Kein Zugriff</h2><p>Dein Discord-Konto ist angemeldet, hat aber keine Mitarbeiterberechtigung. Öffne die öffentliche Website oder wende dich an einen Administrator.</p><a href="index.html">Zur Startseite</a></section>
 <div id="dashboard" hidden>
 <div class="grid"><div class="stat"><strong id="user-count">–</strong><span>Registrierte Benutzer</span></div><div class="stat"><strong id="staff-count">–</strong><span>Team-Mitglieder</span></div><div class="stat"><strong id="beta-count">–</strong><span>Beta-Freigaben</span></div></div>
-<div class="layout">
-<div>
-<section class="panel"><h2>Mein Discord-Profil</h2><div class="profile"><img id="my-avatar" alt="Dein Discord-Profilbild" referrerpolicy="no-referrer"><div><strong id="my-name">Discord-Benutzer</strong><small id="my-role">Mitarbeiter</small></div></div></section>
-<section class="panel" style="margin-top:20px"><h2>Community & Moderation</h2><p>Kommentare zu Mods lesen, eigene Kommentare löschen und als Mitarbeiter Diskussionen moderieren.</p><div class="controls"><a class="ghost" href="community.html#discussions">Mod-Diskussionen ansehen</a><a class="ghost" href="project.html?mod=modcore#mod-comments">Core-Kommentare</a></div></section>
-</div>
 <div id="admin-controls" class="panel" hidden>
 <h2>Benutzerverwaltung</h2><p class="notice">Nur Administratoren können Rollen und Beta-Zugänge ändern.</p>
 <input id="search" class="input" type="search" placeholder="Discord-Benutzer suchen …" aria-label="Benutzer suchen">
 <div id="people" class="people" aria-live="polite"></div>
 <hr class="separator">
-<div id="selected" hidden><h2 id="selected-name">Benutzer</h2><p id="selected-uid" class="notice"></p>
+<div id="selected" hidden role="dialog" aria-modal="true" aria-labelledby="selected-name"><div class="selected-dialog"><div class="selected-dialog-head"><h2 id="selected-name">Benutzer</h2><button type="button" id="close-selected" class="ghost" aria-label="Benutzerverwaltung schließen">✕ Schließen</button></div><p id="selected-uid" class="notice"></p>
 <section class="admin-profile-detail" aria-label="Benutzerprofil">
  <h3>Benutzerprofil</h3>
  <div class="profile"><img id="selected-avatar" alt="Discord-Profilbild" loading="lazy"><div><strong id="selected-profile-name">Benutzer</strong><small id="selected-discord-name" class="notice"></small><small id="selected-joined" class="notice"></small><small id="selected-joined-visibility" class="notice"></small></div></div>
@@ -66,7 +61,13 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 <hr class="separator"><h2>Beta-Zugriffe</h2><p class="notice">Diese Auswahl wird pro Benutzer gespeichert. Die tatsächlichen Beta-Downloads werden später separat per RLS/Storage abgesichert.</p>
 <div id="beta-options" class="beta"></div>
 <p id="edit-message" class="notice" role="status" aria-live="polite"></p>
-</div></div></div></div>
+</div></div>
+<div class="layout">
+<div>
+<section class="panel"><h2>Mein Discord-Profil</h2><div class="profile"><img id="my-avatar" alt="Dein Discord-Profilbild" referrerpolicy="no-referrer"><div><strong id="my-name">Discord-Benutzer</strong><small id="my-role">Mitarbeiter</small></div></div></section>
+<section class="panel" style="margin-top:20px"><h2>Community & Moderation</h2><p>Kommentare zu Mods lesen, eigene Kommentare löschen und als Mitarbeiter Diskussionen moderieren.</p><div class="controls"><a class="ghost" href="community.html#discussions">Mod-Diskussionen ansehen</a><a class="ghost" href="project.html?mod=modcore#mod-comments">Core-Kommentare</a></div></section>
+</div>
+</div></div></div>
 <section id="news-manager" class="panel" style="margin-top:24px" hidden><h2>News & Releases / Update</h2><p>Erstelle News, Releases oder Updates pro Mod. Beiträge können gespeichert, veröffentlicht, bearbeitet, mit Bildern versehen oder gelöscht werden.</p><form id="news-form" style="display:grid;gap:12px"><h3 id="news-id">Neue Meldung</h3><div style="display:grid;gap:5px"><label for="news-kind" style="font-weight:750;color:#e6d4ff">1. Art des Beitrags / Post type</label><select id="news-kind" class="input" aria-label="Art des Beitrags"><option value="news">News</option><option value="release">Release</option><option value="update">Update</option></select><small style="color:#aa9abd">News und Releases erscheinen gemeinsam. Updates erscheinen im Update-Bereich.</small></div><div style="display:grid;gap:5px"><label for="news-mod" style="font-weight:750;color:#e6d4ff">2. Zugehörige Mod / Related mod</label><select id="news-mod" class="input" aria-label="Zugehörige Mod"></select><small style="color:#aa9abd">„Allgemein“ gilt für alle Mods.</small></div><label id="news-version-row">Version (für Release / Update)<input id="news-version" class="input" type="text" maxlength="40" placeholder="z. B. 0.2.1" autocomplete="off"><small style="color:#aa9abd">Optional – bei Release oder Update wird sie öffentlich angezeigt.</small></label><label>Titel<input id="news-title" class="input" minlength="3" maxlength="140" required></label><label>Text<textarea id="news-body" class="input" style="min-height:150px;color:#fff;font:inherit" minlength="3" maxlength="8000" required></textarea></label><label>Bild (optional, PNG/JPG/WebP bis 5 MB)<input type="file" id="news-image" accept="image/png,image/jpeg,image/webp" class="input"></label><img id="news-preview" alt="Bildvorschau" hidden style="display:block;max-width:min(100%,480px);max-height:275px;object-fit:contain;border-radius:12px"><button type="button" id="news-remove-image" class="ghost" hidden>Bild entfernen</button><label><input id="news-published" type="checkbox"> Veröffentlichen</label><div class="controls"><button class="primary" id="news-save" type="submit">Entwurf speichern</button><button class="ghost" type="button" id="news-cancel" hidden>Abbrechen</button><button class="ghost" type="button" id="news-delete" hidden>Löschen</button></div></form><p id="news-message" class="notice" role="status"></p><h2>Meldungen</h2><div id="news-list"></div></section><section id="mod-visibility-manager" class="panel" style="margin-top:24px" hidden><h2>Mod-Sichtbarkeit verwalten</h2><p>Lege pro Mod fest, ob sie öffentlich, nur für freigeschaltete Beta-Tester oder ausgeblendet ist. Die Mod-Daten bleiben erhalten.</p><div id="mod-visibility-list" aria-live="polite"></div><p id="mod-visibility-status" class="notice" role="status"></p></section></main>
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
@@ -91,7 +92,7 @@ function renderPeople(){
   const b=document.createElement("button");b.type="button";b.className="person"+(selected===p.user_id?" selected":"");
   const img=document.createElement("img");img.src=avatar(p.avatar_url);img.alt="";img.loading="lazy";
   const wrap=document.createElement("span"),strong=document.createElement("b"),small=document.createElement("small");strong.textContent=customNames.get(p.user_id)||p.display_name;small.textContent="Discord: "+(discordNames.get(p.user_id)||p.display_name||"Unbekannt")+" · "+(roles.get(p.user_id)||"Benutzer");wrap.append(strong,small);b.append(img,wrap);
-  b.addEventListener("click",()=>{selected=p.user_id;renderPeople();renderSelection();});root.append(b);
+  b.addEventListener("click",()=>{selected=p.user_id;renderPeople();renderSelection();$("close-selected").focus();});root.append(b);
  }
 }
 async function loadSelectedProfile(userId){
@@ -118,6 +119,10 @@ $("save-profile").addEventListener("click",async()=>{
  if(!error)$("selected-profile-name").textContent=displayName||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";
  message.textContent=error?(error.code==="23505"?"Dieser Anzeigename ist bereits vergeben.":"Speichern fehlgeschlagen: "+error.message):"Profiländerungen erfolgreich gespeichert.";
 });
+function closeSelected(){selected=null;$("selected").hidden=true;renderPeople();}
+$("close-selected").addEventListener("click",closeSelected);
+$("selected").addEventListener("click",e=>{if(e.target===$("selected"))closeSelected();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("selected").hidden)closeSelected();});
 function renderSelection(){
  const p=people.find(x=>x.user_id===selected);$("selected").hidden=!p;if(!p)return;
  $("selected-name").textContent=customNames.get(p.user_id)||p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
