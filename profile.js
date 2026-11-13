@@ -32,7 +32,7 @@ async function showProfile(user){
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
  savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked};updateSaveVisibility();
  const role=staff.data?.role;
- $("profile-role").textContent=role==="admin"?"Administrator":role==="staff"?"Team":"Community";
+ $("profile-role").textContent=role==="owner"?"Owner":role==="admin"?"Administrator":role==="staff"?"Team":"Community";
  const betas=beta.error?[]:(beta.data||[]);
  $("profile-beta-count").textContent=String(betas.length);
  const container=$("profile-beta-list");container.replaceChildren();
@@ -69,9 +69,9 @@ $("profile-change-name").addEventListener("click",async()=>{
  const {data:{user},error:authError}=await db.auth.getUser();
  if(authError||!user){message.textContent="Bitte erneut anmelden.";return}
  button.disabled=true;
- let {data:updated,error}=await db.from("user_profiles").update({display_name:displayName,updated_at:new Date().toISOString()}).eq("user_id",user.id).select("display_name").maybeSingle();
+ let {data:updated,error}=await db.from("user_profiles").update({display_name:displayName}).eq("user_id",user.id).select("display_name").maybeSingle();
  if(!error&&!updated){
-  const created=await db.from("user_profiles").upsert({user_id:user.id,display_name:displayName,updated_at:new Date().toISOString()},{onConflict:"user_id"}).select("display_name").single();
+  const created=await db.from("user_profiles").upsert({user_id:user.id,display_name:displayName},{onConflict:"user_id"}).select("display_name").single();
   updated=created.data;error=created.error;
  }
  button.disabled=false;
