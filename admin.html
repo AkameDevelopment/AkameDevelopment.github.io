@@ -169,10 +169,10 @@ async function init(){
  if(error||!data?.user){status("Bitte melde dich mit Discord an.");show("login-view");return;}
  current=data.user;
  const {data:access,error:roleError}=await db.from("staff_access").select("role").eq("user_id",current.id).maybeSingle();
- if(roleError||!["admin","staff"].includes(access?.role)){status("Keine Mitarbeiterberechtigung vorhanden.");show("denied-view");$("logout").hidden=false;return;}
+ if(roleError||!["owner","admin","staff"].includes(access?.role)){status("Keine Mitarbeiterberechtigung vorhanden.");show("denied-view");$("logout").hidden=false;return;}
  role=access.role;show("dashboard");$("logout").hidden=false;
  const meta=current.user_metadata||{};$("my-name").textContent=String(meta.full_name||meta.name||meta.user_name||"Discord-Benutzer");
- $("my-avatar").src=avatar(meta.avatar_url);$("my-role").textContent=["owner","admin"].includes(role)?"Administrator":"Mitarbeiter";
+ $("my-avatar").src=avatar(meta.avatar_url);$("my-role").textContent=role==="owner"?"Owner":role==="admin"?"Administrator":"Mitarbeiter";
  if(["owner","admin"].includes(role)){$("admin-controls").hidden=false;await loadDirectory();}
  else{status("Mitarbeiterzugriff bestätigt.");$("user-count").textContent="–";$("staff-count").textContent="–";$("beta-count").textContent="–";}
 }
