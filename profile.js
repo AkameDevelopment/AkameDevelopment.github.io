@@ -17,15 +17,16 @@ async function showProfile(user){
  $("profile-created").textContent=new Date(user.created_at).toLocaleDateString(lang()==="de"?"de-DE":"en-US",{day:"2-digit",month:"long",year:"numeric"});
  const url=avatarUrl(user);
  avatar.hidden=!url;fallback.hidden=!!url;if(url)avatar.src=url;
- const [saved,beta,staff]=await Promise.all([
-  db.from("user_profiles").select("bio,display_name,show_member_since").eq("user_id",user.id).maybeSingle(),
+ let {data:existing,error:profileError}=await db.from("user_profiles").select("bio,display_name,show_member_since").eq("user_id",user.id).maybeSingle();
+ if(!profileError&&!existing){const created=await db.from("user_profiles").insert({user_id:user.id}).select("bio,display_name,show_member_since").single();existing=created.data;profileError=created.error;if(profileError?.code==="23505"){const retry=await db.from("user_profiles").select("bio,display_name,show_member_since").eq("user_id",user.id).single();existing=retry.data;profileError=retry.error;}}
+ const [beta,staff]=await Promise.all([
   db.from("beta_access").select("project_slug").eq("user_id",user.id),
   db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle()
  ]);
- $("profile-bio").value=saved.error?"":(saved.data?.bio||"");
- $("profile-display-name").value=saved.error?"":(saved.data?.display_name||"");
- $("profile-name").textContent=saved.data?.display_name||name;
- $("profile-show-member-since").checked=saved.data?.show_member_since!==false;
+ $("profile-bio").value=profileError?"":(existing?.bio||"");
+ $("profile-display-name").value=profileError?"":(existing?.display_name||"");
+ $("profile-name").textContent=existing?.display_name||name;
+ $("profile-show-member-since").checked=existing?.show_member_since!==false;
  $("member-since-visibility-note").textContent=saved.data?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
  const role=staff.data?.role;
  $("profile-role").textContent=role==="admin"?"Administrator":role==="staff"?"Team":"Community";
@@ -48,14 +49,25 @@ $("profile-save").addEventListener("click",async()=>{
  if(authError||!user){showError("Bitte zuerst anmelden.");return}
  const bio=$("profile-bio").value.trim();
  const showMemberSince=$("profile-show-member-since").checked;
- const displayName=$("profile-display-name").value.trim();
- if(displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){showError("Ungültiger Anzeigename (max. 32 Zeichen).");return}
  if(bio.length>400){showError("Maximal 400 Zeichen.");return}
  const btn=$("profile-save");btn.disabled=true;
- const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,display_name:displayName,show_member_since:showMemberSince,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ const {error}=await db.from("user_profiles").upsert({user_id:user.id,bio,show_member_since:showMemberSince,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  btn.disabled=false;
  if(error)showError("Speichern fehlgeschlagen: "+error.message);
- else{$("member-since-visibility-note").textContent=showMemberSince?"Für andere sichtbar":"Nur für dich und Administratoren sichtbar";$("profile-name").textContent=displayName||String(user.user_metadata?.full_name||user.user_metadata?.name||user.user_metadata?.user_name||"Discord User");$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
+ else{$("member-since-visibility-note").textContent=showMemberSince?"Für andere sichtbar":"Nur für dich und Administratoren sichtbar";$("save-message").textContent="Gespeichert ✓";$("save-message").dataset.state="success"}
+});
+$("profile-change-name").addEventListener("click",async()=>{
+ const input=$("profile-display-name"),button=$("profile-change-name"),message=$("profile-name-message");
+ if(input.readOnly){input.readOnly=false;input.focus();input.select();button.textContent="Namen speichern";message.textContent="Wähle einen Namen mit bis zu 32 Zeichen.";return}
+ const displayName=input.value.trim();
+ if(!displayName||displayName.length>32||/[\\x00-\\x1F\\x7F]/.test(displayName)){message.textContent="Bitte 1–32 gültige Zeichen eingeben.";return}
+ const {data:{user},error:authError}=await db.auth.getUser();
+ if(authError||!user){message.textContent="Bitte erneut anmelden.";return}
+ button.disabled=true;
+ const {error}=await db.from("user_profiles").update({display_name:displayName,updated_at:new Date().toISOString()}).eq("user_id",user.id);
+ button.disabled=false;
+ if(error){message.textContent="Fehler: "+error.message;return}
+ $("profile-name").textContent=displayName;input.value=displayName;input.readOnly=true;button.textContent="Namen ändern";message.textContent="Anzeigename gespeichert ✓";
 });
 $("profile-logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showError(error.message);else showSignedOut()});
 try{const {data,error}=await db.auth.getUser();if(error||!data.user)showSignedOut();else await showProfile(data.user)}
