@@ -30,7 +30,7 @@ if(root){
    const actions=document.createElement("div");actions.style.cssText="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px";
    for(const [approve,label] of [[true,tr("Freigeben","Approve")],[false,tr("Ablehnen","Reject")]]){
     const btn=document.createElement("button");btn.type="button";btn.className="ghost";btn.textContent=label;
-    btn.addEventListener("click",async()=>{if(!await confirmReview(item,approve))return;for(const b of actions.querySelectorAll("button"))b.disabled=true;const {error}=await db.rpc("review_media_request",{p_id:item.id,p_approve:approve});if(error){state.textContent=error.message;for(const b of actions.querySelectorAll("button"))b.disabled=false;return}await refresh()});actions.append(btn);
+    btn.addEventListener("click",async()=>{if(!await confirmReview(item,approve))return;for(const b of actions.querySelectorAll("button"))b.disabled=true;const {error}=await db.rpc("review_media_request",{p_id:item.id,p_approve:approve});if(error){state.textContent=error.message;for(const b of actions.querySelectorAll("button"))b.disabled=false;return}await refresh();state.textContent=approve?tr("Anfrage freigegeben.","Request approved."):tr("Anfrage abgelehnt.","Request rejected.")});actions.append(btn);
    }card.append(actions);list.append(card);
   }
  }
@@ -43,10 +43,20 @@ if(root){
  .media-review-notification-button:hover{background:#a982ff30}
  .media-review-notification-count{min-width:21px;padding:1px 6px;border-radius:999px;background:#b68aff;color:#130c20;text-align:center;font-size:12px;font-weight:800}
  .media-review-notification-count[hidden]{display:none}
- #media-review-manager.media-review-popover{max-width:720px;margin:0 0 22px auto!important;box-shadow:0 14px 40px #0005}
+ .media-review-notification{z-index:25}
+ .media-review-notification.is-open{z-index:90}
+ #media-review-manager.media-review-popover{position:absolute;z-index:100;top:calc(100% + 10px);right:0;width:min(560px,calc(100vw - 32px));max-width:none;margin:0!important;padding:18px!important;background:#1a1228;border:1px solid #a982ff70;border-radius:16px;box-shadow:0 24px 65px #000b;max-height:var(--review-menu-max-height,75vh);overflow-y:auto;overscroll-behavior:contain}
+ #media-review-manager.media-review-popover .request-admin-head{gap:12px;align-items:center}
+ #media-review-manager.media-review-popover .request-admin-head h2{font-size:17px;margin:3px 0}
+ #media-review-manager.media-review-popover .request-admin-head p{font-size:12px;line-height:1.5}
+ #media-review-manager.media-review-popover #media-review-list article{padding:13px!important;margin:10px 0!important}
+ #media-review-manager.media-review-popover #media-review-list article button{border-radius:9px}
+ #media-review-manager.media-review-popover #media-review-list article button:first-child{border-color:#a982ff88;background:#a982ff1d}
+ #media-review-manager.media-review-popover #media-review-list article button:last-child{border-color:#e4799270}
+ 
  #media-review-manager.media-review-popover[hidden]{display:none!important}
- #media-review-manager.media-review-popover #media-review-list{max-height:min(65vh,650px);overflow-y:auto;overscroll-behavior:contain}
- @media(max-width:650px){#media-review-manager.media-review-popover{max-width:100%}#media-review-manager.media-review-popover #media-review-list{max-height:65vh}}
+ #media-review-manager.media-review-popover #media-review-list{max-height:none;overflow:visible}
+ @media(max-width:650px){#media-review-manager.media-review-popover{width:min(440px,calc(100vw - 28px));padding:14px!important}#media-review-manager.media-review-popover .request-admin-head{flex-wrap:wrap}}
  .media-review-confirm{border:1px solid #a982ff66;border-radius:18px;padding:0;max-width:min(440px,calc(100vw - 30px));width:100%;background:#1c1428;color:#f8f1ff;box-shadow:0 24px 90px #000b}
  .media-review-confirm::backdrop{background:#06030bd4;backdrop-filter:blur(5px)}
  .media-review-confirm-body{padding:24px;display:grid;gap:12px}
@@ -58,8 +68,12 @@ if(root){
  .media-review-confirm-actions button{border-radius:10px;padding:9px 14px}
  .media-review-confirm-actions .danger{background:#8b3455;color:white}
  `;document.head.append(styles);
- root.classList.add("media-review-popover");root.before(notification);
- notificationButton.addEventListener("click",async()=>{const open=root.hidden;root.hidden=!open;notificationButton.setAttribute("aria-expanded",String(open));if(open)await refresh()});
+ root.classList.add("media-review-popover");root.before(notification);notification.append(root);
+ function setOpen(open){root.hidden=!open;notificationButton.setAttribute("aria-expanded",String(open));notification.classList.toggle("is-open",open);if(open){const rect=notificationButton.getBoundingClientRect();root.style.setProperty("--review-menu-max-height",Math.max(240,window.innerHeight-rect.bottom-20)+"px")}}
+ notificationButton.addEventListener("click",async()=>{const open=root.hidden;setOpen(open);if(open)await refresh()});
+ document.addEventListener("pointerdown",event=>{if(!root.hidden&&!notification.contains(event.target))setOpen(false)});
+ document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!root.hidden&&!confirmDialog.open){setOpen(false);notificationButton.focus()}});
+ window.addEventListener("resize",()=>{if(!root.hidden)setOpen(true)});
  const {data:{user}}=await db.auth.getUser();
  if(user){const {data}=await db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle();if(["owner","admin"].includes(data?.role)){notification.hidden=false;root.hidden=true;root.querySelector("#media-review-refresh").onclick=refresh;await refresh();setInterval(()=>{if(!document.hidden)void refresh()},45000)}}
  document.addEventListener("akame-language-change",()=>{notification.querySelector(".media-review-button-label").textContent=tr("Freigaben","Approvals");if(!notification.hidden)void refresh()});
