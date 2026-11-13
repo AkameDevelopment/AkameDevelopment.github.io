@@ -305,6 +305,25 @@ html body main #content>.person{
 @media(max-width:650px){
  html body:has(main #content>.person){background-attachment:scroll!important}
 }
+</style><style id="akame-profile-background-visible-v2">
+/* Explicit profile-page selectors, without :has() dependency. */
+html body{background:radial-gradient(ellipse 85% 60% at 50% -12%,#43216b 0%,#20132f 40%,transparent 77%),linear-gradient(155deg,#0e0a18,#150d23 58%,#0c0a15)!important;background-attachment:fixed!important}
+html body main #content{background:linear-gradient(155deg,#1b122a 0%,#150f22 100%)!important;border-color:#9e6bd350!important}
+html body main #content .person{
+ background:linear-gradient(115deg,rgba(102,50,161,.63) 0%,rgba(57,29,94,.91) 48%,rgba(29,18,48,.98) 100%)!important;
+ border:1px solid #a66be46b!important;
+ border-radius:20px!important;
+ box-shadow:0 14px 45px #0904126b,inset 0 1px 0 #ffffff1c!important;
+ position:relative!important;
+}
+html body main #content .person::before{
+ content:""!important;position:absolute!important;inset:0!important;width:auto!important;height:auto!important;
+ top:0!important;right:0!important;border-radius:inherit!important;
+ background:radial-gradient(ellipse at 92% 10%,#bd81f72b,transparent 48%),linear-gradient(90deg,transparent 70%,#b77fff0b)!important;
+ pointer-events:none!important;
+}
+html body main #content .person>*{position:relative;z-index:1}
+@media(max-width:650px){html body{background-attachment:scroll!important}}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
