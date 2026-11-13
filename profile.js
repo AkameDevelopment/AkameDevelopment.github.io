@@ -163,3 +163,6 @@ void setupGallery();
 
 function updateSpotifyLanguage(){const en=lang()==="en";document.querySelectorAll("[data-spotify-de]").forEach(node=>{node.textContent=node.getAttribute(en?"data-spotify-en":"data-spotify-de")});}
 document.addEventListener("akame-language-change",updateSpotifyLanguage);document.addEventListener("DOMContentLoaded",updateSpotifyLanguage);
+
+// Make Spotify URLs easy to replace: select the entire link on click or focus.
+for(const id of ["profile-spotify-track","profile-spotify-track-2","profile-spotify-track-3"]){const field=document.getElementById(id);if(!field)continue;const selectUrl=()=>{if(field.value)field.select()};field.addEventListener("focus",selectUrl);field.addEventListener("click",selectUrl)}
