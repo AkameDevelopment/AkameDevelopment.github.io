@@ -444,3 +444,24 @@ html body header>.akame-menu-panel summary::-webkit-details-marker{display:none!
 html body header>.akame-menu-panel summary::marker{content:""!important}
 html body header>.akame-menu-panel summary::after{content:""!important;display:block!important;flex:none!important;width:8px!important;height:8px!important;border-right:2px solid #c9a9f2!important;border-bottom:2px solid #c9a9f2!important;transform:rotate(45deg)!important;transition:transform .18s ease!important;margin-right:4px!important}
 html body header>.akame-menu-panel details[open]>summary::after{transform:rotate(225deg)!important}
+
+/* Header v5: single canonical sizing across all pages, including iOS Safari. */
+@media(max-width:850px){
+ html body header{height:66px!important;min-height:66px!important;max-height:66px!important}
+ html body header>.wrap.nav.akame-site-nav{height:66px!important;min-height:66px!important;max-height:66px!important;display:flex!important;align-items:center!important;gap:10px!important;width:calc(100% - 32px)!important;margin-inline:16px!important;padding:0!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{flex:1 1 auto!important;min-width:0!important;max-width:none!important;margin:0!important;font-size:15px!important;line-height:22px!important;white-space:nowrap!important}
+ html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:15px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{appearance:none!important;-webkit-appearance:none!important;display:grid!important;place-items:center!important;position:relative!important;order:1!important;flex:0 0 42px!important;width:42px!important;min-width:42px!important;max-width:42px!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:0!important;border:1px solid #9167bd90!important;border-radius:12px!important;background:#291a3a!important;color:#e8d4ff!important;font-size:0!important;line-height:1!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:first-child{display:grid!important;place-items:center!important;width:22px!important;height:22px!important;font-size:0!important;line-height:0!important;visibility:visible!important;opacity:1!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button svg{display:block!important;width:21px!important;height:21px!important;visibility:visible!important;opacity:1!important;stroke:currentColor!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:nth-child(2){display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{order:2!important;flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;display:flex!important;align-items:center!important;justify-content:center!important;margin:0!important;padding:0!important;gap:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{display:flex!important;align-items:center!important;justify-content:center!important;width:44px!important;height:44px!important;margin:0!important}
+ html body header .akame-account-trigger{display:grid!important;place-items:center!important;box-sizing:border-box!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-height:44px!important;padding:3px!important;border-radius:50%!important}
+ html body header .akame-account-trigger img{width:36px!important;height:36px!important;max-width:36px!important;max-height:36px!important;object-fit:cover!important;border-radius:50%!important}
+ html body header>.akame-menu-panel.open{top:66px!important;height:calc(100dvh - 66px)!important}
+}
+@media(max-width:380px){
+ html body header>.wrap.nav.akame-site-nav{gap:7px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand,html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:13px!important}
+}
