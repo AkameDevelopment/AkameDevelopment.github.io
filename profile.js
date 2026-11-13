@@ -136,7 +136,7 @@ async function setupGallery(){
  const validUrl=value=>{try{const u=new URL(value);return u.protocol==="https:"&&!u.username&&!u.password&&value.length<=2000;}catch{return false;}};
  async function render(){
   const {data,error}=await db.from("profile_gallery").select("slot,image_url").eq("user_id",user.id).order("slot");
-  grid.replaceChildren();if(error){message.textContent="Galerie konnte nicht geladen werden: "+error.message;return;}
+  grid.replaceChildren();if(error){message.textContent="Showcase konnte nicht geladen werden: "+error.message;return;}
   const count=panel.querySelector(".gallery-count");if(count)count.textContent=(data?.length||0)+" / 3";
   for(let slot=1;slot<=3;slot++){
    const entry=data?.find(x=>x.slot===slot),cell=document.createElement("div");cell.className="gallery-slot";
@@ -146,7 +146,7 @@ async function setupGallery(){
    cell.append(preview);
    const body=document.createElement("div");body.className="gallery-slot-body";
    const top=document.createElement("div");top.className="gallery-slot-top";
-   const title=document.createElement("strong");title.className="gallery-slot-title";title.textContent="Bild "+String(slot).padStart(2,"0");
+   const title=document.createElement("strong");title.className="gallery-slot-title";title.textContent="Highlight "+String(slot).padStart(2,"0");
    const state=document.createElement("span");state.className="gallery-slot-state";state.textContent=entry?"Hinzugefügt":"Leer";top.append(title,state);body.append(top);
    const label=document.createElement("label");label.className="gallery-url-label";label.textContent="Bild-URL";const input=document.createElement("input");input.className="gallery-url-input";input.type="url";input.placeholder="Bild- oder Tenor-GIF-Link";input.value=entry?.image_url||"";input.maxLength=2000;input.setAttribute("aria-label","Bild-URL "+slot);label.append(input);body.append(label);
    const actions=document.createElement("div");actions.className="gallery-slot-actions";const save=document.createElement("button");save.type="button";save.textContent=entry?"Link aktualisieren":"Bild hinzufügen";
