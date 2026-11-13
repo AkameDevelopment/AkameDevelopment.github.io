@@ -179,7 +179,7 @@ function renderSelection(){
 function updateBetaSelection(){const boxes=[...$("beta-options").querySelectorAll("input[type=checkbox]:not(:disabled)")],count=boxes.filter(x=>x.checked).length;$("beta-selected-count").textContent=count+" "+(count===1?"ausgewählt":"ausgewählt");$("beta-invite-selected").disabled=count===0;$("beta-select-all").disabled=!boxes.length||count===boxes.length;$("beta-clear-all").disabled=count===0;}
 $("beta-select-all").addEventListener("click",()=>{$("beta-options").querySelectorAll("input[type=checkbox]:not(:disabled)").forEach(x=>x.checked=true);updateBetaSelection()});
 $("beta-clear-all").addEventListener("click",()=>{$("beta-options").querySelectorAll("input[type=checkbox]").forEach(x=>x.checked=false);updateBetaSelection()});
-$("beta-mode-toggle").addEventListener("click",()=>{betaRemoveMode=!betaRemoveMode;renderSelection()});
+$("beta-mode-toggle").addEventListener("click",()=>{betaRemoveMode=!betaRemoveMode;const target=selected;const active=betas.get(target)||new Set();for(const input of $("beta-options").querySelectorAll('input[type="checkbox"]')){input.checked=false;input.disabled=betaRemoveMode&&!active.has(input.dataset.mod)}const manager=document.querySelector(".beta-manager");manager.classList.toggle("beta-remove-mode",betaRemoveMode);const toggle=$("beta-mode-toggle");toggle.setAttribute("aria-pressed",String(betaRemoveMode));toggle.textContent=betaRemoveMode?"← Zurück zu Einladungen":"Beta-Zugriff entfernen";$("beta-invite-selected").textContent=betaRemoveMode?"Ausgewählte Beta-Zugänge entfernen":"Einladung senden";updateBetaSelection();msg("")});
 function renderBetaInvitationSummary(){
  const root=$("beta-invite-summary");if(!root)return;
  const list=invitations.filter(x=>x.user_id===selected);
