@@ -337,3 +337,20 @@ html body header .akame-header-actions>.akame-account{
  html body header>.wrap.nav.akame-site-nav>.akame-header-actions{order:2!important;margin-left:0!important;margin-right:0!important;flex:0 0 auto!important;position:static!important;transform:none!important}
  html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{position:relative!important;right:auto!important;left:auto!important;top:auto!important;transform:none!important}
 }
+
+/* Desktop header fix: never mix mobile hamburger with desktop navigation. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important;visibility:hidden!important;width:0!important;min-width:0!important;max-width:0!important;flex:0 0 0!important;margin:0!important;padding:0!important;border:0!important}
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:flex!important;visibility:visible!important;align-items:center!important;flex-wrap:nowrap!important;min-width:0!important;gap:12px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{flex:0 0 auto!important;white-space:nowrap!important}
+}
+@media(min-width:851px) and (max-width:1199px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important;visibility:visible!important;width:auto!important;min-width:0!important;max-width:none!important;flex:0 0 auto!important}
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
+}
