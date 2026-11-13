@@ -82,14 +82,15 @@ function msg(text,error=false){$("edit-message").textContent=text;$("edit-messag
 async function login(){status("Weiterleitung zu Discord …");const {error}=await db.auth.signInWithOAuth({provider:"discord",options:{redirectTo:"https://akamedevelopment.github.io/admin.html",scopes:"identify email"}});if(error)status("Anmeldung fehlgeschlagen: "+error.message);}
 $("login").addEventListener("click",login);
 
+let customNames=new Map();
 function renderPeople(){
  const term=$("search").value.trim().toLowerCase(),root=$("people");root.replaceChildren();
- const filtered=people.filter(p=>(p.display_name||"").toLowerCase().includes(term)||p.user_id.toLowerCase().includes(term));
+ const filtered=people.filter(p=>(p.display_name||"").toLowerCase().includes(term)||(customNames.get(p.user_id)||"").toLowerCase().includes(term)||(discordNames.get(p.user_id)||"").toLowerCase().includes(term)||p.user_id.toLowerCase().includes(term));
  if(!filtered.length){root.textContent="Keine passenden Benutzer.";return}
  for(const p of filtered){
   const b=document.createElement("button");b.type="button";b.className="person"+(selected===p.user_id?" selected":"");
   const img=document.createElement("img");img.src=avatar(p.avatar_url);img.alt="";img.loading="lazy";
-  const wrap=document.createElement("span"),strong=document.createElement("b"),small=document.createElement("small");strong.textContent=p.display_name;small.textContent=roles.get(p.user_id)||"Benutzer";wrap.append(strong,small);b.append(img,wrap);
+  const wrap=document.createElement("span"),strong=document.createElement("b"),small=document.createElement("small");strong.textContent=customNames.get(p.user_id)||p.display_name;small.textContent="Discord: "+(discordNames.get(p.user_id)||p.display_name||"Unbekannt")+" · "+(roles.get(p.user_id)||"Benutzer");wrap.append(strong,small);b.append(img,wrap);
   b.addEventListener("click",()=>{selected=p.user_id;renderPeople();renderSelection();});root.append(b);
  }
 }
@@ -119,12 +120,12 @@ $("save-profile").addEventListener("click",async()=>{
 });
 function renderSelection(){
  const p=people.find(x=>x.user_id===selected);$("selected").hidden=!p;if(!p)return;
- $("selected-name").textContent=p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
+ $("selected-name").textContent=customNames.get(p.user_id)||p.display_name;$("selected-uid").textContent="Supabase User ID: "+p.user_id;
  $("role-select").value=roles.get(p.user_id)||"";$("role-select").disabled=p.user_id===current?.id||roles.get(p.user_id)==="owner";$("save-role").disabled=$("role-select").disabled;
  $("akamesmp-toggle").checked=smpMembers.has(p.user_id);$("akamesmp-toggle").disabled=false;$("akamesmp-message").textContent="";
  $("open-user-profile").href="user.html?id="+encodeURIComponent(p.user_id);
  $("selected-avatar").src=avatar(p.avatar_url);
- $("selected-profile-name").textContent=p.display_name||"Discord-Benutzer";$("selected-discord-name").textContent="Discord: "+(discordNames.get(p.user_id)||"Nicht verfügbar");
+ $("selected-profile-name").textContent=customNames.get(p.user_id)||p.display_name||"Discord-Benutzer";$("selected-discord-name").textContent="Discord: "+(discordNames.get(p.user_id)||"Nicht verfügbar");
  $("selected-joined").textContent=p.created_at?"Bekannt seit "+new Date(p.created_at).toLocaleDateString("de-DE"):"";
  void loadSelectedProfile(p.user_id);
  const grid=$("beta-options");grid.replaceChildren();
@@ -156,15 +157,16 @@ $("save-role").addEventListener("click",async()=>{
 });
 async function loadDirectory(){
  status("Benutzer und Freigaben werden geladen …");
- const [p,r,b,smp,dn]=await Promise.all([
+ const [p,r,b,smp,dn,custom]=await Promise.all([
  db.from("community_profiles").select("user_id,display_name,avatar_url,created_at").order("created_at",{ascending:false}).limit(500),
  db.from("staff_access").select("user_id,role"),
  db.from("beta_access").select("user_id,project_slug"),
  db.from("akamesmp_members").select("user_id"),
- db.rpc("admin_discord_names")
+ db.rpc("admin_discord_names"),
+ db.from("user_profiles").select("user_id,display_name").limit(1000)
  ]);
- if(p.error||r.error||b.error||smp.error||dn.error){status("Verwaltungsdaten konnten nicht geladen werden: "+(p.error||r.error||b.error||smp.error||dn.error).message);return;}smpMembers=new Set((smp.data||[]).map(x=>x.user_id));discordNames=new Map((dn.data||[]).map(x=>[x.user_id,x.discord_name]));
- people=p.data||[];roles=new Map((r.data||[]).map(x=>[x.user_id,x.role]));betas=new Map();
+ if(p.error||r.error||b.error||smp.error||dn.error||custom.error){status("Verwaltungsdaten konnten nicht geladen werden: "+(p.error||r.error||b.error||smp.error||dn.error||custom.error).message);return;}smpMembers=new Set((smp.data||[]).map(x=>x.user_id));discordNames=new Map((dn.data||[]).map(x=>[x.user_id,x.discord_name]));
+ customNames=new Map((custom.data||[]).filter(x=>x.display_name).map(x=>[x.user_id,x.display_name]));people=p.data||[];roles=new Map((r.data||[]).map(x=>[x.user_id,x.role]));betas=new Map();
  for(const record of b.data||[]){if(!betas.has(record.user_id))betas.set(record.user_id,new Set());betas.get(record.user_id).add(record.project_slug);}
  $("user-count").textContent=people.length;$("staff-count").textContent=roles.size;$("beta-count").textContent=(b.data||[]).length;
  renderPeople();status("Administratorzugriff bestätigt. Rollen und Beta-Freigaben werden sicher über Supabase geprüft.");
