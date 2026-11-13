@@ -50,7 +50,17 @@ const names={modcore:"ModCore",chest:"ChestScout",crosshair:"Crosshair+",chunklo
 const tr=(de,en)=>localStorage.getItem("akame-lang")==="en"?en:de;
 function el(tag,txt,cls){const n=document.createElement(tag);n.textContent=txt;if(cls)n.className=cls;return n;}
 try{
- if(requestedName){const {data:matches,error:lookupError}=await db.rpc("lookup_public_profile_name",{p_name:requestedName});if(lookupError)throw Error("Profilname konnte nicht überprüft werden.");if(!matches?.length)throw Error("Dieses Profil wurde nicht gefunden. Möglicherweise wurde der Name geändert.");id=matches[0].profile_user_id;}else if(!id){const {data:{user:ownUser}}=await db.auth.getUser();if(!ownUser){location.replace("admin.html?login=discord");throw Error("Bitte anmelden.");}id=ownUser.id;}
+ if(requestedName){const {data:matches,error:lookupError}=await db.rpc("lookup_public_profile_name",{p_name:requestedName});if(lookupError)throw Error("Profilname konnte nicht überprüft werden.");if(!matches?.length)throw Error("Dieses Profil wurde nicht gefunden. Möglicherweise wurde der Name geändert.");id=matches[0].profile_user_id;}else if(!id){const {data:{user:ownUser}}=await db.auth.getUser();if(ownUser)id=ownUser.id;}
+ if(!id){
+ root.replaceChildren();
+ const section=el("section","","profile-section");
+ section.style.cssText="max-width:620px;margin:20px auto;padding:32px;border:1px solid #a480d544;border-radius:20px;background:#1b1427";
+ section.append(el("h1","Öffentliche Profile"),el("p","Suche nach einem Benutzernamen, um das öffentliche Profil ohne Anmeldung anzusehen.","muted"));
+ const form=document.createElement("form");form.style.cssText="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px";
+ const input=document.createElement("input");input.type="search";input.placeholder="Benutzername";input.required=true;input.autocomplete="off";input.setAttribute("aria-label","Benutzername");input.style.cssText="flex:1;min-width:180px;padding:12px 14px;border-radius:10px;border:1px solid #a480d577;background:#110d19;color:white;font:inherit";
+ const button=document.createElement("button");button.type="submit";button.textContent="Profil ansehen";button.style.cssText="padding:12px 18px;border:0;border-radius:10px;background:#8f5cda;color:white;font:inherit;font-weight:700;cursor:pointer";
+ form.append(input,button);form.addEventListener("submit",e=>{e.preventDefault();const name=input.value.trim();if(name)location.href="user.html?name="+encodeURIComponent(name);});section.append(form);root.append(section);
+ }else{
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))throw Error("Ungültiges Benutzerprofil.");
  const [{data:comments,error:commentsError},{data:gallery},{data:mods,error:modsError},{data:{user}}]=await Promise.all([
  db.from("mod_comments").select("id,project_slug,author_id,author_name,author_avatar_url,body,created_at").eq("author_id",id).order("created_at",{ascending:false}).limit(100),
@@ -85,5 +95,5 @@ const modsSection=el("section","","profile-section");modsSection.append(el("h2",
  else{const list=el("div","","user-comments");for(const comment of comments){const item=el("article","","user-comment");const head=el("div","","user-comment-head");const link=el("a",names[comment.project_slug]||comment.project_slug);link.href="project.html?mod="+encodeURIComponent(comment.project_slug)+"#mod-comments";const time=el("time",new Date(comment.created_at).toLocaleString(tr("de-DE","en-GB"),{dateStyle:"medium",timeStyle:"short"}),"muted");time.dateTime=comment.created_at;head.append(link,time);const body=el("p",comment.body,"bio");const open=el("a",tr("Zur Diskussion","View discussion"));open.href=link.href;open.className="comment-open";item.append(head,body,open);list.append(item);}commentsSection.append(list);}
  mainColumn.append(modsSection);
  document.addEventListener("akame-language-change",()=>{heading.textContent=tr("Kommentare (","Comments (")+(comments?.length||0)+")";const empty=commentsSection.querySelector(".profile-empty");if(empty)empty.textContent=tr("Dieser Benutzer hat noch keine Kommentare geschrieben.","This member has not written any comments yet.");for(const a of commentsSection.querySelectorAll(".comment-open"))a.textContent=tr("Zur Diskussion","View discussion");for(const t of commentsSection.querySelectorAll("time"))t.textContent=new Date(t.dateTime).toLocaleString(tr("de-DE","en-GB"),{dateStyle:"medium",timeStyle:"short"});});
-}catch(e){root.textContent=e.message||"Profil konnte nicht geladen werden."}
+}}catch(e){root.textContent=e.message||"Profil konnte nicht geladen werden."}
 </script><script src="language.js?v=comments-i18n-54" defer></script><script src="mobile-nav.js?v=chevrons-unified-3" defer></script></body></html>
