@@ -475,186 +475,7 @@ html body main #content>.person>.akame-profile-actions>.own-profile-edit{
  html body main #content>.profile-layout>.profile-main{order:0!important;width:100%!important}
  html body main #content>.profile-layout>.profile-side{order:1!important;width:100%!important}
 }
-</style><style id="akame-profile-large-custom-banner-v2">
-/* Spacious banner for desktop while maintaining compact mobile profile layout. */
-@media(min-width:1050px){
- html body main #content>.person{
-  min-height:310px!important;
-  padding:40px 36px 36px!important;
-  display:grid!important;
-  grid-template-columns:100px minmax(0,1fr)!important;
-  align-items:end!important;
-  column-gap:22px!important;
-  overflow:hidden!important;
-  background-size:cover!important;
-  background-repeat:no-repeat!important;
-  background-position:center!important;
-  border-radius:20px!important;
- }
- html body main #content>.person>.akame-profile-actions{top:24px!important;right:24px!important}
- html body main #content>.person::before{
-  background:linear-gradient(0deg,rgba(11,7,20,.38),transparent 70%)!important;
-  pointer-events:none!important;
- }
- html body main #content>.person>img{align-self:end!important}
- html body main #content>.person>div:not(.akame-profile-actions){align-self:end!important}
-}
-@media(min-width:650px) and (max-width:1049px){
- html body main #content>.person{min-height:235px!important;background-size:cover!important;background-position:center!important}
-}
-@media(max-width:649px){
- html body main #content>.person{min-height:190px!important;background-size:cover!important;background-position:center!important}
-}
-</style><style id="akame-banner-profile-layout-v3">
-/* Desktop banner: more image area, compact readable identity card near the bottom. */
-@media(min-width:1050px){
- html body main #content>.person{
-  min-height:405px!important;
-  padding:42px 36px 34px!important;
-  display:grid!important;
-  grid-template-columns:100px minmax(0,1fr)!important;
-  grid-template-rows:1fr auto!important;
-  gap:0 22px!important;
-  align-items:end!important;
-  overflow:hidden!important;
-  isolation:isolate!important;
-  background-position:center!important;
-  background-size:cover!important;
- }
- html body main #content>.person::before{
-  content:""!important;
-  position:absolute!important;inset:0!important;
-  background:linear-gradient(180deg,rgba(11,7,20,.12) 0%,rgba(11,7,20,.04) 34%,rgba(11,7,20,.72) 100%)!important;
-  border-radius:inherit!important;pointer-events:none!important;z-index:0!important;
- }
- html body main #content>.person>img{
-  grid-column:1!important;grid-row:2!important;
-  width:100px!important;height:100px!important;min-width:100px!important;
-  border:3px solid #e0c6ff8c!important;border-radius:20px!important;
-  box-shadow:0 6px 28px #09041288!important;
-  align-self:end!important;object-fit:cover!important;
- }
- html body main #content>.person>div:not(.akame-profile-actions){
-  grid-column:2!important;grid-row:2!important;
-  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
-  justify-content:flex-end!important;align-self:end!important;
-  min-width:0!important;max-width:calc(100% - 25px)!important;
-  gap:9px!important;padding:0!important;margin:0!important;
- }
- html body main #content>.person>div:not(.akame-profile-actions)>h1{
-  font-size:clamp(28px,2.2vw,35px)!important;
-  line-height:1.1!important;margin:0!important;gap:10px!important;
-  text-shadow:0 2px 13px #07030db5!important;
- }
- html body main #content>.person .profile-joined-header{
-  font-size:12px!important;line-height:1.35!important;
-  margin:0!important;display:inline-flex!important;align-items:center!important;gap:7px!important;
-  color:#ebdff7!important;text-shadow:0 1px 9px #090411a6!important;
- }
- html body main #content>.person .profile-badges{
-  display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:6px!important;
-  margin:0!important;padding:0!important;
- }
- html body main #content>.person .profile-hero-bio{
-  max-width:640px!important;font-size:13px!important;line-height:1.45!important;
-  color:#f1e5fc!important;margin:0!important;text-shadow:0 1px 9px #07030d!important;
- }
- html body main #content>.person .profile-hero-stats{
-  max-width:640px!important;display:flex!important;flex-wrap:wrap!important;
-  margin:0!important;padding:9px 0 0!important;gap:22px!important;
-  border-top:1px solid #eee1ff3d!important;color:#e7dbf1!important;
- }
- html body main #content>.person>.akame-profile-actions{
-  position:absolute!important;right:24px!important;top:24px!important;z-index:4!important;
-  align-self:auto!important;
- }
-}
-@media(min-width:650px) and (max-width:1049px){
- html body main #content>.person{min-height:270px!important;background-position:center!important;background-size:cover!important}
-}
-@media(max-width:649px){
- html body main #content>.person{min-height:190px!important}
-}
-</style><style id="akame-tenor-banner-layer">html body main #content>.person>.akame-tenor-banner{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;pointer-events:none!important;z-index:0!important}html body main #content>.person>.akame-profile-actions,html body main #content>.person>img,html body main #content>.person>div:not(.akame-tenor-banner){position:relative;z-index:2}</style><style id="akame-profile-banner-polish-20261113">
-/* Polished desktop banner: image stays visible, identity aligns as one clear unit. */
-@media(min-width:1050px){
- html body main #content>.person{
-  min-height:390px!important;
-  grid-template-columns:108px minmax(0,1fr)!important;
-  grid-template-rows:minmax(120px,1fr) auto!important;
-  align-items:start!important;
-  column-gap:20px!important;
-  padding:34px 32px 28px!important;
-  border-radius:19px!important;
-  border:1px solid rgba(205,174,242,.37)!important;
-  box-shadow:0 18px 45px rgba(5,3,12,.32),inset 0 1px rgba(255,255,255,.08)!important;
- }
- html body main #content>.person::before{
-  background:linear-gradient(180deg,rgba(12,8,24,.08) 0%,rgba(12,8,24,.08) 35%,rgba(12,8,24,.55) 68%,rgba(12,8,24,.90) 100%)!important;
-  z-index:1!important;
- }
- html body main #content>.person>img{
-  width:108px!important;height:108px!important;min-width:108px!important;
-  grid-column:1!important;grid-row:2!important;
-  align-self:start!important;justify-self:start!important;
-  border-radius:19px!important;border:2px solid rgba(234,212,255,.72)!important;
-  box-shadow:0 8px 26px rgba(0,0,0,.46)!important;
-  z-index:3!important;
- }
- html body main #content>.person>div:not(.akame-profile-actions):not(.akame-tenor-banner){
-  grid-column:2!important;grid-row:2!important;
-  display:flex!important;flex-direction:column!important;
-  align-self:start!important;align-items:flex-start!important;justify-content:flex-start!important;
-  max-width:min(690px,100%)!important;
-  gap:6px!important;margin:0!important;padding:0!important;
-  position:relative!important;z-index:3!important;
- }
- html body main #content>.person>div:not(.akame-profile-actions):not(.akame-tenor-banner)>h1{
-  font-size:clamp(28px,2.6vw,38px)!important;
-  letter-spacing:-.035em!important;line-height:1.12!important;
-  margin:0 0 2px!important;
- }
- html body main #content>.person .profile-joined-header{
-  margin:0!important;line-height:1.4!important;
-  font-size:12px!important;color:#e0d0ee!important;
- }
- html body main #content>.person .profile-badges{
-  gap:7px!important;margin:3px 0 0!important;
- }
- html body main #content>.person .profile-hero-bio{
-  margin:2px 0 0!important;
-  max-width:560px!important;font-size:13px!important;
-  line-height:1.5!important;
- }
- html body main #content>.person .profile-hero-stats{
-  max-width:620px!important;width:100%!important;
-  margin:5px 0 0!important;padding:10px 0 0!important;
-  border-top:1px solid rgba(227,202,255,.28)!important;
-  gap:24px!important;
- }
- html body main #content>.person>.akame-profile-actions{
-  position:absolute!important;top:22px!important;right:22px!important;z-index:5!important;
-  display:flex!important;align-items:center!important;gap:9px!important;
- }
- html body main #content>.person>.akame-profile-actions>.profile-share-icon,
- html body main #content>.person>.akame-profile-actions>.own-profile-edit{
-  background:rgba(18,11,33,.72)!important;
-  backdrop-filter:blur(12px)!important;
-  border:1px solid rgba(211,173,248,.48)!important;
-  color:#f5eaff!important;
-  border-radius:12px!important;
-  min-height:42px!important;height:42px!important;
- }
- html body main #content>.person>.akame-profile-actions>.profile-share-icon:hover,
- html body main #content>.person>.akame-profile-actions>.own-profile-edit:hover{
-  background:rgba(72,40,110,.88)!important;
-  border-color:#cba9fa!important;
- }
-}
-@media(min-width:650px) and (max-width:1049px){
- html body main #content>.person{min-height:285px!important}
-}
-</style><style id="akame-banner-crop-render-20261113">html body main #content>.person>.akame-banner-visual{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;border:0!important;pointer-events:none!important;object-fit:cover!important;z-index:0!important}html body main #content>.person>img:not(.akame-banner-visual){z-index:3!important}</style><style id="akame-banner-media-layout-fix-20261113">
+</style><style id="akame-tenor-banner-layer">html body main #content>.person>.akame-tenor-banner{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;pointer-events:none!important;z-index:0!important}html body main #content>.person>.akame-profile-actions,html body main #content>.person>img,html body main #content>.person>div:not(.akame-tenor-banner){position:relative;z-index:2}</style><style id="akame-banner-crop-render-20261113">html body main #content>.person>.akame-banner-visual{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;border:0!important;pointer-events:none!important;object-fit:cover!important;z-index:0!important}html body main #content>.person>img:not(.akame-banner-visual){z-index:3!important}</style><style id="akame-banner-media-layout-fix-20261113">
 /* Banner image must never inherit avatar grid sizing or positioning. */
 html body main #content>.person{position:relative!important;overflow:hidden!important;isolation:isolate!important}
 html body main #content>.person>img.akame-banner-visual,
@@ -719,136 +540,97 @@ html body main #content>.person>.akame-profile-actions{z-index:5!important}
   border-left:0!important;border-top:1px solid #e9d7ff47!important;
  }
 }
-</style><style id="akame-banner-top-identity-bottom-bio-20261113">
-/* A distinct top identity row and bottom bio/stats row frame the banner artwork. */
+</style><style id="akame-profile-hero-clean-layout-20261113">
+/* Single desktop banner layout, with the complete identity beside the avatar. */
 @media(min-width:1050px){
  html body main #content>.person{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
   display:grid!important;grid-template-columns:108px minmax(0,1fr)!important;
   grid-template-rows:auto minmax(80px,1fr) auto!important;
-  column-gap:20px!important;row-gap:0!important;
-  align-content:stretch!important;align-items:start!important;
-  min-height:400px!important;padding:28px 32px 25px!important;
- }
- html body main #content>.person>img:not(.akame-banner-visual){
-  grid-column:1!important;grid-row:1!important;align-self:start!important;
-  justify-self:start!important;width:100px!important;height:100px!important;
-  min-width:100px!important;max-width:100px!important;
-  object-fit:cover!important;z-index:3!important;
- }
- html body main #content>.person>.profile-identity-info{
-  grid-column:2!important;grid-row:1!important;align-self:start!important;
-  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
-  justify-content:flex-start!important;gap:7px!important;
-  min-width:0!important;max-width:calc(100% - 165px)!important;
-  margin:4px 0 0!important;padding:0!important;z-index:3!important;
- }
- html body main #content>.person>.profile-identity-info>h1{margin:0!important}
- html body main #content>.person>.profile-identity-info>.profile-badges{margin:3px 0 0!important}
- html body main #content>.person>.profile-bio-stats-row{
-  grid-column:1 / -1!important;grid-row:3!important;
-  align-self:end!important;justify-self:stretch!important;
-  display:flex!important;align-items:center!important;justify-content:flex-start!important;
-  width:100%!important;max-width:none!important;gap:22px!important;
-  margin:0!important;padding:15px 0 0!important;
-  min-width:0!important;z-index:3!important;
-  border-top:1px solid rgba(231,212,255,.32)!important;
- }
- html body main #content>.person>.profile-bio-stats-row>.profile-hero-bio{
-  flex:1 1 auto!important;max-width:640px!important;min-width:0!important;
-  margin:0!important;line-height:1.5!important;
- }
- html body main #content>.person>.profile-bio-stats-row>.profile-hero-stats{
-  flex:0 0 auto!important;width:auto!important;max-width:none!important;
-  border-left:1px solid #e9d7ff47!important;border-top:0!important;
-  padding:0 0 0 20px!important;margin:0!important;gap:20px!important;
- }
- html body main #content>.person>.akame-profile-actions{top:10px!important;right:20px!important}
-}
-@media(max-width:1049px){
- html body main #content>.person>.profile-identity-info{
-  grid-column:2!important;grid-row:1!important;
-  min-width:0!important;max-width:100%!important;
-  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
-  gap:7px!important;margin:0!important;
- }
- html body main #content>.person>.profile-bio-stats-row{
-  grid-column:1 / -1!important;grid-row:2!important;
-  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
-  gap:8px!important;width:100%!important;max-width:100%!important;
-  margin:14px 0 0!important;padding:10px 0 0!important;
-  border-top:1px solid #e9d7ff47!important;
- }
- html body main #content>.person>.profile-bio-stats-row>.profile-hero-bio{margin:0!important;max-width:100%!important}
- html body main #content>.person>.profile-bio-stats-row>.profile-hero-stats{
-  margin:0!important;padding:0!important;width:auto!important;max-width:100%!important;
-  border:0!important;gap:15px!important;
- }
-}
-</style><style id="akame-profile-top-identity-bottom-bio-20261113">
-/* Desktop profile hero: avatar + identity at top, bio and counts in footer.
-   The bio row is a DIRECT child of .person, not a child of identity-info. */
-@media(min-width:1050px){
- html body main #content>.person{
-  display:grid!important;
-  grid-template-columns:108px minmax(0,1fr)!important;
-  grid-template-rows:auto minmax(90px,1fr) auto!important;
-  align-items:start!important;align-content:stretch!important;
-  column-gap:20px!important;row-gap:0!important;
-  min-height:390px!important;padding:26px 32px 26px!important;
+  column-gap:20px!important;row-gap:0!important;align-items:start!important;
+  align-content:stretch!important;
+  min-height:400px!important;padding:26px 32px 24px!important;
+  background-size:cover!important;background-position:center!important;
+  border-radius:20px!important;
  }
  html body main #content>.person>img:not(.akame-banner-visual){
   grid-column:1!important;grid-row:1!important;
+  position:relative!important;z-index:3!important;
   align-self:start!important;justify-self:start!important;
-  margin:0!important;
+  width:108px!important;height:108px!important;
+  min-width:108px!important;max-width:108px!important;
+  margin:0!important;object-fit:cover!important;
+  border-radius:19px!important;border:2px solid rgba(234,212,255,.72)!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.46)!important;
  }
- html body main #content>.person>.profile-identity-info{
+ html body main #content>.person>.profile-identity-info,
+ html body main #content>.person>div.profile-identity-info:not(.akame-profile-actions):not(.akame-tenor-banner){
   grid-column:2!important;grid-row:1!important;
-  position:relative!important;
   display:flex!important;flex-direction:column!important;
   align-items:flex-start!important;justify-content:flex-start!important;
   align-self:start!important;justify-self:start!important;
-  gap:6px!important;
+  position:relative!important;z-index:4!important;
+  gap:8px!important;flex:0 0 auto!important;
   width:auto!important;max-width:calc(100% - 165px)!important;
   height:auto!important;min-height:0!important;
-  margin:0!important;padding:2px 0 0!important;
-  z-index:3!important;
+  padding:0!important;margin:2px 0 0!important;
  }
  html body main #content>.person>.profile-identity-info>h1{
-  margin:0!important;line-height:1.15!important;
+  display:flex!important;align-items:center!important;align-self:auto!important;
+  position:static!important;grid-column:auto!important;grid-row:auto!important;
+  font-size:clamp(28px,2.6vw,36px)!important;line-height:1.15!important;
+  margin:0!important;padding:0!important;
  }
  html body main #content>.person>.profile-identity-info>.profile-joined-header{
-  margin:0!important;
+  display:inline-flex!important;position:static!important;
+  grid-column:auto!important;grid-row:auto!important;
+  align-self:auto!important;align-items:center!important;
+  margin:0!important;padding:0!important;
+  font-size:12px!important;line-height:1.35!important;
  }
  html body main #content>.person>.profile-identity-info>.profile-badges{
-  margin:2px 0 0!important;
+  display:flex!important;position:static!important;
+  grid-column:auto!important;grid-row:auto!important;
+  align-self:auto!important;flex-wrap:wrap!important;
+  gap:7px!important;margin:0!important;padding:0!important;
  }
  html body main #content>.person>.profile-bio-stats-row{
-  grid-column:1 / -1!important;grid-row:3!important;
-  position:relative!important;z-index:3!important;
+  grid-column:1/-1!important;grid-row:3!important;
   display:flex!important;align-items:center!important;
+  position:relative!important;z-index:4!important;
   align-self:end!important;justify-self:stretch!important;
-  width:100%!important;max-width:none!important;min-width:0!important;
-  gap:20px!important;margin:0!important;padding:13px 0 0!important;
-  border-top:1px solid rgba(230,208,255,.30)!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  gap:20px!important;margin:0!important;
+  padding:13px 0 0!important;border-top:1px solid rgba(231,212,255,.32)!important;
  }
  html body main #content>.person>.profile-bio-stats-row>.profile-hero-bio{
   flex:1 1 auto!important;min-width:0!important;max-width:none!important;
-  margin:0!important;padding:0!important;
+  position:static!important;grid-column:auto!important;grid-row:auto!important;
+  margin:0!important;padding:0!important;line-height:1.5!important;
  }
  html body main #content>.person>.profile-bio-stats-row>.profile-hero-stats{
-  flex:0 0 auto!important;width:auto!important;max-width:none!important;
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;
+  width:auto!important;max-width:none!important;gap:18px!important;
+  position:static!important;grid-column:auto!important;grid-row:auto!important;
   margin:0!important;padding:0 0 0 18px!important;
-  border-top:0!important;border-left:1px solid rgba(230,208,255,.3)!important;
+  border-top:0!important;border-left:1px solid #e9d7ff47!important;
  }
  html body main #content>.person>.akame-profile-actions{
   position:absolute!important;top:10px!important;right:20px!important;
-  grid-column:auto!important;grid-row:auto!important;z-index:8!important;
+  z-index:8!important;grid-column:auto!important;grid-row:auto!important;
+ }
+ html body main #content>.person::before{
+  background:linear-gradient(180deg,rgba(12,8,24,.25),rgba(12,8,24,.12) 45%,rgba(12,8,24,.78) 100%)!important;
+  pointer-events:none!important;z-index:1!important;
  }
 }
 @media(min-width:750px) and (max-width:1049px){
+ html body main #content>.person>.profile-identity-info{
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  grid-column:2!important;grid-row:1!important;gap:7px!important;
+ }
  html body main #content>.person>.profile-bio-stats-row{
-  grid-column:1/-1!important;grid-row:3!important;
-  align-self:end!important;
+  grid-column:1/-1!important;grid-row:3!important;align-self:end!important;
  }
 }
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
