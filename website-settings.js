@@ -31,6 +31,30 @@ document.querySelectorAll(".setting").forEach(row=>{
 });
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>selectTab(b.dataset.tab)));
 window.addEventListener("hashchange",()=>selectTab(location.hash.slice(1),false));
-$("reset-settings").addEventListener("click",()=>{for(const [k,v] of Object.entries(defaults))store.setItem(keys[k],String(v));store.removeItem("akame-site-theme");store.setItem("akame-lang-preference","auto");const browser=(navigator.languages?.[0]||navigator.language||"en").toLowerCase().startsWith("de")?"de":"en";store.setItem("akame-lang",browser);try{window.AkameLanguage?.set?.(browser)}catch(error){console.warn("Language reset:",error)}sync();window.AkameWebsiteSettings?.apply?.();document.dispatchEvent(new CustomEvent("akame-settings-change"));$("save-status").textContent=(words[lang()]||words.de).restored;});
+function showResetToast(message){
+ let toast=document.getElementById("akame-settings-reset-toast");
+ if(!toast){toast=document.createElement("div");toast.id="akame-settings-reset-toast";toast.setAttribute("role","status");toast.setAttribute("aria-live","polite");Object.assign(toast.style,{position:"fixed",right:"20px",bottom:"24px",zIndex:"99999",background:"#261b38",color:"#f4eaff",border:"1px solid #a678ec",borderRadius:"12px",padding:"13px 18px",boxShadow:"0 12px 36px #0009",font:"600 14px Inter,system-ui,sans-serif",maxWidth:"calc(100vw - 40px)",transition:"opacity .2s ease"});document.body.appendChild(toast)}
+ toast.textContent="✓ "+message;toast.style.opacity="1";toast.hidden=false;
+ clearTimeout(showResetToast.timeout);showResetToast.timeout=setTimeout(()=>{toast.style.opacity="0";setTimeout(()=>{toast.hidden=true},220)},3200);
+}
+$("reset-settings").addEventListener("click",()=>{
+ const button=$("reset-settings");button.disabled=true;
+ try{
+  for(const [k,v] of Object.entries(defaults))store.setItem(keys[k],String(v));
+  store.removeItem("akame-site-theme");
+  store.setItem("akame-lang-preference","auto");
+  const browser=(navigator.languages?.[0]||navigator.language||"en").toLowerCase().startsWith("de")?"de":"en";
+  store.setItem("akame-lang",browser);
+  sync();
+  window.AkameWebsiteSettings?.apply?.();
+  document.dispatchEvent(new CustomEvent("akame-settings-change"));
+  const message=(words[browser]||words.de).restored;
+  $("save-status").textContent=message;showResetToast(message);
+  // Set language last so a language change cannot interrupt resetting other preferences.
+  try{window.AkameLanguage?.set?.(browser)}catch(error){console.warn("Language reset:",error)}
+ }catch(error){console.error("Settings reset failed:",error);showResetToast(lang()==="en"?"Could not restore defaults.":"Standardeinstellungen konnten nicht wiederhergestellt werden.")}
+ finally{button.disabled=false}
+});
+
 document.addEventListener("akame-language-change",renderLanguage);window.addEventListener("storage",()=>{sync();applyLocal()});window.matchMedia?.("(prefers-reduced-motion: reduce)").addEventListener?.("change",renderLanguage);sync();selectTab(location.hash.slice(1)||"appearance",false);
 })();
