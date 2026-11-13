@@ -181,7 +181,7 @@ function renderSelection(skipDetails=false){
   label.classList.toggle("beta-already-accepted",accepted);
   input.dataset.accepted=String(accepted);
   input.checked=false;
-  input.disabled=betaRemoveMode?!(direct||accepted):(accepted||direct);
+  input.disabled=betaRemoveMode?!(direct||accepted||pending):(accepted||direct||pending);
   input.addEventListener("change",updateBetaSelection);
   label.append(input,document.createTextNode(value));
   if(accepted){const badge=document.createElement("span");badge.className="beta-access-state accepted";badge.textContent="Angenommen";badge.title="Beta-Einladung wurde vom Mitglied angenommen";label.append(badge)}
@@ -193,7 +193,7 @@ function renderSelection(skipDetails=false){
 function updateBetaSelection(){const boxes=[...$("beta-options").querySelectorAll("input[type=checkbox]:not(:disabled)")],count=boxes.filter(x=>x.checked).length;$("beta-selected-count").textContent=count+" "+(count===1?"ausgewählt":"ausgewählt");$("beta-invite-selected").disabled=count===0;$("beta-select-all").disabled=!boxes.length||count===boxes.length;$("beta-clear-all").disabled=count===0;}
 $("beta-select-all").addEventListener("click",()=>{$("beta-options").querySelectorAll("input[type=checkbox]:not(:disabled)").forEach(x=>x.checked=true);updateBetaSelection()});
 $("beta-clear-all").addEventListener("click",()=>{$("beta-options").querySelectorAll("input[type=checkbox]").forEach(x=>x.checked=false);updateBetaSelection()});
-$("beta-mode-toggle").addEventListener("click",()=>{betaRemoveMode=!betaRemoveMode;for(const input of $("beta-options").querySelectorAll('input[type="checkbox"]')){input.checked=false;const active=betas.get(selected)?.has(input.dataset.mod);input.disabled=betaRemoveMode?!(active||input.dataset.accepted==="true"):(input.dataset.accepted==="true"||active)}const manager=document.querySelector(".beta-manager");manager.classList.toggle("beta-remove-mode",betaRemoveMode);const toggle=$("beta-mode-toggle");toggle.setAttribute("aria-pressed",String(betaRemoveMode));toggle.textContent=betaRemoveMode?"← Zurück zu Einladungen":"Beta-Zugriff entfernen";$("beta-invite-selected").textContent=betaRemoveMode?"Ausgewählte Beta-Zugänge entfernen":"Einladung senden";updateBetaSelection();msg("")});
+$("beta-mode-toggle").addEventListener("click",()=>{betaRemoveMode=!betaRemoveMode;for(const input of $("beta-options").querySelectorAll('input[type="checkbox"]')){input.checked=false;const active=betas.get(selected)?.has(input.dataset.mod),pending=invitations.some(x=>x.user_id===selected&&x.project_slug===input.dataset.mod&&x.status==="pending");input.disabled=betaRemoveMode?!(active||input.dataset.accepted==="true"||pending):(input.dataset.accepted==="true"||active||pending)}const manager=document.querySelector(".beta-manager");manager.classList.toggle("beta-remove-mode",betaRemoveMode);const toggle=$("beta-mode-toggle");toggle.setAttribute("aria-pressed",String(betaRemoveMode));toggle.textContent=betaRemoveMode?"← Zurück zu Einladungen":"Beta-Zugriff entfernen";$("beta-invite-selected").textContent=betaRemoveMode?"Ausgewählte Beta-Zugänge entfernen":"Einladung senden";updateBetaSelection();msg("")});
 function renderBetaInvitationSummary(){
  const root=$("beta-invite-summary");if(!root)return;
  const list=invitations.filter(x=>x.user_id===selected);
@@ -204,26 +204,26 @@ async function manageBetaInvitations(mode){
  if(!selected||!["owner","admin"].includes(role))return;
  const target=selected,buttons=[$("beta-invite-selected"),$("beta-direct-selected"),$("beta-cancel-selected"),$("beta-mode-toggle")];
  const keys=[...$("beta-options").querySelectorAll("input:checked:not(:disabled)")].map(x=>x.dataset.mod).filter(Boolean);
- if(!keys.length){msg("Bitte mindestens eine Mod auswählen.",true);return;}if(revoke&&!confirm("Beta-Zugriff für "+keys.length+" ausgewählte Mod(s) wirklich entfernen?"))return;
+ if(!keys.length){msg("Bitte mindestens eine Mod auswählen.",true);return;}if(revoke&&!confirm("Beta-Zugriff und/oder ausstehende Einladung für "+keys.length+" ausgewählte Mod(s) wirklich entfernen?"))return;
  buttons.forEach(x=>x.disabled=true);msg(cancel?"Einladungen werden zurückgezogen …":revoke?"Beta-Zugänge werden entzogen …":direct?"Beta-Zugänge werden freigeschaltet …":"Einladungen werden gesendet …");
  let successes=0,errors=[];
  for(const mod of keys){
-  if(revoke&&!betas.get(target)?.has(mod)&&!invitations.some(x=>x.user_id===target&&x.project_slug===mod&&x.status==="accepted")){errors.push((names[mod]||mod)+": kein aktiver Beta-Zugriff oder angenommene Einladung");continue;}
+  if(revoke&&!betas.get(target)?.has(mod)&&!invitations.some(x=>x.user_id===target&&x.project_slug===mod&&["accepted","pending"].includes(x.status))){errors.push((names[mod]||mod)+": kein aktiver Beta-Zugriff oder angenommene Einladung");continue;}
   if(cancel){
    const {error}=await db.from("beta_invitations").delete().eq("user_id",target).eq("project_slug",mod).eq("status","pending");
    if(error)errors.push((names[mod]||mod)+": "+error.message);
    else{invitations=invitations.filter(x=>!(x.user_id===target&&x.project_slug===mod&&x.status==="pending"));successes++;}
   }else if(revoke){
    const accessResult=await db.from("beta_access").delete().eq("user_id",target).eq("project_slug",mod).select("user_id");
-   const inviteResult=await db.from("beta_invitations").delete().eq("user_id",target).eq("project_slug",mod).eq("status","accepted").select("id");
+   const inviteResult=await db.from("beta_invitations").delete().eq("user_id",target).eq("project_slug",mod).in("status",["accepted","pending"]).select("id");
    if(accessResult.error||inviteResult.error){errors.push((names[mod]||mod)+": "+[accessResult.error?.message,inviteResult.error?.message].filter(Boolean).join("; "));}
    else{
     const [accessCheck,inviteCheck]=await Promise.all([
      db.from("beta_access").select("user_id").eq("user_id",target).eq("project_slug",mod),
-     db.from("beta_invitations").select("id").eq("user_id",target).eq("project_slug",mod).eq("status","accepted")
+     db.from("beta_invitations").select("id").eq("user_id",target).eq("project_slug",mod).in("status",["accepted","pending"])
     ]);
     if(accessCheck.error||inviteCheck.error||accessCheck.data?.length||inviteCheck.data?.length){errors.push((names[mod]||mod)+": Entfernen konnte nicht bestätigt werden");}
-    else{betas.get(target)?.delete(mod);invitations=invitations.filter(x=>!(x.user_id===target&&x.project_slug===mod&&x.status==="accepted"));successes++;}
+    else{betas.get(target)?.delete(mod);invitations=invitations.filter(x=>!(x.user_id===target&&x.project_slug===mod&&["accepted","pending"].includes(x.status)));successes++;}
    }
   }else if(direct){
    if(betas.get(target)?.has(mod)){successes++;continue;}
