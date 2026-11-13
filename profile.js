@@ -68,7 +68,8 @@ $("profile-change-name").addEventListener("click",async()=>{
  if(!displayName||displayName.length>32||/[\x00-\x1F\x7F]/.test(displayName)){message.textContent="Bitte 1–32 gültige Zeichen eingeben.";return}
  const {data:{user},error:authError}=await db.auth.getUser();
  if(authError||!user){message.textContent="Bitte erneut anmelden.";return}
- button.disabled=true;
+ button.disabled=true;message.textContent="Name wird gespeichert …";
+ try {
  let {data:updated,error}=await db.from("user_profiles").update({display_name:displayName}).eq("user_id",user.id).select("display_name").maybeSingle();
  if(!error&&!updated){
   const created=await db.from("user_profiles").upsert({user_id:user.id,display_name:displayName},{onConflict:"user_id"}).select("display_name").single();
@@ -77,6 +78,7 @@ $("profile-change-name").addEventListener("click",async()=>{
  button.disabled=false;
  if(error||!updated||updated.display_name!==displayName){message.textContent=error?.code==="23505"?"Dieser Name ist bereits vergeben. Bitte wähle einen anderen.":"Speichern fehlgeschlagen: "+(error?.message||"Keine Änderung in der Datenbank bestätigt.");return}
  $("profile-name").textContent=displayName;input.value=displayName;input.disabled=true;button.title="Namen bearbeiten";button.setAttribute("aria-label","Namen bearbeiten");$("profile-name-edit-icon").innerHTML='<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>';message.textContent="Anzeigename gespeichert ✓";
+ } catch(e){message.textContent="Speichern fehlgeschlagen: "+(e?.message||String(e));} finally {button.disabled=false;}
 });
 $("profile-logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showError(error.message);else showSignedOut()});
 try{const {data,error}=await db.auth.getUser();if(error||!data.user)showSignedOut();else await showProfile(data.user)}
