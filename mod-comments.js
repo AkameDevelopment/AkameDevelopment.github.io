@@ -1,3 +1,4 @@
+import {enhanceLinks} from "./link-previews.js?v=20261113";
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const slugs = new Set(["modcore","chest","crosshair","chunkloader","items","hud","info","admin","zoom"]);
 const slug = new URLSearchParams(location.search).get("mod");
@@ -5,7 +6,7 @@ const root = document.getElementById("mod-comments");
 if (root && slugs.has(slug)) {
   const style = document.createElement("style");
   style.textContent = `
-  .akame-comments{margin-top:24px}.akame-comments-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .akame-link-previews{display:grid;gap:9px;margin:10px 0 4px}.akame-link-preview{display:flex;align-items:center;gap:12px;max-width:520px;min-width:0;overflow:hidden;padding:10px;border:1px solid #a982ff48;border-radius:12px;background:#a982ff0c;color:#eee1ff;text-decoration:none!important}.akame-link-preview:hover{background:#a982ff19;border-color:#a982ff90}.akame-link-image{width:96px;height:74px;object-fit:cover;border-radius:8px;flex-shrink:0}.akame-link-info{min-width:0;display:grid;gap:2px}.akame-link-host{font-size:11px;color:#bfa2e0}.akame-link-title{font-size:13px;line-height:1.3;overflow-wrap:anywhere}.akame-link-desc{font-size:11px;color:#b9a9cc;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}@media(max-width:520px){.akame-link-image{width:72px;height:68px}}\n  .akame-comments{margin-top:24px}.akame-comments-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .akame-comments h2{font-size:26px;margin:0}.akame-comments .akame-small{color:#b5a7c7;font-size:13px;margin:5px 0 18px}
   .akame-comment-box{background:#ffffff06;border:1px solid #a77bf24a;border-radius:14px;padding:16px;margin:18px 0}
   .akame-comment-box textarea{display:block;width:100%;min-height:100px;background:#120e1c;border:1px solid #9470c35c;border-radius:11px;padding:12px;color:white;resize:vertical;font:inherit}
@@ -55,7 +56,7 @@ if (root && slugs.has(slug)) {
         });meta.append(remove);
       }
       const body=document.createElement("p");body.textContent=item.body;
-      article.append(meta,body);
+      article.append(meta,body);enhanceLinks(article,item.body);
       if(!isReply){
         const actions=document.createElement("div");actions.className="akame-reply-actions";
         const replyButton=document.createElement("button");replyButton.type="button";replyButton.textContent=tr("Antworten","Reply");
