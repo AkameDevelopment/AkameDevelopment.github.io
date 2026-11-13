@@ -29,6 +29,6 @@ html[data-akame-theme="light"] :is(.setting,.settings-footnote,.beta-select-tool
 html[data-akame-theme="light"] :is(.tabs button,.tab-link,.setting small,.settings-footnote,.notification-item,.menu-item,.dropdown-item){color:#51435f!important}
 html[data-akame-theme="light"] :is(.notice,.status,.success,.error,.warning,.danger,.badge){text-shadow:none}
 html[data-akame-theme="light"] :is(.toast,#akame-settings-reset-toast){background:#fff!important;color:#30213d!important;border-color:var(--akame-user-accent,#a678ec)!important;box-shadow:0 12px 34px #26163224!important}
-html[data-akame-theme="light"] :is(dialog::backdrop){background:#23153080}
+html[data-akame-theme="light"] dialog::backdrop{background:#23153080}
 html[data-akame-theme="light"] :is(.akame-menu-panel,.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu) :is(svg,path){stroke:currentColor}
 html[data-akame-theme="light"] :is(.akame-menu-panel,.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu) :is(.active,[aria-current="page"],[aria-selected="true"]){background:var(--akame-accent-soft,#eee4f9)!important;color:#42245d!important}
