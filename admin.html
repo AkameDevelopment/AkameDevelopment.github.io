@@ -70,7 +70,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 </section>
 <div class="controls"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="akamesmp-toggle"> AkameSMP (Zusatzrolle)</label><span id="akamesmp-message" class="notice"></span></div><div class="controls"><select id="role-select" aria-label="Mitarbeiterrolle"><option value="">Community</option><option value="staff">Mitarbeiter</option><option value="admin">Administrator</option></select><button type="button" class="primary" id="save-role">Rolle speichern</button></div>
 <hr class="separator"><h2>Beta-Zugriffe</h2><p class="notice">Diese Auswahl wird pro Benutzer gespeichert. Die tatsächlichen Beta-Downloads werden später separat per RLS/Storage abgesichert.</p>
-<p class="notice">Einladung senden: Das Mitglied entscheidet selbst. Direkt freischalten: sofortiger Zugriff.</p><div class="controls"><button type="button" class="primary" id="beta-invite-selected">Ausgewählte Beta-Einladungen senden</button><button type="button" class="ghost" id="beta-direct-selected">Ausgewählte direkt freischalten</button></div><div id="beta-options" class="beta"></div><p id="beta-invite-summary" class="notice"></p>
+<p class="notice">Einladung senden: Das Mitglied entscheidet selbst. Direkt freischalten: sofortiger Zugriff.</p><div class="controls"><button type="button" class="primary" id="beta-invite-selected">Ausgewählte Beta-Einladungen senden</button><button type="button" class="ghost" id="beta-direct-selected">Ausgewählte direkt freischalten</button><button type="button" class="ghost" id="beta-revoke-selected">Zugriff entziehen</button></div><div id="beta-options" class="beta"></div><p id="beta-invite-summary" class="notice"></p>
 <p id="edit-message" class="notice" role="status" aria-live="polite"></p>
 </div></div></div>
 <div class="layout">
@@ -149,13 +149,9 @@ function renderSelection(){
  for(const [key,value] of Object.entries(names)){
   const label=document.createElement("label"),input=document.createElement("input");input.type="checkbox";input.dataset.mod=key;input.checked=betas.get(p.user_id)?.has(key)||false;
   const selfTarget=selected,mod=key;
-  input.addEventListener("change",async()=>{
-   input.disabled=true;msg("Beta-Freigabe wird gespeichert …");
-   const {error}=input.checked?await db.from("beta_access").insert({user_id:selfTarget,project_slug:mod}):await db.from("beta_access").delete().eq("user_id",selfTarget).eq("project_slug",mod);
-   if(error){input.checked=!input.checked;msg("Fehler: "+error.message,true)}
-   else{if(!betas.has(selfTarget))betas.set(selfTarget,new Set());if(input.checked)betas.get(selfTarget).add(mod);else betas.get(selfTarget).delete(mod);$("beta-count").textContent=[...betas.values()].reduce((n,s)=>n+s.size,0);renderBetaInvitationSummary();msg("Beta-Zugriff gespeichert.");}
-   input.disabled=false;
-  });label.append(input,document.createTextNode(value));grid.append(label);
+  input.checked=false;
+  const state=betas.get(p.user_id)?.has(key)?" · Aktiv":invitations.some(x=>x.user_id===p.user_id&&x.project_slug===key&&x.status==="pending")?" · Eingeladen":"";
+  label.append(input,document.createTextNode(value+state));grid.append(label);
  }
  msg("");
 }
@@ -164,15 +160,20 @@ function renderBetaInvitationSummary(){
  const list=invitations.filter(x=>x.user_id===selected);
  root.textContent=list.length?"Einladungen: "+list.map(x=>(names[x.project_slug]||x.project_slug)+" ("+({pending:"Offen",accepted:"Angenommen",declined:"Abgelehnt"}[x.status]||x.status)+")").join(" · "):"Noch keine Einladungen für dieses Mitglied.";
 }
-async function manageBetaInvitations(direct){
+async function manageBetaInvitations(mode){
+ const direct=mode==="direct",revoke=mode==="revoke";
  if(!selected||!["owner","admin"].includes(role))return;
- const target=selected,buttons=[$("beta-invite-selected"),$("beta-direct-selected")];
+ const target=selected,buttons=[$("beta-invite-selected"),$("beta-direct-selected"),$("beta-revoke-selected")];
  const keys=[...$("beta-options").querySelectorAll("input:checked")].map(x=>x.dataset.mod).filter(Boolean);
  if(!keys.length){msg("Bitte mindestens eine Mod auswählen.",true);return;}
- buttons.forEach(x=>x.disabled=true);msg(direct?"Beta-Zugänge werden freigeschaltet …":"Einladungen werden gesendet …");
+ buttons.forEach(x=>x.disabled=true);msg(revoke?"Beta-Zugänge werden entzogen …":direct?"Beta-Zugänge werden freigeschaltet …":"Einladungen werden gesendet …");
  let successes=0,errors=[];
  for(const mod of keys){
-  if(direct){
+  if(revoke){
+   const {error}=await db.from("beta_access").delete().eq("user_id",target).eq("project_slug",mod);
+   if(error)errors.push((names[mod]||mod)+": "+error.message);
+   else{betas.get(target)?.delete(mod);successes++;}
+  }else if(direct){
    if(betas.get(target)?.has(mod)){successes++;continue;}
    const {error}=await db.from("beta_access").insert({user_id:target,project_slug:mod});
    if(error)errors.push((names[mod]||mod)+": "+error.message);
@@ -188,11 +189,12 @@ async function manageBetaInvitations(direct){
  }
  buttons.forEach(x=>x.disabled=false);
  $("beta-count").textContent=[...betas.values()].reduce((n,x)=>n+x.size,0);
- renderBetaInvitationSummary();msg(successes+" "+(direct?"Beta-Zugänge freigeschaltet.":"Einladungen gesendet.")+(errors.length?" Fehler: "+errors.join("; "):""),!!errors.length);
+ renderBetaInvitationSummary();msg(successes+" "+(revoke?"Beta-Zugänge entzogen.":direct?"Beta-Zugänge freigeschaltet.":"Einladungen gesendet.")+(errors.length?" Fehler: "+errors.join("; "):""),!!errors.length);
  renderSelection();
 }
-$("beta-invite-selected").addEventListener("click",()=>manageBetaInvitations(false));
-$("beta-direct-selected").addEventListener("click",()=>manageBetaInvitations(true));
+$("beta-invite-selected").addEventListener("click",()=>manageBetaInvitations("invite"));
+$("beta-direct-selected").addEventListener("click",()=>manageBetaInvitations("direct"));
+$("beta-revoke-selected").addEventListener("click",()=>manageBetaInvitations("revoke"));
 $("akamesmp-toggle").addEventListener("change",async()=>{if(!selected)return;const target=selected,box=$("akamesmp-toggle"),enabled=box.checked;box.disabled=true;$("akamesmp-message").textContent="Wird gespeichert …";const {error}=enabled?await db.from("akamesmp_members").insert({user_id:target}):await db.from("akamesmp_members").delete().eq("user_id",target);if(error){box.checked=!enabled;$("akamesmp-message").textContent="Fehler: "+error.message;}else{if(enabled)smpMembers.add(target);else smpMembers.delete(target);$("akamesmp-message").textContent="Gespeichert ✓";}box.disabled=false;});
 $("search").addEventListener("input",renderPeople);
 $("save-role").addEventListener("click",async()=>{
@@ -208,16 +210,17 @@ $("save-role").addEventListener("click",async()=>{
 });
 async function loadDirectory(){
  status("Benutzer und Freigaben werden geladen …");
- const [p,r,b,smp,dn,custom]=await Promise.all([
+ const [p,r,b,smp,dn,custom,inv]=await Promise.all([
  db.from("community_profiles").select("user_id,display_name,avatar_url,created_at").order("created_at",{ascending:false}).limit(500),
  db.from("staff_access").select("user_id,role"),
  db.from("beta_access").select("user_id,project_slug"),
  db.from("akamesmp_members").select("user_id"),
  db.rpc("admin_discord_names"),
- db.from("user_profiles").select("user_id,display_name").limit(1000)
+ db.from("user_profiles").select("user_id,display_name").limit(1000),
+ db.from("beta_invitations").select("*").order("created_at",{ascending:false}).limit(1000)
  ]);
- if(p.error||r.error||b.error||smp.error||dn.error||custom.error){status("Verwaltungsdaten konnten nicht geladen werden: "+(p.error||r.error||b.error||smp.error||dn.error||custom.error).message);return;}smpMembers=new Set((smp.data||[]).map(x=>x.user_id));discordNames=new Map((dn.data||[]).map(x=>[x.user_id,x.discord_name]));
- customNames=new Map((custom.data||[]).filter(x=>x.display_name).map(x=>[x.user_id,x.display_name]));people=p.data||[];roles=new Map((r.data||[]).map(x=>[x.user_id,x.role]));betas=new Map();
+ if(p.error||r.error||b.error||smp.error||dn.error||custom.error||inv.error){status("Verwaltungsdaten konnten nicht geladen werden: "+(p.error||r.error||b.error||smp.error||dn.error||custom.error||inv.error).message);return;}smpMembers=new Set((smp.data||[]).map(x=>x.user_id));discordNames=new Map((dn.data||[]).map(x=>[x.user_id,x.discord_name]));
+ customNames=new Map((custom.data||[]).filter(x=>x.display_name).map(x=>[x.user_id,x.display_name]));people=p.data||[];invitations=inv.data||[];roles=new Map((r.data||[]).map(x=>[x.user_id,x.role]));betas=new Map();
  for(const record of b.data||[]){if(!betas.has(record.user_id))betas.set(record.user_id,new Set());betas.get(record.user_id).add(record.project_slug);}
  $("user-count").textContent=people.length;$("staff-count").textContent=roles.size;$("beta-count").textContent=(b.data||[]).length;
  renderPeople();status("Administratorzugriff bestätigt. Rollen und Beta-Freigaben werden sicher über Supabase geprüft.");
