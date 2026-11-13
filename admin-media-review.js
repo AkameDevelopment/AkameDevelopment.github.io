@@ -4,6 +4,18 @@ const root=document.getElementById("media-review-manager");
 if(root){
  const list=root.querySelector("#media-review-list"),state=root.querySelector("#media-review-status"),count=root.querySelector("#media-review-count");
  const tr=(de,en)=>(window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang"))==="en"?en:de;
+ const confirmDialog=document.createElement("dialog");confirmDialog.className="media-review-confirm";confirmDialog.setAttribute("aria-labelledby","media-review-confirm-title");confirmDialog.innerHTML='<div class="media-review-confirm-body"><div class="media-review-confirm-icon" aria-hidden="true">!</div><h2 id="media-review-confirm-title"></h2><p id="media-review-confirm-description"></p><div class="media-review-confirm-preview"><img alt="" referrerpolicy="no-referrer"></div><div class="media-review-confirm-actions"><button type="button" class="ghost" data-action="cancel"></button><button type="button" class="primary" data-action="confirm"></button></div></div>';document.body.append(confirmDialog);
+ function confirmReview(item,approve){return new Promise(resolve=>{
+  const title=confirmDialog.querySelector("#media-review-confirm-title"),description=confirmDialog.querySelector("#media-review-confirm-description"),preview=confirmDialog.querySelector("img"),ok=confirmDialog.querySelector('[data-action="confirm"]'),cancel=confirmDialog.querySelector('[data-action="cancel"]');
+  title.textContent=approve?tr("Bild wirklich freigeben?","Approve this image?"):tr("Bild wirklich ablehnen?","Reject this image?");
+  description.textContent=approve?tr("Das Bild und der zugehörige Inhalt werden veröffentlicht. Bitte prüfe sie vorher sorgfältig.","The image and related content will be published. Please review them carefully."):tr("Diese Anfrage wird abgelehnt und der Inhalt nicht veröffentlicht.","This request will be rejected and the content will not be published.");
+  preview.src=item.media_url;preview.alt=tr("Bild zur Prüfung","Image for review");
+  cancel.textContent=tr("Abbrechen","Cancel");ok.textContent=approve?tr("Ja, freigeben","Yes, approve"):tr("Ja, ablehnen","Yes, reject");ok.classList.toggle("danger",!approve);
+  let settled=false;const finish=value=>{if(settled)return;settled=true;confirmDialog.close();resolve(value)};
+  const onCancel=()=>finish(false);confirmDialog.addEventListener("cancel",onCancel,{once:true});
+  cancel.onclick=()=>finish(false);ok.onclick=()=>finish(true);
+  confirmDialog.showModal();
+ })}
  async function refresh(){
   const {data,error}=await db.from("media_moderation_reviews").select("id,submitted_by,surface,media_url,reason,created_at,post_body,post_tag,post_topic,gallery_slot").eq("status","pending").order("created_at",{ascending:true}).limit(100);
   list.replaceChildren();if(error){state.textContent=error.message;return}
@@ -18,7 +30,7 @@ if(root){
    const actions=document.createElement("div");actions.style.cssText="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px";
    for(const [approve,label] of [[true,tr("Freigeben","Approve")],[false,tr("Ablehnen","Reject")]]){
     const btn=document.createElement("button");btn.type="button";btn.className="ghost";btn.textContent=label;
-    btn.addEventListener("click",async()=>{if(!confirm(approve?tr("Bild wirklich freigeben?","Approve this image?"):tr("Bild wirklich ablehnen?","Reject this image?")))return;for(const b of actions.querySelectorAll("button"))b.disabled=true;const {error}=await db.rpc("review_media_request",{p_id:item.id,p_approve:approve});if(error){state.textContent=error.message;for(const b of actions.querySelectorAll("button"))b.disabled=false;return}await refresh()});actions.append(btn);
+    btn.addEventListener("click",async()=>{if(!await confirmReview(item,approve))return;for(const b of actions.querySelectorAll("button"))b.disabled=true;const {error}=await db.rpc("review_media_request",{p_id:item.id,p_approve:approve});if(error){state.textContent=error.message;for(const b of actions.querySelectorAll("button"))b.disabled=false;return}await refresh()});actions.append(btn);
    }card.append(actions);list.append(card);
   }
  }
@@ -35,6 +47,16 @@ if(root){
  #media-review-manager.media-review-popover[hidden]{display:none!important}
  #media-review-manager.media-review-popover #media-review-list{max-height:min(65vh,650px);overflow-y:auto;overscroll-behavior:contain}
  @media(max-width:650px){#media-review-manager.media-review-popover{max-width:100%}#media-review-manager.media-review-popover #media-review-list{max-height:65vh}}
+ .media-review-confirm{border:1px solid #a982ff66;border-radius:18px;padding:0;max-width:min(440px,calc(100vw - 30px));width:100%;background:#1c1428;color:#f8f1ff;box-shadow:0 24px 90px #000b}
+ .media-review-confirm::backdrop{background:#06030bd4;backdrop-filter:blur(5px)}
+ .media-review-confirm-body{padding:24px;display:grid;gap:12px}
+ .media-review-confirm-icon{width:37px;height:37px;display:grid;place-items:center;border:1px solid #b58cff66;background:#b58cff1c;border-radius:12px;color:#d8baff;font-weight:900}
+ .media-review-confirm h2{margin:0;font-size:19px}.media-review-confirm p{margin:0;color:#bdb0cb;font-size:13px}
+ .media-review-confirm-preview{display:grid;place-items:center;background:#100b19;border-radius:11px;max-height:190px;overflow:hidden}
+ .media-review-confirm-preview img{max-width:100%;max-height:190px;object-fit:contain}
+ .media-review-confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px;flex-wrap:wrap}
+ .media-review-confirm-actions button{border-radius:10px;padding:9px 14px}
+ .media-review-confirm-actions .danger{background:#8b3455;color:white}
  `;document.head.append(styles);
  root.classList.add("media-review-popover");root.before(notification);
  notificationButton.addEventListener("click",async()=>{const open=root.hidden;root.hidden=!open;notificationButton.setAttribute("aria-expanded",String(open));if(open)await refresh()});
