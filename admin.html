@@ -66,6 +66,31 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 @media(max-width:450px){.akame-admin-header .top{padding:11px 15px}.akame-admin-header .brand{font-size:17px}.admin-quicknav{gap:4px}.admin-quicknav a{font-size:11px;padding:7px}}
 .akame-admin-header .top{max-width:1320px;gap:16px}.admin-site-links{gap:14px}.admin-github-link{border:1px solid #a982ff40;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap}.admin-github-link:hover{background:#a982ff18;text-decoration:none}.akame-admin-header .toplinks{flex-shrink:0}@media(max-width:1180px){.admin-site-links{gap:9px}.admin-site-links a{font-size:11px}.admin-github-link{display:none}}@media(max-width:850px){.admin-site-links{gap:16px}.admin-site-links a{font-size:12px}}
 .admin-user-content-tabs{display:flex;gap:5px;padding:5px;background:#100b1b;border:1px solid #a982ff35;border-radius:12px;margin:12px 0 16px;width:max-content;max-width:100%}.admin-user-content-tab{border:0;border-radius:9px;padding:9px 19px;background:transparent;color:#bbaacc;font:inherit;font-size:13px;font-weight:750;cursor:pointer}.admin-user-content-tab.is-active{background:#a982ff35;color:#fff;box-shadow:0 2px 10px #0003}.admin-user-content-tab:focus-visible{outline:2px solid #cbaaff;outline-offset:2px}#selected-showcase[hidden]{display:none!important}#admin-user-posts-content[hidden]{display:none!important}
+
+/* Dashboard visual cleanup: consistent rhythm, restrained surfaces and controls */
+.shell{max-width:1200px;padding:28px 22px 76px}
+.intro{margin-bottom:18px}.intro h1{font-size:clamp(29px,4vw,39px);margin:6px 0}.intro p{margin:4px 0 0;font-size:13px}
+#dashboard>.grid{margin:14px 0 22px}.grid .stat{background:#ffffff05;border-color:#a982ff22;padding:16px 18px}.grid .stat strong{font-size:25px;line-height:1.2}.grid .stat span{display:block;margin-top:5px}
+#dashboard .panel{background:#171120;border-color:#a982ff28;border-radius:15px;padding:21px}
+#dashboard .panel h2{font-size:18px;margin-bottom:10px}
+#dashboard .panel p{line-height:1.6}
+#dashboard .panel .notice{font-size:12px}
+.admin-quicknav{position:relative;gap:6px;margin-bottom:18px;background:#171120;border-color:#a982ff30;padding:7px;border-radius:12px}
+.admin-quicknav a{padding:9px 12px;font-size:12px;border-radius:8px;transition:background .15s,color .15s}
+.admin-quicknav a:hover,.admin-quicknav a:focus-visible{background:#a982ff27;color:#fff}
+.admin-section-heading{margin:27px 0 10px;padding-left:3px;color:#c8b0ea;font-size:11px;letter-spacing:.13em}
+#dashboard .panel[hidden],#dashboard section[hidden],#dashboard div[hidden]{display:none!important}
+#dashboard .input{background:#100c18;border-color:#a982ff35}
+#dashboard .input:focus{border-color:#b58cff;box-shadow:0 0 0 3px #a982ff1c}
+#dashboard button.ghost,#dashboard a.ghost{border-radius:9px}
+#dashboard button.primary{border-radius:9px}
+#dashboard hr.separator{border-color:#a982ff24}
+#admin-controls{scroll-margin-top:110px}
+#news-manager,#requests-manager,#mod-visibility-manager,#owner-build-controls{scroll-margin-top:105px}
+#dashboard .layout{gap:14px}
+#dashboard .layout .panel{margin-top:14px!important}
+#dashboard .request-admin-head{gap:15px}
+@media(max-width:700px){.shell{padding:20px 14px 55px}.intro h1{font-size:29px}#dashboard .panel{padding:15px}.admin-quicknav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;justify-content:flex-start}.admin-quicknav a{flex-shrink:0}.grid{gap:8px}.grid .stat{padding:12px}.grid .stat strong{font-size:21px}.grid .stat span{font-size:11px}}
 </style><link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261112-purple-anime-large-2"><link rel="shortcut icon" href="favicon.svg?v=20261112-purple-anime-large-2"><style id="beta-accepted-check-style">
 .beta-manager:not(.beta-remove-mode) #beta-options label.beta-already-accepted{opacity:.48;filter:grayscale(.65);cursor:not-allowed}
 #beta-options label.beta-already-accepted input[data-accepted="true"]{appearance:none;-webkit-appearance:none;width:17px;height:17px;min-width:17px;border:1px solid #8bd9b3;border-radius:4px;background:#285c48;position:relative;opacity:1}
@@ -80,7 +105,7 @@ p{color:var(--muted)}.state{padding:17px 20px;border:1px solid #a382db55;border-
 <div id="status" class="state" role="status" aria-live="polite">Anmeldestatus wird überprüft …</div>
 <section id="login-view" class="panel" hidden><h2>Discord-Anmeldung erforderlich</h2><p>Du musst angemeldet und freigeschaltet sein, um den Mitarbeiterbereich zu sehen.</p><button type="button" class="primary" id="login">Mit Discord anmelden</button></section>
 <section id="denied-view" class="panel" hidden><h2>Kein Zugriff</h2><p>Dein Discord-Konto ist angemeldet, hat aber keine Mitarbeiterberechtigung. Öffne die öffentliche Website oder wende dich an einen Administrator.</p><a href="index.html">Zur Startseite</a></section>
-<div id="dashboard" hidden><nav class="admin-quicknav" aria-label="Dashboard-Bereiche"><a href="#admin-controls">Mitglieder</a><a href="#requests-manager">Meldungen</a><a href="#news-manager">News & Updates</a><a href="#mod-visibility-manager">Mods</a><a href="#owner-build-controls">Website</a></nav>
+<div id="dashboard" hidden><nav class="admin-quicknav" aria-label="Dashboard-Bereiche"><a href="#admin-controls">Mitglieder</a><a href="#news-manager">News & Updates</a><a href="#mod-visibility-manager">Mods</a><a href="#requests-manager">Community & Support</a><a href="#owner-build-controls">Website</a></nav>
 <div class="grid"><div class="stat"><strong id="user-count">–</strong><span>Registrierte Benutzer</span></div><div class="stat"><strong id="staff-count">–</strong><span>Team-Mitglieder</span></div><div class="stat"><strong id="beta-count">–</strong><span>Beta-Freigaben</span></div></div>
 <div id="admin-controls" class="panel" hidden>
 <h2>Benutzerverwaltung</h2><p class="notice">Nur Administratoren können Rollen und Beta-Zugänge ändern.</p>
