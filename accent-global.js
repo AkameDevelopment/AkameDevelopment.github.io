@@ -3,7 +3,7 @@ const KEY="akame-site-accent",DEFAULT="#a678ec",valid=v=>/^#[0-9a-f]{6}$/i.test(
 const URL="https://wycdpuzlbivtfxwtarzn.supabase.co",PUBLISHABLE="sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0";
 let dbPromise=null,activeUser=null,loaded=false,revision=0;
 function apply(){
- let value=DEFAULT;try{const stored=localStorage.getItem(KEY);if(valid(stored))value=stored}catch{}
+ let value=DEFAULT;try{localStorage.removeItem(KEY)}catch{}
  const root=document.documentElement;
  for(const name of ["--akame-user-accent","--akame-accent","--settings-accent","--purple","--accent"])root.style.setProperty(name,value);
  root.style.accentColor=value;
@@ -42,5 +42,5 @@ apply();
 document.addEventListener("akame-settings-change",apply);
 window.addEventListener("storage",e=>{if(!e.key||e.key===KEY)apply()});
 window.AkameAccent={apply,saveAccount,loadAccount,reset(){revision++;localStorage.setItem(KEY,DEFAULT);apply();document.dispatchEvent(new CustomEvent("akame-accent-account-loaded"));return saveAccount(DEFAULT)}};
-void loadAccount();
+// Custom accents are retired; keep the default purple on every page.
 })();
