@@ -20,6 +20,20 @@ async function fetchProfiles(){
  }));
 }
 const top=panel.querySelector("strong"),read=panel.querySelector(".akame-notify-read"),list=panel.querySelector(".akame-notify-items"),filters=panel.querySelector(".akame-notify-filters");
+async function markNotificationRead(item){
+ if(!user||item.read_at)return true;
+ const now=new Date().toISOString();
+ const source=item.source;
+ let query;
+ if(source==="beta")query=client.from("beta_invitations").update({recipient_read_at:now}).eq("id",item.id).eq("user_id",user.id);
+ else if(source==="beta-feedback")query=client.from("beta_invitations").update({sender_read_at:now}).eq("id",item.id).eq("invited_by",user.id);
+ else query=client.from(source==="mod"?"mod_comment_notifications":"akamesmp_notifications").update({read_at:now}).eq("id",item.id).eq("recipient_id",user.id);
+ try{const {error}=await query;if(error)throw error;item.read_at=now;render();return true}catch(error){console.warn("Could not mark notification as read",error);return false}
+}
+function bindNotificationLink(link,item){link.addEventListener("click",async e=>{
+ if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
+ e.preventDefault();const destination=link.href;await markNotificationRead(item);window.location.assign(destination);
+})}
 function render(){
  label.textContent=tr("Benachrichtigungen","Notifications");
  top.textContent=tr("Benachrichtigungen","Notifications");
@@ -56,7 +70,7 @@ function render(){
    img.onerror=()=>{img.remove();avatar.textContent=displayName.slice(0,1).toUpperCase()};avatar.replaceChildren(img);
   }
   const who=document.createElement("span");who.className="akame-notify-actor";who.textContent=displayName;
-  identity.append(avatar,who);card.append(identity,title,date);
+  identity.append(avatar,who);if(actorId)bindNotificationLink(identity,item);card.append(identity,title,date);
   if(item.source==="beta"){
    const actions=document.createElement("div");actions.className="akame-notify-actions";
    if(item.status==="pending"){
@@ -66,7 +80,7 @@ function render(){
       actions.querySelectorAll("button").forEach(x=>x.disabled=true);
       const {error}=await client.rpc("respond_to_beta_invitation",{p_invitation_id:item.id,p_accept:accept});
       if(error){actions.querySelectorAll("button").forEach(x=>x.disabled=false);btn.title=error.message;alert(tr("Antwort konnte nicht gespeichert werden: ","Could not save response: ")+error.message);return;}
-      await refresh();
+      await markNotificationRead(item);await refresh();
      });actions.append(btn);
     }
    }else{const state=document.createElement("span");state.textContent=item.status==="accepted"?tr("Angenommen","Accepted"):tr("Abgelehnt","Declined");actions.append(state);}
@@ -75,9 +89,10 @@ function render(){
    const a=document.createElement("a");a.className="akame-notify-open";
    a.href=item.source==="mod"?"project.html?mod="+encodeURIComponent(item.project_slug)+"&comment="+encodeURIComponent(item.reply_id)+"#mod-comments":"community.html?post="+encodeURIComponent(item.post_id)+"#community-social-feed";
    a.textContent=tr("Ansehen","View");
-   a.addEventListener("click",()=>{if(!item.read_at)void client.from(item.source==="mod"?"mod_comment_notifications":"akamesmp_notifications").update({read_at:new Date().toISOString()}).eq("id",item.id).eq("recipient_id",user.id)});
+   bindNotificationLink(a,item);
    card.append(a);
   }
+  card.addEventListener("click",e=>{if(e.target.closest("a,button,input,select,textarea"))return;void markNotificationRead(item)});
   list.append(card);
  }
 }
