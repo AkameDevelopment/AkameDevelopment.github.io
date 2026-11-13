@@ -378,3 +378,13 @@ html body header .akame-header-actions>.akame-account{
  html body header>.akame-menu-panel .akame-language-choices button.selected{background:#7649b5!important;border-color:#b08ce7!important}
  html body.akame-menu-open{overflow:hidden!important}
 }
+
+/* Compact header controls when notifications are present on narrow phones. */
+@media(max-width:600px){
+ html body header>.wrap.nav.akame-site-nav{gap:7px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand,html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:clamp(12px,3.5vw,15px)!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{width:40px!important;min-width:40px!important;max-width:40px!important;padding:0!important;justify-content:center!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:nth-child(2){display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{gap:7px!important}
+ html body header .akame-notify-bell{width:36px;height:36px}
+}
