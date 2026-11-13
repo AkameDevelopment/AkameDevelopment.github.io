@@ -115,7 +115,7 @@ $("save-profile").addEventListener("click",async()=>{
  if(selected!==userId)return;
  button.disabled=false;field.disabled=false;$("selected-display-name").disabled=false;
  if(!error)$("selected-profile-name").textContent=displayName||people.find(p=>p.user_id===userId)?.display_name||"Benutzer";
- message.textContent=error?"Speichern fehlgeschlagen: "+error.message:"Profilbeschreibung erfolgreich gespeichert.";
+ message.textContent=error?(error.code==="23505"?"Dieser Anzeigename ist bereits vergeben.":"Speichern fehlgeschlagen: "+error.message):"Profiländerungen erfolgreich gespeichert.";
 });
 function renderSelection(){
  const p=people.find(x=>x.user_id===selected);$("selected").hidden=!p;if(!p)return;
