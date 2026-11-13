@@ -556,7 +556,7 @@ try{
    let image=String(appearance.data?.banner_url||"");
    try{const u=new URL(image);if(u.protocol!=="https:"||u.username||u.password||image.length>1200||/[<>"'\\\\\s]/.test(image))image="";}catch{image="";}
    const solid=/^#[0-9a-fA-F]{6}$/.test(appearance.data?.custom_color||"")?appearance.data.custom_color:"";
-   const background=image?'linear-gradient(90deg,rgba(10,7,19,.68),rgba(11,7,19,.26)),url("'+image+'")':'radial-gradient(ellipse at 88% 10%,color-mix(in srgb,'+accent+' 28%,transparent),transparent 63%),linear-gradient(120deg,'+first+','+second+')';
+   const background=image?'linear-gradient(90deg,rgba(10,7,19,.68),rgba(11,7,19,.26)),url("'+image+'")':solid?'none':'radial-gradient(ellipse at 88% 10%,color-mix(in srgb,'+accent+' 28%,transparent),transparent 63%),linear-gradient(120deg,'+first+','+second+')';
    person.style.setProperty("background-color",solid||second,"important");
    person.style.setProperty("background-image",background,"important");
    person.style.setProperty("background-position","center","important");
