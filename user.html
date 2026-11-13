@@ -431,6 +431,50 @@ html body main #content>.person>.akame-profile-actions>.own-profile-edit{
 @media(max-width:900px){
  html body main #content>.person{min-height:180px!important}
 }
+</style><style id="akame-profile-sidebar-outside-left-20261113">
+/* Desktop: mods occupy the previously empty right-hand area, beginning at the banner. */
+@media(min-width:1050px){
+ html body main{
+  box-sizing:border-box!important;width:calc(100% - clamp(36px,5vw,110px))!important;
+  max-width:1640px!important;margin:30px auto 75px!important;padding:0!important;
+ }
+ html body main #content{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(265px,320px)!important;
+  grid-template-rows:auto auto 1fr!important;column-gap:22px!important;row-gap:18px!important;
+  align-items:start!important;width:100%!important;max-width:none!important;
+ }
+ html body main #content>.person{
+  grid-column:1!important;grid-row:1!important;margin:0!important;width:100%!important;
+ }
+ html body main #content>.profile-spotify-card{
+  grid-column:1!important;grid-row:2!important;width:100%!important;margin:0!important;
+ }
+ html body main #content>.profile-layout{
+  display:contents!important;
+ }
+ html body main #content>.profile-layout>.profile-main{
+  grid-column:1!important;grid-row:3!important;display:flex!important;
+  flex-direction:column!important;gap:16px!important;min-width:0!important;
+  width:100%!important;
+ }
+ html body main #content>.profile-layout>.profile-side{
+  grid-column:2!important;grid-row:1 / span 3!important;display:flex!important;
+  flex-direction:column!important;align-self:start!important;min-width:0!important;
+  width:100%!important;gap:14px!important;
+ }
+ html body main #content>.profile-layout>.profile-side>.profile-section{
+  width:100%!important;max-width:none!important;margin:0!important;padding:20px!important;
+ }
+ html body main #content>.profile-layout>.profile-side .public-mod-grid{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;
+ }
+}
+@media(max-width:1049px){
+ html body main #content{display:block!important}
+ html body main #content>.profile-layout{display:flex!important;flex-direction:column!important;gap:16px!important}
+ html body main #content>.profile-layout>.profile-main{order:0!important;width:100%!important}
+ html body main #content>.profile-layout>.profile-side{order:1!important;width:100%!important}
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
