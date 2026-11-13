@@ -17,3 +17,27 @@ function setUser(user){account.classList.add("visible");loginLink.hidden=!!user;
 })();
 /* Shared notification center on every page with the navigation. */
 (()=>{if(document.querySelector('script[data-akame-notifications]'))return;const s=document.createElement("script");s.src="akamesmp-notifications.js?v=mod-reply-notifications-20261113";s.defer=true;s.dataset.akameNotifications="1";document.body.append(s)})();
+
+/* Desktop-only Home dropdown: preserve original mobile navigation. */
+(()=>{
+ const nav=document.querySelector("header .akame-site-nav .navlinks");
+ if(!nav||nav.querySelector(".akame-home-dropdown"))return;
+ const links=[...nav.querySelectorAll(":scope > a")];
+ const home=links.find(a=>/^(?:index\.html)?#home$/.test(a.getAttribute("href")||"")||a.getAttribute("href")==="index.html");
+ const projects=links.find(a=>/#projects$/.test(a.getAttribute("href")||""));
+ const roadmap=links.find(a=>/#roadmap$/.test(a.getAttribute("href")||""));
+ if(!home||!projects||!roadmap)return;
+ const wrap=document.createElement("div");wrap.className="akame-home-dropdown";
+ home.before(wrap);wrap.append(home);
+ const menu=document.createElement("div");menu.className="akame-home-submenu";
+ const projectLink=document.createElement("a");projectLink.href=projects.href;projectLink.className="akame-home-submenu-link";
+ const roadmapLink=document.createElement("a");roadmapLink.href=roadmap.href;roadmapLink.className="akame-home-submenu-link";
+ menu.append(projectLink,roadmapLink);wrap.append(menu);
+ projects.classList.add("akame-home-duplicate");roadmap.classList.add("akame-home-duplicate");
+ home.classList.add("akame-home-trigger");home.setAttribute("aria-haspopup","true");
+ function translate(){const en=(window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang"))==="en";
+ projectLink.textContent=en?"Projects":"Projekte";roadmapLink.textContent="Roadmap";
+ home.setAttribute("aria-label",en?"Home, submenu with Projects and Roadmap":"Startseite, Untermenü mit Projekte und Roadmap");
+ }
+ translate();document.addEventListener("akame-language-change",translate);
+})();
