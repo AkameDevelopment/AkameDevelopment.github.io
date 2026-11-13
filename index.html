@@ -123,6 +123,15 @@ body{background:radial-gradient(ellipse 75% 42% at 85% 0%,#3d205633,transparent 
 @media(min-width:1800px){
  html body main .hero-inner{padding-left:16px!important}
 }
+</style><style id="akame-project-category-hidden-temporarily">
+/* Hide the redundant single-category selector while keeping all projects usable. */
+html body #projects .category-tabs{display:none!important}
+html body #projects #minecraftProjectContent{display:block!important}
+html body #projects #categoryIntro{margin-top:0!important}
+@media(max-width:620px){
+ html body #projects #minecraftProjectContent,
+ html body #projects #minecraftProjectContent:not(.expanded){display:block!important}
+}
 </style></head>
 <body>
 <header><div class="wrap nav akame-site-nav"><a class="brand" href="#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><button class="mobile-toggle" id="menuToggle" aria-label="Menü öffnen" aria-expanded="false">☰</button><nav class="navlinks" id="navlinks" aria-label="Hauptnavigation"><a href="#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="#projects">Projekte</a><a href="#roadmap">Roadmap</a><a href="#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header>
