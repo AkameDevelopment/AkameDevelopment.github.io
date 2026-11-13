@@ -7,7 +7,7 @@ if(root){
  async function refresh(){
   const {data,error}=await db.from("media_moderation_reviews").select("id,submitted_by,surface,media_url,reason,created_at,post_body,post_tag,post_topic,gallery_slot").eq("status","pending").order("created_at",{ascending:true}).limit(100);
   list.replaceChildren();if(error){state.textContent=error.message;return}
-  count.textContent=String(data.length);state.textContent=data.length?"":tr("Keine offenen Prüfungen.","No pending reviews.");
+  count.textContent=String(data.length);notificationCount.textContent=String(data.length);notificationCount.hidden=data.length===0;notificationButton.setAttribute("aria-label",tr("Offene Freigaben: ","Pending approvals: ")+data.length);state.textContent=data.length?"":tr("Keine offenen Prüfungen.","No pending reviews.");
   for(const item of data){
    const card=document.createElement("article");card.style.cssText="border:1px solid #ffffff25;border-radius:13px;padding:16px;margin:12px 0;background:#ffffff08";
    const head=document.createElement("strong");head.textContent=(item.surface==="community_post"?tr("Community-Beitrag","Community post"):tr("Profilbild","Profile image"))+" · #"+item.id;card.append(head);
@@ -22,7 +22,23 @@ if(root){
    }card.append(actions);list.append(card);
   }
  }
+ const notification=document.createElement("div");notification.className="media-review-notification";notification.hidden=true;
+ notification.innerHTML='<button type="button" class="media-review-notification-button" aria-expanded="false" aria-controls="media-review-manager"><span aria-hidden="true">🔔</span> <span class="media-review-button-label">Freigaben</span> <span class="media-review-notification-count" hidden>0</span></button>';
+ const notificationButton=notification.querySelector("button"),notificationCount=notification.querySelector(".media-review-notification-count");
+ const styles=document.createElement("style");styles.textContent=`
+ .media-review-notification{position:relative;display:flex;justify-content:flex-end;margin:0 0 12px}.media-review-notification[hidden]{display:none!important}
+ .media-review-notification-button{display:inline-flex;align-items:center;gap:9px;padding:9px 13px;border:1px solid #a982ff65;border-radius:12px;background:#a982ff16;color:#f5eaff;font-weight:700;cursor:pointer}
+ .media-review-notification-button:hover{background:#a982ff30}
+ .media-review-notification-count{min-width:21px;padding:1px 6px;border-radius:999px;background:#b68aff;color:#130c20;text-align:center;font-size:12px;font-weight:800}
+ .media-review-notification-count[hidden]{display:none}
+ #media-review-manager.media-review-popover{max-width:720px;margin:0 0 22px auto!important;box-shadow:0 14px 40px #0005}
+ #media-review-manager.media-review-popover[hidden]{display:none!important}
+ #media-review-manager.media-review-popover #media-review-list{max-height:min(65vh,650px);overflow-y:auto;overscroll-behavior:contain}
+ @media(max-width:650px){#media-review-manager.media-review-popover{max-width:100%}#media-review-manager.media-review-popover #media-review-list{max-height:65vh}}
+ `;document.head.append(styles);
+ root.classList.add("media-review-popover");root.before(notification);
+ notificationButton.addEventListener("click",async()=>{const open=root.hidden;root.hidden=!open;notificationButton.setAttribute("aria-expanded",String(open));if(open)await refresh()});
  const {data:{user}}=await db.auth.getUser();
- if(user){const {data}=await db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle();if(["owner","admin"].includes(data?.role)){root.hidden=false;root.querySelector("#media-review-refresh").onclick=refresh;await refresh()}}
- document.addEventListener("akame-language-change",()=>{if(!root.hidden)void refresh()});
+ if(user){const {data}=await db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle();if(["owner","admin"].includes(data?.role)){notification.hidden=false;root.hidden=true;root.querySelector("#media-review-refresh").onclick=refresh;await refresh();setInterval(()=>{if(!document.hidden)void refresh()},45000)}}
+ document.addEventListener("akame-language-change",()=>{notification.querySelector(".media-review-button-label").textContent=tr("Freigaben","Approvals");if(!notification.hidden)void refresh()});
 }
