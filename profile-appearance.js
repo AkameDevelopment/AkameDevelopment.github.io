@@ -27,17 +27,26 @@ function styleBanner(node,theme,image,customColor="",x=50,y=50,zoom=100){
  const solid=/^#[0-9a-fA-F]{6}$/.test(customColor)?customColor:"";
  node.style.setProperty("--banner-start",start);node.style.setProperty("--banner-end",end);node.style.setProperty("--banner-accent",accent);
  node.style.backgroundColor=solid||end;node.style.backgroundPosition="center";node.style.backgroundSize="cover";
- let media=node.querySelector(":scope > .akame-banner-media");if(media)media.remove();
+ let media=node.querySelector(":scope > .akame-banner-media");
  const embed=image&&validUrl(image)?tenorEmbed(image):null;
+ const mediaUrl=embed||image;
  if(image&&validUrl(image)){
   node.style.backgroundImage="linear-gradient(120deg,var(--banner-start),var(--banner-end))";
-  media=document.createElement(embed?"iframe":"img");media.className="akame-banner-media";
-  if(embed){media.src=embed;media.title="Tenor GIF banner";media.referrerPolicy="no-referrer";media.setAttribute("sandbox","allow-scripts allow-same-origin");}
-  else{media.src=image;media.alt="";media.decoding="async";media.referrerPolicy="no-referrer";}
-  media.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;z-index:0;object-fit:cover;display:block";
-  applyFraming(media,x,y,zoom);node.prepend(media);
- }else if(solid)node.style.backgroundImage="none";
- else node.style.backgroundImage="radial-gradient(ellipse at 88% 10%,color-mix(in srgb,var(--banner-accent) 28%,transparent),transparent 63%),linear-gradient(120deg,var(--banner-start),var(--banner-end))";
+  if(!media||media.dataset.bannerUrl!==mediaUrl||media.tagName!==(embed?"IFRAME":"IMG")){
+   if(media)media.remove();
+   media=document.createElement(embed?"iframe":"img");media.className="akame-banner-media";
+   if(embed){media.src=embed;media.title="Tenor GIF banner";media.referrerPolicy="no-referrer";media.setAttribute("sandbox","allow-scripts allow-same-origin");}
+   else{media.src=image;media.alt="";media.decoding="async";media.referrerPolicy="no-referrer";}
+   media.dataset.bannerUrl=mediaUrl;
+   media.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;z-index:0;object-fit:cover;display:block";
+   node.prepend(media);
+  }
+  applyFraming(media,x,y,zoom);
+ }else{
+  if(media)media.remove();
+  if(solid)node.style.backgroundImage="none";
+  else node.style.backgroundImage="radial-gradient(ellipse at 88% 10%,color-mix(in srgb,var(--banner-accent) 28%,transparent),transparent 63%),linear-gradient(120deg,var(--banner-start),var(--banner-end))";
+ }
 }
 
 if(document.getElementById("profile-content")){
