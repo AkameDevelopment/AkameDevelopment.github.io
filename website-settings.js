@@ -57,44 +57,7 @@ function showResetToast(message){
  toast.textContent="✓ "+message;toast.style.opacity="1";toast.hidden=false;
  clearTimeout(showResetToast.timeout);showResetToast.timeout=setTimeout(()=>{toast.style.opacity="0";setTimeout(()=>{toast.hidden=true},220)},3200);
 }
-$("reset-settings").addEventListener("click",()=>{
- const button=$("reset-settings");
- // A synchronous, self-contained reset: no network, promises or account operations.
- try{
-  for(const [key,value] of Object.entries(defaults)){
-   if(key==="accent")continue;
-   localStorage.setItem(keys[key],String(value));
-  }
-  localStorage.removeItem("akame-site-accent");
-  localStorage.setItem("akame-site-theme","dark");
-  localStorage.setItem("akame-lang-preference","de");
-  localStorage.setItem("akame-lang","de");
-  document.documentElement.dataset.akameTheme="dark";
-  document.documentElement.classList.remove("akame-compact","akame-reduced-motion");
-  document.documentElement.style.setProperty("--akame-user-accent","#a678ec");
-  document.documentElement.style.setProperty("--settings-accent","#a678ec");
-  document.documentElement.style.setProperty("--akame-accent","#a678ec");
-  for(const key of Object.keys(defaults)){
-   const id=key==="community"?"setting-notify-community":key==="beta"?"setting-notify-beta":key==="updates"?"setting-notify-updates":"setting-"+key;
-   const el=$(id);if(!el)continue;
-   if(el.type==="checkbox")el.checked=!!defaults[key];else el.value=String(defaults[key]);
-  }
-  $("setting-language").value="de";
-  pendingAccent=null;
-  window.AkameTheme?.apply?.();
-  window.AkameWebsiteSettings?.apply?.();
-  window.AkameAccent?.apply?.();
-  document.dispatchEvent(new CustomEvent("akame-settings-change"));
-  try{window.AkameLanguage?.set?.("de")}catch(error){console.warn("Language change",error)}
-  renderLanguage();
-  const message=(words.de).restored;
-  $("save-status").textContent=message;
-  showResetToast(message);
- }catch(error){
-  console.error("Restore defaults error:",error);
-  showResetToast(lang()==="en"?"Could not restore defaults.":"Standardeinstellungen konnten nicht wiederhergestellt werden.");
- }finally{button.disabled=false}
-});
+// Restore defaults is handled independently by settings-reset.js.
 
 document.addEventListener("akame-language-change",renderLanguage);window.addEventListener("storage",()=>{sync();applyLocal()});window.addEventListener("pageshow",()=>{sync();window.AkameTheme?.apply?.()});document.addEventListener("visibilitychange",()=>{if(!document.hidden)sync()});window.matchMedia?.("(prefers-reduced-motion: reduce)").addEventListener?.("change",renderLanguage);sync();selectTab(location.hash.slice(1)||"appearance",false);
 })();
