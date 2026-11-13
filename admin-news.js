@@ -3,7 +3,7 @@ const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable
 const root=document.getElementById("news-manager");
 if(root){
 const $=id=>document.getElementById(id);
-const mods={all:"Allgemein",modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud+",info:"AkameInfos",admin:"Admin",zoom:"AkameZoom"};
+const mods={all:"Allgemein",akamesmp:"AkameSMP",modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud+",info:"AkameInfos",admin:"Admin",zoom:"AkameZoom"};
 let current=null,records=[],selected=null,oldImage=null,removeImage=false,objectUrl=null;
 const lang=()=>window.AkameLanguage?.get()==="en"?"en":"de";
 const tr=(de,en)=>lang()==="en"?en:de;
