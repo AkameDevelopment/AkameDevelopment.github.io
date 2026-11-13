@@ -813,6 +813,31 @@ html body main #content>.person .profile-badges .akame-badge-name{
   background:rgba(15,10,27,.48)!important;
  }
 }
+</style><style id="akame-member-since-glass-name-outline-20261113">
+/* A translucent joined-date chip, matching the profile bio card. */
+html body main #content>.person .profile-identity-info>.profile-joined-header{
+ display:inline-flex!important;align-items:center!important;width:fit-content!important;max-width:100%!important;
+ gap:7px!important;padding:6px 11px!important;
+ background:rgba(12,8,24,.46)!important;
+ border:1px solid rgba(229,205,255,.21)!important;border-radius:10px!important;
+ -webkit-backdrop-filter:blur(7px)!important;backdrop-filter:blur(7px)!important;
+ box-shadow:0 4px 16px rgba(0,0,0,.12)!important;
+ color:#f0e4fc!important;
+}
+html body main #content>.person .profile-identity-info>h1.akame-outlined-name{
+ --akame-name-outline:#000000;
+ -webkit-text-stroke:1px var(--akame-name-outline)!important;
+ paint-order:stroke fill!important;
+ text-shadow:1px 1px 0 var(--akame-name-outline),-1px -1px 0 var(--akame-name-outline),1px -1px 0 var(--akame-name-outline),-1px 1px 0 var(--akame-name-outline)!important;
+}
+html body main #content>.person .profile-identity-info>h1.akame-outlined-name>.profile-discord-name{
+ -webkit-text-stroke:0!important;text-shadow:none!important;
+}
+@media(max-width:550px){
+ html body main #content>.person .profile-identity-info>.profile-joined-header{
+  font-size:11px!important;padding:5px 8px!important;
+ }
+}
 </style></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
@@ -853,12 +878,14 @@ try{
  const avatarUrl=community?.avatar_url||latest?.author_avatar_url||"";
  avatar.src=/^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(avatarUrl)?avatarUrl:"https://cdn.discordapp.com/embed/avatars/0.png";
  avatar.alt="Avatar";const info=document.createElement("div");info.className="profile-identity-info";
- const profileName=el("h1",profile?.display_name||community?.display_name||latest?.author_name||"Mitglied");profileName.style.cssText="display:flex;align-items:baseline;flex-wrap:wrap;column-gap:10px;row-gap:3px";info.append(profileName);if(community?.created_at&&profile?.show_member_since!==false){const joined=el("div","Seit "+new Date(community.created_at).toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"}),"muted profile-joined-header");joined.insertAdjacentHTML("afterbegin",'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>');info.append(joined);}
+ const profileName=el("h1",profile?.display_name||community?.display_name||latest?.author_name||"Mitglied");profileName.style.cssText="display:flex;align-items:baseline;flex-wrap:wrap;column-gap:10px;row-gap:3px";profileName.classList.add("akame-outlined-name");info.append(profileName);if(community?.created_at&&profile?.show_member_since!==false){const joined=el("div","Seit "+new Date(community.created_at).toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"}),"muted profile-joined-header");joined.insertAdjacentHTML("afterbegin",'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>');info.append(joined);}
  if(user?.id===id){const edit=el("a","","own-profile-edit");edit.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l-1.8 1.8a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-2.6v-1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-1.8-1.8A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H5.4v-2.6h1A1.7 1.7 0 0 0 8 10.4a1.7 1.7 0 0 0-.3-1.9l1.8-1.8a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-1H15v1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l1.8 1.8a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1H22v2.6h-1a1.7 1.7 0 0 0-1.6 1Z" transform="translate(-1.7 -0.7) scale(.99)"/></svg>';edit.insertAdjacentHTML("beforeend",'<span class="settings-mobile-label">'+tr("Einstellungen","Settings")+'</span>');edit.setAttribute("aria-label",tr("Einstellungen öffnen","Open settings"));edit.href="profile.html";edit.title=tr("Einstellungen","Settings");person.append(edit);}person.append(avatar,info);root.append(person);
  /* Profile header appearance is public; ownership is enforced on writes by RLS. */
  try{
-  const appearance=await db.from("profile_appearance").select("theme,banner_url,custom_color,banner_position_x,banner_position_y,banner_zoom").eq("user_id",id).maybeSingle();
+  const appearance=await db.from("profile_appearance").select("theme,banner_url,custom_color,banner_position_x,banner_position_y,banner_zoom,name_outline_color").eq("user_id",id).maybeSingle();
   if(!appearance.error){
+   const nameOutline=/^#[0-9A-Fa-f]{6}$/.test(appearance.data?.name_outline_color||"")?appearance.data.name_outline_color:"#000000";
+   profileName.style.setProperty("--akame-name-outline",nameOutline);
    const themes={violet:["#563485","#241734","#b981ff"],midnight:["#26365c","#101728","#8ca7ec"],rose:["#713a66","#271429","#f2a8d9"],ocean:["#205b74","#112836","#91d7f1"],emerald:["#276259","#112e2b","#83e4ba"]};
    const [first,second,accent]=themes[appearance.data?.theme]||themes.violet;
    let image=String(appearance.data?.banner_url||"");
