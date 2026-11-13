@@ -18,3 +18,17 @@ html[data-akame-theme="light"] :is(.akame-menu-panel,.akame-account-menu,.notifi
 html[data-akame-theme="light"] :is(.brand b,.akame-site-nav .brand b,.accent-text){color:var(--akame-user-accent,#8552c8)!important}
 html[data-akame-theme="light"] :is(.danger,.error,.delete,.destructive,[aria-invalid="true"]){--akame-user-accent:#c0445b}
 @media(prefers-reduced-motion:reduce){html[data-akame-theme="light"] *{scroll-behavior:auto}}
+
+/* Nested navigation, account, notifications, beta and profile overlays */
+html[data-akame-theme="light"] :is(.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu,.akame-menu-panel,.akame-menu-panel section,.akame-account-trigger,.akame-language-setting,.akame-language-choices,.akame-notification-dropdown,.akame-notification-popover,.akame-notifications-panel,.notification-dropdown,.notifications-dropdown,.profile-dropdown,.user-dropdown,.menu-dropdown,.menu-submenu,.submenu,.context-menu,.settings-menu,.beta-advanced,.beta-confirm-dialog,.smp-sort-select-wrap,.smp-sort-select){background:#fff!important;background-image:none!important;color:#281d35!important;border-color:#ded5e9!important}
+html[data-akame-theme="light"] :is(.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu,.akame-menu-panel,.notification-dropdown,.notifications-dropdown,.profile-dropdown,.menu-dropdown,.menu-submenu,.submenu,.context-menu,.beta-confirm-dialog){box-shadow:0 16px 42px #29173924!important}
+html[data-akame-theme="light"] :is(.akame-menu-panel a,.akame-account-dropdown a,.akame-home-dropdown a,.akame-home-submenu a,.notification-dropdown a,.notifications-dropdown a,.profile-dropdown a,.menu-dropdown a,.submenu a,.akame-menu-panel button,.akame-account-dropdown button){color:#352443!important}
+html[data-akame-theme="light"] :is(.akame-menu-panel a,.akame-account-dropdown a,.akame-home-dropdown a,.akame-home-submenu a,.notification-dropdown a,.profile-dropdown a,.menu-dropdown a,.submenu a):hover{background:#f0e7fa!important;color:#4c2677!important}
+html[data-akame-theme="light"] :is(.akame-menu-button,.akame-account-trigger,.akame-language-choices button,.smp-sort-select){background:#f3eef9!important;color:#38284a!important;border-color:#d7c9e5!important}
+html[data-akame-theme="light"] :is(.setting,.settings-footnote,.beta-select-tools,.beta-manager-heading,.controls,.actions,.profile-public-link){border-color:#e4ddeb!important}
+html[data-akame-theme="light"] :is(.tabs button,.tab-link,.setting small,.settings-footnote,.notification-item,.menu-item,.dropdown-item){color:#51435f!important}
+html[data-akame-theme="light"] :is(.notice,.status,.success,.error,.warning,.danger,.badge){text-shadow:none}
+html[data-akame-theme="light"] :is(.toast,#akame-settings-reset-toast){background:#fff!important;color:#30213d!important;border-color:var(--akame-user-accent,#a678ec)!important;box-shadow:0 12px 34px #26163224!important}
+html[data-akame-theme="light"] :is(dialog::backdrop){background:#23153080}
+html[data-akame-theme="light"] :is(.akame-menu-panel,.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu) :is(svg,path){stroke:currentColor}
+html[data-akame-theme="light"] :is(.akame-menu-panel,.akame-account-dropdown,.akame-home-dropdown,.akame-home-submenu) :is(.active,[aria-current="page"],[aria-selected="true"]){background:var(--akame-accent-soft,#eee4f9)!important;color:#42245d!important}
