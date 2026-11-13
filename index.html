@@ -105,6 +105,24 @@ body{background:radial-gradient(ellipse 75% 42% at 85% 0%,#3d205633,transparent 
 .homepage-intro-inner p{font-size:13px;color:#b6a8c9;margin:0;max-width:750px}
 .homepage-intro-inner>.btn{flex:0 0 auto;white-space:nowrap}
 @media(max-width:750px){.homepage-intro{padding:15px 0 20px}.homepage-intro-inner{padding:21px;flex-direction:column;align-items:flex-start;gap:16px}.homepage-intro-inner>.btn{min-height:43px}}
+</style><style id="akame-homepage-wide-desktop-20261113">
+/* Use more horizontal space on larger desktop displays while keeping text readable.
+   Intentionally scope to main only: the navigation and mobile layout are unchanged. */
+@media(min-width:1100px){
+ html body main .wrap{
+  width:min(1540px,calc(100% - clamp(56px,6vw,128px)))!important;
+  max-width:none!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+ }
+ html body main .hero-inner .hero-copy{max-width:680px!important}
+ html body main .shortcut-grid{gap:18px!important}
+ html body main .projects{gap:20px!important}
+ html body main .section-head{gap:32px!important}
+}
+@media(min-width:1800px){
+ html body main .hero-inner{padding-left:16px!important}
+}
 </style></head>
 <body>
 <header><div class="wrap nav akame-site-nav"><a class="brand" href="#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><button class="mobile-toggle" id="menuToggle" aria-label="Menü öffnen" aria-expanded="false">☰</button><nav class="navlinks" id="navlinks" aria-label="Hauptnavigation"><a href="#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="#projects">Projekte</a><a href="#roadmap">Roadmap</a><a href="#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header>
