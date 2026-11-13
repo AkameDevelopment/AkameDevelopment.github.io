@@ -27,7 +27,7 @@ async function showProfile(user){
  $("profile-display-name").value=profileError?"":(existing?.display_name||"");
  $("profile-name").textContent=existing?.display_name||name;
  $("profile-show-member-since").checked=existing?.show_member_since!==false;
- $("member-since-visibility-note").textContent=saved.data?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
+ $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
  const role=staff.data?.role;
  $("profile-role").textContent=role==="admin"?"Administrator":role==="staff"?"Team":"Community";
  const betas=beta.error?[]:(beta.data||[]);
