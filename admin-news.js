@@ -30,7 +30,7 @@ try{
 if(file){const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";uploaded="mod-news/"+crypto.randomUUID()+"."+ext;const result=await db.storage.from("mod-news").upload(uploaded,file,{contentType:file.type,upsert:false});if(result.error)throw result.error;image=uploaded;}
 const version=$("news-kind").value==="news"?"":$("news-version").value.trim();if(version&&!/^[A-Za-z0-9][A-Za-z0-9._+\-]{0,39}$/.test(version)){status(tr("Ungültige Versionsnummer.","Invalid version number."),true);return;}
 const payload={project_slug:$("news-mod").value,kind:$("news-kind").value,title,body,version:version||null,published:$("news-published").checked,image_path:image};
-const result=selected?await db.from("mod_news").update(payload).eq("id",selected):await db.from("mod_news").insert({...payload,created_by:current.id});
+const result=selected?await db.from("mod_news").update(payload).eq("id",selected):await db.from("mod_news").insert(payload);
 if(result.error)throw result.error;
 if(oldImage&&oldImage!==image)await db.storage.from("mod-news").remove([oldImage]);
 reset();status(payload.published?tr("Beitrag veröffentlicht.","Post published."):tr("Entwurf gespeichert.","Draft saved."));await load();
