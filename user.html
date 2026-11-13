@@ -224,7 +224,7 @@ main{box-sizing:border-box!important;width:100%!important;max-width:1180px!impor
  .public-mod-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
  .public-mod-card{min-height:48px!important;padding:10px 13px!important}
 }
-</style><link rel="stylesheet" href="site-header.css?v=home-dropdown-fix-20261113b"><style id="akame-desktop-profile-final">
+</style><link rel="stylesheet" href="site-header.css?v=cache-reset-20261113c"><style id="akame-desktop-profile-final">
 @media(min-width:901px){
 html body main{box-sizing:border-box!important;width:min(100% - 64px,1320px)!important;max-width:1320px!important;padding:0!important;margin:34px auto 75px!important}
 html body main #content{width:100%!important;max-width:none!important}
@@ -381,4 +381,4 @@ const modsSection=el("section","","profile-section");modsSection.append(el("h2",
  mainColumn.append(modsSection);
  document.addEventListener("akame-language-change",()=>{heading.textContent=tr("Kommentare (","Comments (")+(comments?.length||0)+")";const empty=commentsSection.querySelector(".profile-empty");if(empty)empty.textContent=tr("Dieser Benutzer hat noch keine Kommentare geschrieben.","This member has not written any comments yet.");for(const a of commentsSection.querySelectorAll(".comment-open"))a.textContent=tr("Zur Diskussion","View discussion");for(const t of commentsSection.querySelectorAll("time"))t.textContent=new Date(t.dateTime).toLocaleString(tr("de-DE","en-GB"),{dateStyle:"medium",timeStyle:"short"});});
 }}catch(e){root.textContent=e.message||"Profil konnte nicht geladen werden."}
-</script><script src="language.js?v=browser-default-20261113" defer></script><script src="mobile-nav.js?v=home-dropdown-20261113" defer></script></body></html>
+</script><script src="language.js?v=browser-default-20261113" defer></script><script src="mobile-nav.js?v=cache-reset-20261113c" defer></script></body></html>
