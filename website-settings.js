@@ -8,14 +8,29 @@ const keys={compact:"akame-site-compact",accent:"akame-site-accent",motion:"akam
 const current=k=>store.getItem(keys[k])??String(defaults[k]);
 const lang=()=>window.AkameLanguage?.get?.()||store.getItem("akame-lang")||"de";
 function renderLanguage(){const t=words[lang()]||words.de;document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(t[key])el.textContent=t[key]});document.documentElement.lang=lang();const status=$("system-motion-status");if(status)status.textContent=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?t.systemMotionOn:t.systemMotionOff;}
-function applyLocal(){const accent=current("accent");document.documentElement.style.setProperty("--akame-user-accent",accent);document.documentElement.style.accentColor=accent;document.documentElement.classList.toggle("akame-compact",current("compact")==="true");document.documentElement.classList.toggle("akame-reduced-motion",current("motion")==="true");}
-function sync(){for(const key of Object.keys(keys)){const el=$("setting-"+(key==="motion"?"motion":key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(!el)continue;if(el.type==="checkbox")el.checked=current(key)==="true";else el.value=current(key)}$("setting-language").value=store.getItem("akame-lang-preference")||"auto";renderLanguage()}
+function applyLocal(){const accent=current("accent");document.documentElement.style.setProperty("--akame-user-accent",accent);document.documentElement.style.setProperty("--settings-accent",/^#[0-9a-f]{6}$/i.test(accent)?accent:"#a678ec");document.documentElement.style.accentColor=accent;document.documentElement.classList.toggle("akame-compact",current("compact")==="true");document.documentElement.classList.toggle("akame-reduced-motion",current("motion")==="true");}
+function sync(){applyLocal();for(const key of Object.keys(keys)){const el=$("setting-"+(key==="motion"?"motion":key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(!el)continue;if(el.type==="checkbox")el.checked=current(key)==="true";else el.value=current(key)}$("setting-language").value=store.getItem("akame-lang-preference")||"auto";renderLanguage()}
 function save(key,value){store.setItem(keys[key],String(value));window.AkameWebsiteSettings?.apply?.();applyLocal();$("save-status").textContent=(words[lang()]||words.de).saved;document.dispatchEvent(new CustomEvent("akame-settings-change"))}
 for(const key of Object.keys(keys)){const el=$("setting-"+(key==="community"?"notify-community":key==="beta"?"notify-beta":key==="updates"?"notify-updates":key));if(el)el.addEventListener(el.type==="checkbox"?"change":"input",()=>save(key,el.type==="checkbox"?el.checked:el.value))}
 $("setting-language").addEventListener("change",e=>{const preference=e.target.value;store.setItem("akame-lang-preference",preference);const target=preference==="auto"?((navigator.languages?.[0]||navigator.language||"en").toLowerCase().startsWith("de")?"de":"en"):preference;window.AkameLanguage?.set?.(target);if(!window.AkameLanguage)store.setItem("akame-lang",target);renderLanguage();$("save-status").textContent=(words[lang()]||words.de).saved});
 function selectTab(name,updateHash=true){const target=$(name);if(!target||!target.classList.contains("section"))return;document.querySelectorAll("[data-tab]").forEach(b=>{const active=b.dataset.tab===name;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active))});document.querySelectorAll(".section").forEach(x=>x.classList.toggle("active",x===target));if(updateHash)history.replaceState(null,"","#"+name)}
+// Entire setting rows can be clicked, not just the tiny controls.
+document.querySelectorAll(".setting").forEach(row=>{
+ const input=row.querySelector('input[type="checkbox"],input[type="color"],select');
+ if(!input)return;
+ row.dataset.interactive="true";
+ const title=row.querySelector("strong");
+ if(title&&!input.getAttribute("aria-label")&&input.type!=="checkbox")input.setAttribute("aria-label",title.textContent.trim());
+ if(title&&input.type==="checkbox")input.setAttribute("aria-label",title.textContent.trim());
+ row.addEventListener("click",event=>{
+  if(event.target.closest("input,select,button,a,label"))return;
+  if(input.type==="checkbox"){input.checked=!input.checked;input.dispatchEvent(new Event("change",{bubbles:true}));}
+  else if(input.type==="color"&&typeof input.showPicker==="function"){try{input.showPicker()}catch{input.focus()}}
+  else input.focus();
+ });
+});
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>selectTab(b.dataset.tab)));
 window.addEventListener("hashchange",()=>selectTab(location.hash.slice(1),false));
 $("reset-settings").addEventListener("click",()=>{for(const k of Object.keys(keys))store.removeItem(keys[k]);store.removeItem("akame-site-theme");store.removeItem("akame-lang-preference");const browser=(navigator.languages?.[0]||navigator.language||"en").toLowerCase().startsWith("de")?"de":"en";window.AkameLanguage?.set?.(browser);window.AkameWebsiteSettings?.apply?.();sync();document.dispatchEvent(new CustomEvent("akame-settings-change"));$("save-status").textContent=(words[lang()]||words.de).restored});
-document.addEventListener("akame-language-change",renderLanguage);window.matchMedia?.("(prefers-reduced-motion: reduce)").addEventListener?.("change",renderLanguage);sync();selectTab(location.hash.slice(1)||"appearance",false);
+document.addEventListener("akame-language-change",renderLanguage);window.addEventListener("storage",()=>{sync();applyLocal()});window.matchMedia?.("(prefers-reduced-motion: reduce)").addEventListener?.("change",renderLanguage);sync();selectTab(location.hash.slice(1)||"appearance",false);
 })();
