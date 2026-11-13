@@ -302,3 +302,29 @@ html body header .akame-header-actions>.akame-account{
   position:relative!important;transform:none!important;margin:0!important;
  }
 }
+
+/* Profile launch: sufficient space for GitHub, desktop language control and Discord. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:360px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  position:absolute!important;right:20px!important;top:50%!important;
+  transform:translateY(-50%)!important;max-width:calc(100vw - 240px)!important
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{
+  position:relative!important;left:auto!important;right:auto!important;top:auto!important;
+  transform:none!important;margin:0!important;flex:0 0 auto!important
+ }
+}
+@media(min-width:851px) and (max-width:1150px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(5),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{gap:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages{display:none!important}
+}
