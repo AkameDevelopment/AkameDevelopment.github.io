@@ -58,7 +58,7 @@ $("profile-save").addEventListener("click",async()=>{
 });
 $("profile-change-name").addEventListener("click",async()=>{
  const input=$("profile-display-name"),button=$("profile-change-name"),message=$("profile-name-message");
- if(input.readOnly){input.readOnly=false;input.focus();input.select();button.textContent="Namen speichern";message.textContent="Wähle einen Namen mit bis zu 32 Zeichen.";return}
+ if(input.disabled){input.disabled=false;input.focus();input.select();button.textContent="Namen speichern";message.textContent="Wähle einen Namen mit bis zu 32 Zeichen.";return}
  const displayName=input.value.trim();
  if(!displayName||displayName.length>32||/[\\x00-\\x1F\\x7F]/.test(displayName)){message.textContent="Bitte 1–32 gültige Zeichen eingeben.";return}
  const {data:{user},error:authError}=await db.auth.getUser();
@@ -67,7 +67,7 @@ $("profile-change-name").addEventListener("click",async()=>{
  const {error}=await db.from("user_profiles").update({display_name:displayName,updated_at:new Date().toISOString()}).eq("user_id",user.id);
  button.disabled=false;
  if(error){message.textContent=error.code==="23505"?"Dieser Name ist bereits vergeben. Bitte wähle einen anderen.":"Fehler: "+error.message;return}
- $("profile-name").textContent=displayName;input.value=displayName;input.readOnly=true;button.textContent="Namen ändern";message.textContent="Anzeigename gespeichert ✓";
+ $("profile-name").textContent=displayName;input.value=displayName;input.disabled=true;button.textContent="Namen ändern";message.textContent="Anzeigename gespeichert ✓";
 });
 $("profile-logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showError(error.message);else showSignedOut()});
 try{const {data,error}=await db.auth.getUser();if(error||!data.user)showSignedOut();else await showProfile(data.user)}
