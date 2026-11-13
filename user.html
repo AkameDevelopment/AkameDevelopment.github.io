@@ -723,7 +723,7 @@ try{
     person.style.setProperty("background-image","none","important");
    }
    if(tenorHost)insertBannerMedia(tenorHost,true);
-   else if(/^https:\\/\\/(?:www\\.)?tenor\\.com\\/[A-Za-z0-9_-]+\\.gif\\/?$/i.test(image)){
+   else if(/^https:\/\/(?:www\.)?tenor\.com\/[A-Za-z0-9_-]+\.gif\/?$/i.test(image)){
     resolveShowcaseUrl(image).then(resolved=>{if(resolved!==image)insertBannerMedia(resolved,false);});
    }else if(image)insertBannerMedia(image,false);
 
