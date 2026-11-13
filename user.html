@@ -191,6 +191,39 @@ main{box-sizing:border-box!important;width:100%!important;max-width:1180px!impor
 }
 @media(min-width:801px){.profile-spotify-tracks[data-count="3"]{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:520px){.profile-spotify-tracks[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}}
+
+/* Desktop-only profile refresh: consistent full-width sections and tiles. */
+@media (min-width: 901px) {
+ main{width:min(100%,1380px)!important;max-width:1380px!important;padding-inline:clamp(30px,4vw,64px)!important;margin-top:38px!important}
+ main>.muted{margin:0 0 14px!important;font-size:12px!important;letter-spacing:.08em}
+ #content{width:100%!important}
+ .person{width:100%!important;min-height:170px!important;padding:28px 34px!important;grid-template-columns:112px minmax(0,1fr)!important;column-gap:24px!important;border-radius:20px!important;margin-bottom:22px!important}
+ .person>img{width:112px!important;height:112px!important}
+ .person h1{font-size:clamp(29px,2.6vw,38px)!important}
+ .person .profile-joined-header{margin-top:10px!important}
+ .person .profile-badges{margin-top:12px!important}
+ .person .profile-hero-bio{margin-top:14px!important;max-width:840px!important}
+ .person .profile-hero-stats{max-width:600px!important;margin-top:16px!important;padding-top:14px!important}
+ .person>.own-profile-edit{top:22px!important;right:22px!important}
+ .person .profile-share-icon{top:24px!important;right:68px!important}
+ .profile-layout{display:block!important;width:100%!important}
+ .profile-main{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:16px!important;width:100%!important}
+ .profile-side:empty{display:none!important}
+ .profile-tabs{width:100%!important;gap:12px!important}
+ .profile-tab{flex:1 1 0!important;min-height:46px!important;font-size:14px!important}
+ .profile-main>.profile-tab-panel,.profile-main>.profile-section{width:100%!important;margin:0!important}
+ .profile-tab-panel{min-height:225px!important}
+ .profile-gallery-in-posts{width:100%!important;margin:0 0 18px!important;padding:0 0 20px!important}
+ .gallery-public.gallery-layout-two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .gallery-public.gallery-layout-four{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .gallery-public{gap:14px!important}
+ .gallery-public>.gallery-tile{aspect-ratio:16/10!important;height:auto!important;min-height:180px!important;max-height:300px!important;border-radius:14px!important}
+ .gallery-public>.gallery-tile img,.gallery-public>.gallery-tile iframe{width:100%!important;height:100%!important;object-fit:contain!important}
+ .profile-section{padding:24px 28px!important;border-radius:17px!important}
+ .profile-main>.profile-section:not(.profile-tab-panel){min-height:100px!important}
+ .public-mod-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+ .public-mod-card{min-height:48px!important;padding:10px 13px!important}
+}
 </style><link rel="stylesheet" href="site-header.css?v=profile-menu-fix-20261113"></head><body><header><div class="wrap nav akame-site-nav"><a class="brand" href="index.html#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><nav class="navlinks" aria-label="Hauptnavigation"><a href="index.html#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="index.html#projects">Projekte</a><a href="index.html#roadmap">Roadmap</a><a href="index.html#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header><main><p class="muted">BENUTZERPROFIL</p><section class="card" id="content" role="status">Profil wird geladen …</section></main><script type="module">
 import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
