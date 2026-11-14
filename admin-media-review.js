@@ -18,8 +18,9 @@ if(root){
  })}
  async function refresh(){
   const {data,error}=await db.from("media_moderation_reviews").select("id,submitted_by,surface,media_url,reason,created_at,post_body,post_tag,post_topic,gallery_slot").eq("status","pending").order("created_at",{ascending:true}).limit(100);
-  list.replaceChildren();if(error){state.textContent=error.message;return}
+  if(error){state.textContent=error.message;return}list.replaceChildren();
   count.textContent=String(data.length);notificationCount.textContent=String(data.length);notificationCount.hidden=data.length===0;notificationButton.setAttribute("aria-label",tr("Offene Freigaben: ","Pending approvals: ")+data.length);state.textContent=data.length?"":tr("Keine offenen Prüfungen.","No pending reviews.");
+  if(!data.length){const empty=document.createElement("p");empty.className="admin-review-empty";empty.textContent=tr("Alles erledigt – aktuell warten keine Bilder auf Freigabe.","All caught up – no images are waiting for approval.");list.append(empty)}
   for(const item of data){
    const card=document.createElement("article");card.style.cssText="border:1px solid #ffffff25;border-radius:13px;padding:16px;margin:12px 0;background:#ffffff08";
    const head=document.createElement("strong");head.textContent=(item.surface==="community_post"?tr("Community-Beitrag","Community post"):tr("Profilbild","Profile image"))+" · #"+item.id;card.append(head);
@@ -38,25 +39,11 @@ if(root){
  notification.innerHTML='<button type="button" class="media-review-notification-button" aria-expanded="false" aria-controls="media-review-manager"><span aria-hidden="true">🔔</span> <span class="media-review-button-label">Freigaben</span> <span class="media-review-notification-count" hidden>0</span></button>';
  const notificationButton=notification.querySelector("button"),notificationCount=notification.querySelector(".media-review-notification-count");
  const styles=document.createElement("style");styles.textContent=`
- .media-review-notification{position:relative;display:flex;justify-content:flex-end;margin:0 0 12px}.media-review-notification[hidden]{display:none!important}
+ .media-review-notification{display:block;margin:0}.media-review-notification-button{width:100%;justify-content:center;flex-wrap:wrap}.media-review-notification[hidden]{display:none!important}
  .media-review-notification-button{display:inline-flex;align-items:center;gap:9px;padding:9px 13px;border:1px solid #a982ff65;border-radius:12px;background:#a982ff16;color:#f5eaff;font-weight:700;cursor:pointer}
  .media-review-notification-button:hover{background:#a982ff30}
  .media-review-notification-count{min-width:21px;padding:1px 6px;border-radius:999px;background:#b68aff;color:#130c20;text-align:center;font-size:12px;font-weight:800}
  .media-review-notification-count[hidden]{display:none}
- .media-review-notification{z-index:25}
- .media-review-notification.is-open{z-index:90}
- #media-review-manager.media-review-popover{position:absolute;z-index:100;top:calc(100% + 10px);right:0;width:min(560px,calc(100vw - 32px));max-width:none;margin:0!important;padding:18px!important;background:#1a1228;border:1px solid #a982ff70;border-radius:16px;box-shadow:0 24px 65px #000b;max-height:var(--review-menu-max-height,75vh);overflow-y:auto;overscroll-behavior:contain}
- #media-review-manager.media-review-popover .request-admin-head{gap:12px;align-items:center}
- #media-review-manager.media-review-popover .request-admin-head h2{font-size:17px;margin:3px 0}
- #media-review-manager.media-review-popover .request-admin-head p{font-size:12px;line-height:1.5}
- #media-review-manager.media-review-popover #media-review-list article{padding:13px!important;margin:10px 0!important}
- #media-review-manager.media-review-popover #media-review-list article button{border-radius:9px}
- #media-review-manager.media-review-popover #media-review-list article button:first-child{border-color:#a982ff88;background:#a982ff1d}
- #media-review-manager.media-review-popover #media-review-list article button:last-child{border-color:#e4799270}
- 
- #media-review-manager.media-review-popover[hidden]{display:none!important}
- #media-review-manager.media-review-popover #media-review-list{max-height:none;overflow:visible}
- @media(max-width:650px){#media-review-manager.media-review-popover{width:min(440px,calc(100vw - 28px));padding:14px!important}#media-review-manager.media-review-popover .request-admin-head{flex-wrap:wrap}}
  .media-review-confirm{border:1px solid #a982ff66;border-radius:18px;padding:0;max-width:min(440px,calc(100vw - 30px));width:100%;background:#1c1428;color:#f8f1ff;box-shadow:0 24px 90px #000b}
  .media-review-confirm::backdrop{background:#06030bd4;backdrop-filter:blur(5px)}
  .media-review-confirm-body{padding:24px;display:grid;gap:12px}
@@ -68,13 +55,10 @@ if(root){
  .media-review-confirm-actions button{border-radius:10px;padding:9px 14px}
  .media-review-confirm-actions .danger{background:#8b3455;color:white}
  `;document.head.append(styles);
- root.classList.add("media-review-popover");const toolbarSlot=document.getElementById("admin-approvals-slot");if(toolbarSlot)toolbarSlot.append(notification);else root.before(notification);notification.append(root);
- function setOpen(open){root.hidden=!open;notificationButton.setAttribute("aria-expanded",String(open));notification.classList.toggle("is-open",open);if(open){const rect=notificationButton.getBoundingClientRect();root.style.setProperty("--review-menu-max-height",Math.max(240,window.innerHeight-rect.bottom-20)+"px")}}
- notificationButton.addEventListener("click",async()=>{const open=root.hidden;setOpen(open);if(open)await refresh()});
- document.addEventListener("pointerdown",event=>{if(!root.hidden&&!notification.contains(event.target))setOpen(false)});
- document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!root.hidden&&!confirmDialog.open){setOpen(false);notificationButton.focus()}});
- window.addEventListener("resize",()=>{if(!root.hidden)setOpen(true)});
+ const toolbarSlot=document.getElementById("admin-approvals-slot");if(toolbarSlot)toolbarSlot.append(notification);else root.before(notification);
+ notificationButton.removeAttribute("aria-expanded");
+ notificationButton.addEventListener("click",async()=>{root.scrollIntoView({behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});root.setAttribute("tabindex","-1");root.focus({preventScroll:true});await refresh()});
  const {data:{user}}=await db.auth.getUser();
- if(user){const {data}=await db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle();if(["owner","admin"].includes(data?.role)){notification.hidden=false;root.hidden=true;root.querySelector("#media-review-refresh").onclick=refresh;await refresh();setInterval(()=>{if(!document.hidden)void refresh()},45000)}}
+ if(user){const {data}=await db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle();if(["owner","admin"].includes(data?.role)){notification.hidden=false;root.hidden=false;root.querySelector("#media-review-refresh").onclick=refresh;await refresh();setInterval(()=>{if(!document.hidden)void refresh()},45000)}}
  document.addEventListener("akame-language-change",()=>{notification.querySelector(".media-review-button-label").textContent=tr("Freigaben","Approvals");if(!notification.hidden)void refresh()});
 }

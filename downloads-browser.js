@@ -9,8 +9,8 @@
   const key = r => r.modId || r.mod;
   const demo = r => r.demo === true || /test|demo/i.test(r.version || '');
   const params = () => new URLSearchParams(location.hash.slice(1));
-  function navigate(id, versions = false) {
-    const p = new URLSearchParams(); if (id) p.set('mod', id); if (versions) p.set('view', 'versions');
+  function navigate(id, view = 'description') {
+    const p = new URLSearchParams(); if (id) p.set('mod', id); if (view !== 'description') p.set('view', view);
     location.hash = p.toString();
   }
   function button(text, action, cls = 'mod-button') { const b = el('button', text, cls); b.type = 'button'; b.addEventListener('click', action); return b; }
@@ -39,23 +39,45 @@
       root.append(grid); return;
     }
     if (!selected) { root.append(el('p', t('Diese Mod wurde nicht gefunden.', 'This mod was not found.')), button(t('← Alle Mods', '← All mods'), () => navigate())); return; }
-    const r = selected[0], versions = p.get('view') === 'versions';
+    const r = selected[0], view = ['versions', 'changelog'].includes(p.get('view')) ? p.get('view') : 'description';
     root.append(button(t('← Alle Mods', '← All mods'), () => navigate(), 'mod-back'));
     const hero = el('div', undefined, 'mod-heading');
     const heading = el('div'); heading.append(el('h2', r.mod || id), el('p', r.summary || ''));
-    hero.append(image(r), heading, button(t('↓ Download', '↓ Download'), () => navigate(id, true))); root.append(hero);
+    hero.append(image(r), heading, button(t('↓ Download', '↓ Download'), () => navigate(id, 'versions'))); root.append(hero);
     const tabs = el('nav', undefined, 'mod-tabs'); tabs.setAttribute('aria-label', t('Mod-Ansicht', 'Mod view'));
-    for (const [label, value] of [[t('Beschreibung', 'Description'), false], [t('Versionen', 'Versions'), true]]) {
-      const b = button(label, () => navigate(id, value), 'mod-tab'); if (versions === value) b.setAttribute('aria-current', 'page'); tabs.append(b);
+    for (const [label, value] of [[t('Beschreibung', 'Description'), 'description'], ['Changelog', 'changelog'], [t('Versionen', 'Versions'), 'versions']]) {
+      const b = button(label, () => navigate(id, value), 'mod-tab'); if (view === value) b.setAttribute('aria-current', 'page'); tabs.append(b);
     }
     root.append(tabs);
     const layout = el('div', undefined, 'mod-layout'), content = el('section', undefined, 'mod-content'), aside = el('aside', undefined, 'mod-content');
     aside.append(el('h3', t('Kompatibilität', 'Compatibility')), el('p', 'Minecraft: Java Edition'));
     aside.append(chips([...new Set(selected.map(x => x.minecraftVersion).filter(Boolean))]), el('h3', 'Modloader'), chips([...new Set(selected.map(x => x.loader).filter(Boolean))]), el('h3', t('Umgebung', 'Environment')), chips([...new Set(selected.map(x => x.side === 'both' ? 'Client & Server' : x.side === 'server' ? 'Server' : x.side === 'client' ? 'Client' : null))]));
-    if (!versions) {
+    if (view === 'changelog') {
+      content.append(el('h3', 'Changelog'));
+      const ordered = selected.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.version || '').localeCompare(String(a.version || ''), undefined, {numeric: true}));
+      for (const release of ordered) {
+        const entry = el('article', undefined, 'mod-changelog-entry');
+        entry.append(el('h4', `v${release.version || '—'}`), chips([release.date, release.minecraftVersion ? `Minecraft ${release.minecraftVersion}` : null, release.loader, release.channel || 'stable']));
+        let notes = release.changelog;
+        if (notes && typeof notes === 'object' && !Array.isArray(notes)) notes = notes[lang] || notes.de || notes.en;
+        if (demo(release)) entry.append(el('p', t('TESTDATEI · Keine installierbare Mod', 'TEST FILE · Not an installable mod'), 'mod-warning'));
+        if (!notes && release.previewBatch === 'downloads-layout-test-30') {
+          entry.append(el('p', t('Beispiel-Changelog für die Layout-Vorschau:', 'Sample changelog for the layout preview:'), 'mod-warning'));
+          notes = [t('Vorschau der Mod-Detailseite hinzugefügt.', 'Added a preview of the mod detail page.'), t('Minecraft-Version, Modloader und Kanal als Beispiel hinterlegt.', 'Added sample Minecraft version, modloader and channel.'), t('Download-Auswahl mit einer nicht installierbaren Testdatei verknüpft.', 'Linked the download picker to a non-installable test file.')];
+        }
+        if (Array.isArray(notes) && notes.some(n => typeof n === 'string' && n.trim())) {
+          const list = el('ul'); notes.filter(n => typeof n === 'string' && n.trim()).forEach(note => list.append(el('li', note))); entry.append(list);
+        } else if (typeof notes === 'string' && notes.trim()) {
+          entry.append(el('p', notes, 'mod-changelog-text'));
+        } else {
+          entry.append(el('p', t('Für diese Version wurden noch keine Änderungen hinterlegt.', 'No changes have been recorded for this version yet.')));
+        }
+        content.append(entry);
+      }
+    } else if (view === 'description') {
       content.append(el('h3', r.mod || id), el('p', r.summary || t('Wähle unter Versionen die passende Datei für dein Minecraft aus.', 'Choose the right file for your Minecraft under Versions.')));
       if (selected.every(demo)) content.append(el('p', t('Hinweis: Aktuell sind nur Testdateien verfügbar. Diese Dateien sind keine installierbaren Minecraft-Mods.', 'Notice: Only test files are currently available. These files are not installable Minecraft mods.'), 'mod-warning'));
-      content.append(button(t('Download · Version auswählen', 'Download · Choose version'), () => navigate(id, true)));
+      content.append(button(t('Download · Version auswählen', 'Download · Choose version'), () => navigate(id, 'versions')));
     } else {
       content.append(el('h3', t('Version auswählen', 'Choose a version')));
       const filters = el('div', undefined, 'mod-filters'), list = el('div');
