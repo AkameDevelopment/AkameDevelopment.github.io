@@ -828,3 +828,6 @@ html body header .akame-site-nav .akame-mobile-menu a{
  text-transform:uppercase!important;
  letter-spacing:.045em!important;
 }
+
+/* v1.0.49: larger AkameDevelopment wordmark on desktop only. */
+@media(min-width:1101px){html body header>.wrap.nav.akame-site-nav>.brand{font-size:23px!important;font-weight:850!important;letter-spacing:-.055em!important;line-height:1.15!important}html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:inherit!important}html body header>.wrap.nav.akame-site-nav>.brand b{font-size:inherit!important}}
