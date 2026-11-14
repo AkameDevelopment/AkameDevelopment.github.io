@@ -818,3 +818,13 @@ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
   width:7px!important;height:7px!important;border-width:0 1.8px 1.8px 0!important;
  }
 }
+
+/* v1.0.47 — consistent uppercase navigation across desktop and mobile. */
+html body header .akame-site-nav .navlinks>a,
+html body header .akame-site-nav .navlinks>.akame-home-dropdown>.akame-home-trigger,
+html body header .akame-site-nav .akame-home-submenu>a,
+html body header .akame-site-nav .mobile-menu a,
+html body header .akame-site-nav .akame-mobile-menu a{
+ text-transform:uppercase!important;
+ letter-spacing:.045em!important;
+}
