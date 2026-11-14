@@ -13,7 +13,7 @@ test('Pages build generates clean routes, working local links, versioned assets 
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'akame-pages-'));
   try{
     execFileSync('python3',[path.join(root,'scripts/build-pages.py'),'--output',temp]);
-    const pages=fs.readdirSync(root).filter(f=>f.endsWith('.html'));
+    const pages=fs.readdirSync(root).filter(f=>f.endsWith('.html')).concat(fs.readdirSync(path.join(root,'akamesmp')).filter(f=>f.endsWith('.html')).map(f=>'akamesmp/'+f));
     for(const name of pages){
       const route=name==='index.html'?'/':'/'+name.replace(/\.html$/,'')+'/';
       const file=path.join(temp,route,'index.html');assert.ok(fs.existsSync(file),route);

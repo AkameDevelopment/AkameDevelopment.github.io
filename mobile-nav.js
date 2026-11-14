@@ -63,6 +63,27 @@ function setUser(user){if(user&&sessionStorage.getItem("akame-support-return")==
  translate();document.addEventListener("akame-language-change",translate);
 })();
 
+/* AkameSMP guide navigation: same desktop dropdown geometry as Home. */
+(()=>{
+ const items=[['Server beitreten','Join the server','akamesmp/join.html'],['Benötigte Mods','Required mods','akamesmp/mods.html'],['Serverregeln & Hilfe','Server rules & help','akamesmp/rules.html']];
+ const nav=document.querySelector('header .akame-site-nav .navlinks');
+ const key=value=>String(value||'').split(/[?#]/)[0].replace(/^\//,'').replace(/\.html$/,'').replace(/\/$/,'');
+ const smp=nav&&[...nav.querySelectorAll(':scope > a')].find(a=>key(a.getAttribute('href'))==='akamesmp');
+ const labels=[];
+ if(smp&&!nav.querySelector('.akame-smp-dropdown')){
+  const wrap=document.createElement('div');wrap.className='akame-home-dropdown akame-smp-dropdown';smp.before(wrap);wrap.append(smp);smp.classList.add('akame-home-trigger');smp.setAttribute('aria-haspopup','true');
+  const menu=document.createElement('div');menu.className='akame-home-submenu';wrap.append(menu);
+  for(const [de,en,href] of items){const a=document.createElement('a');a.href=href;a.className='akame-home-submenu-link';if(key(location.pathname)===key(href))a.setAttribute('aria-current','page');menu.append(a);labels.push({a,de,en});}
+ }
+ const mobile=document.querySelector('.akame-menu-panel [data-smp-nav="1"]');
+ if(mobile&&!document.querySelector('.akame-smp-mobile-subnav')){
+  const group=document.createElement('div');group.className='akame-smp-mobile-subnav';mobile.after(group);
+  for(const [de,en,href] of items){const a=document.createElement('a');a.href=href;if(key(location.pathname)===key(href))a.setAttribute('aria-current','page');group.append(a);labels.push({a,de,en});}
+ }
+ function translate(){const english=(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en';for(const {a,de,en} of labels)a.textContent=english?en:de;if(smp)smp.setAttribute('aria-label',english?'AkameSMP, submenu with joining guide, mods and server rules':'AkameSMP, Untermenü mit Beitritt, Mods und Serverregeln');}
+ translate();document.addEventListener('akame-language-change',translate);
+})();
+
 /* Site preferences: never override existing page layout, backgrounds or component spacing. */
 (()=>{const style=document.createElement("style");style.id="akame-global-preferences";document.head.append(style);function apply(){const ls=localStorage,accent=ls.getItem("akame-site-accent")||"#a678ec",motion=ls.getItem("akame-site-motion")==="true",compact=ls.getItem("akame-site-compact")==="true";if(!/^#[0-9a-f]{6}$/i.test(accent))return;document.documentElement.style.setProperty("--akame-user-accent",accent);style.textContent=":root{accent-color:"+accent+";--akame-accent:"+accent+";--settings-accent:"+accent+"}input[type=checkbox],input[type=radio]{accent-color:"+accent+"}a:focus-visible,button:focus-visible,input:focus-visible{outline-color:"+accent+"} .akame-site-nav a:hover,.akame-home-dropdown a:hover{color:"+accent+"} .akame-site-nav .active,.akame-site-nav [aria-current=page]{border-color:"+accent+"}"+(compact?"main .card,main .panel,main .section,main .profile-section{padding:clamp(12px,2vw,18px)!important}main .cards,main .grid,main .layout{gap:12px!important}main h1{margin-bottom:10px!important}":"")+(motion?"*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}":"");}window.AkameWebsiteSettings={apply};apply();window.addEventListener("storage",apply);document.addEventListener("akame-settings-change",apply)})();
 
