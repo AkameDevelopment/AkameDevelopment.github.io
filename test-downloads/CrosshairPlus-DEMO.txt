@@ -1,0 +1,17 @@
+Crosshair+ — AkameDevelopment DOWNLOAD TEST
+========================================
+Status: DEMO / TEST FILE — NOT A MINECRAFT MOD
+Project: Crosshair+
+Author: Akame
+Platform: Minecraft Java Edition / Fabric
+Target Minecraft version: 26.3
+Demo version: 0.0.1-test
+
+This is a harmless text file for testing the AkameDevelopment Downloads page.
+It is NOT a .jar, cannot be installed in Minecraft, and contains no executable code.
+
+When a real, tested Crosshair+ build is available, replace this demo entry with its official release link.
+
+Deutsch:
+Dies ist ausschließlich eine Testdatei für die Download-Funktion der Website.
+Es handelt sich NICHT um eine installierbare Minecraft-Mod.
