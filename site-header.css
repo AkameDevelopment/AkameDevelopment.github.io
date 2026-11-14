@@ -209,19 +209,14 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
  html body header>.akame-menu-panel{display:none!important}
 }
 @media(min-width:1101px) and (max-width:1350px){
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4){display:none!important}
+
 }
 @media(min-width:851px) and (max-width:1100px){
  html body header>.wrap.nav.akame-site-nav>nav.navlinks{
   gap:10px!important;
   margin-left:auto!important;
  }
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(5),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+
 }
 @media(max-width:850px){
  html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
@@ -289,8 +284,7 @@ html body header .akame-header-actions>.akame-account{
  html body header>.wrap.nav.akame-site-nav>nav.navlinks{margin-left:26px!important;margin-right:0!important}
 }
 @media(min-width:1101px) and (max-width:1550px){
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4){display:none!important}
+
 }
 @media(max-width:850px){
  html body header>.wrap.nav.akame-site-nav{padding-right:0!important}
@@ -317,11 +311,7 @@ html body header .akame-header-actions>.akame-account{
  }
 }
 @media(min-width:851px) and (max-width:1150px){
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(5),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+
 }
 @media(max-width:850px){
  html body header>.wrap.nav.akame-site-nav{padding-right:0!important}
@@ -345,10 +335,7 @@ html body header .akame-header-actions>.akame-account{
  html body header>.wrap.nav.akame-site-nav>.akame-header-actions{flex:0 0 auto!important;white-space:nowrap!important}
 }
 @media(min-width:851px) and (max-width:1199px){
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
- html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+
 }
 @media(max-width:850px){
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important;visibility:visible!important;width:auto!important;min-width:0!important;max-width:none!important;flex:0 0 auto!important}
@@ -897,3 +884,54 @@ html.akame-header-pending body header>.wrap.nav.akame-site-nav>.akame-header-act
 @media(max-width:900px){.akame-header-actions>.akame-page-share{display:none!important}}
 @media(max-width:850px){.akame-account-preview{width:44px;flex-basis:44px}.akame-preview-trigger{width:42px;padding:4px;border-radius:50%;justify-content:center}.akame-preview-trigger .akame-account-name{display:none}}
 html[data-akame-theme="light"] .akame-preview-trigger{background:#f3edf9;border-color:#ddcfee;color:#281c37}html[data-akame-theme="light"] .akame-page-share{background:#f3edf9;border-color:#ddcfee;color:#765291}
+
+/* Canonical header geometry. Static previews and live controls share exact slots. */
+html body header{--header-actions-width:260px;box-sizing:border-box!important;height:78px!important;min-height:78px!important;margin:0!important;padding:0!important;border:0!important;box-shadow:inset 0 -1px 0 #ffffff10!important;line-height:normal!important}
+html body header>.wrap.nav.akame-site-nav{box-sizing:border-box!important;position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;width:calc(100% - 40px)!important;max-width:none!important;height:100%!important;min-height:0!important;margin:0 20px!important;padding:0!important;gap:0!important;transform:none!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions{box-sizing:border-box!important;position:absolute!important;left:auto!important;right:0!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important;display:grid!important;grid-template-columns:90px 40px 110px!important;align-items:center!important;justify-content:initial!important;gap:10px!important;width:var(--header-actions-width)!important;min-width:var(--header-actions-width)!important;max-width:var(--header-actions-width)!important;height:42px!important;min-height:42px!important;margin:0!important;padding:0!important;flex:none!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share{grid-column:1!important;grid-row:1!important;box-sizing:border-box!important;width:90px!important;min-width:90px!important;max-width:90px!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:0 12px!important;gap:7px!important;font:600 12px/1 system-ui,-apple-system,"Segoe UI",sans-serif!important;flex:none!important;transform:none!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-notify-root{grid-column:2!important;grid-row:1!important;box-sizing:border-box!important;position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;width:40px!important;min-width:40px!important;max-width:40px!important;height:40px!important;min-height:40px!important;margin:0!important;padding:0!important;flex:none!important;transform:none!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-notify-root>.akame-desktop-notify-bell{box-sizing:border-box!important;display:grid!important;place-items:center!important;width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;margin:0!important;padding:0!important;line-height:1!important;transform:none!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account,
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account-preview{grid-column:3!important;grid-row:1!important;box-sizing:border-box!important;position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;width:110px!important;min-width:110px!important;max-width:110px!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:0!important;flex:none!important;transform:none!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger,
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account-preview>.akame-preview-trigger{box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;width:110px!important;min-width:110px!important;max-width:110px!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:3px 10px 3px 4px!important;border:1px solid #765596!important;border-radius:999px!important;background:#20172d!important;color:#f0e3ff!important;font:700 12px/1 system-ui,-apple-system,"Segoe UI",sans-serif!important;transform:none!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions :is(.akame-account-trigger,.akame-preview-trigger)>:is(img,.akame-avatar-fallback,.akame-preview-neutral){box-sizing:border-box!important;width:32px!important;min-width:32px!important;max-width:32px!important;height:32px!important;min-height:32px!important;max-height:32px!important;flex:0 0 32px!important;margin:0!important;border-radius:50%!important;object-fit:cover!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions .akame-account-name{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font:inherit!important;line-height:1!important;margin:0!important;padding:0!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages,
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions>a[href^="https://github.com/"]{display:none!important}
+@media(min-width:1501px){html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:flex!important;position:absolute!important;top:50%!important;left:50%!important;right:auto!important;transform:translate(-50%,-50%)!important;margin:0!important;padding:0!important;max-width:none!important;width:max-content!important}html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important}}
+@media(max-width:1500px){html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}html body header>.wrap.nav.akame-site-nav>.akame-menu-button{box-sizing:border-box!important;display:grid!important;place-items:center!important;visibility:visible!important;pointer-events:auto!important;position:absolute!important;left:auto!important;right:calc(var(--header-actions-width) + 12px)!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important;width:42px!important;min-width:42px!important;max-width:42px!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:0!important}html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:last-child{display:none!important}html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:first-child{display:grid!important;place-items:center!important}}
+@media(min-width:851px) and (max-width:900px){html body header{--header-actions-width:160px}html body header>.wrap.nav.akame-site-nav>.akame-header-actions{grid-template-columns:40px 110px!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share{display:none!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-notify-root{grid-column:1!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account,html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account-preview{grid-column:2!important}}
+@media(max-width:850px){html body header{--header-actions-width:44px;height:66px!important;min-height:66px!important}html body header>.wrap.nav.akame-site-nav{width:calc(100% - 32px)!important;margin:0 16px!important}html body header>.wrap.nav.akame-site-nav>.brand{position:absolute!important;top:50%!important;left:0!important;right:auto!important;transform:translateY(-50%)!important;max-width:calc(100% - 108px)!important;width:max-content!important;min-width:0!important;margin:0!important;overflow:hidden!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions{grid-template-columns:44px!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share,html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-notify-root{display:none!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account,html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account-preview{grid-column:1!important;width:44px!important;min-width:44px!important;max-width:44px!important;height:42px!important;min-height:42px!important;max-height:42px!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger,html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account-preview>.akame-preview-trigger{width:42px!important;min-width:42px!important;max-width:42px!important;padding:4px!important;justify-content:center!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions .akame-account-name{display:none!important}}
+@media(max-width:360px){html body header>.wrap.nav.akame-site-nav{width:calc(100% - 24px)!important;margin:0 12px!important}}
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger,
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account-preview>.akame-preview-trigger{background:#f3edf9!important;color:#281c37!important;border-color:#ddcfee!important}
+/* Header labels must not change metrics when a page-specific font arrives. */
+html body header>.wrap.nav.akame-site-nav>.brand,
+html body header>.wrap.nav.akame-site-nav>nav.navlinks>a,
+html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important}
+@media(min-width:851px) and (max-width:1500px){
+ html body header>.akame-menu-panel{display:none!important;position:fixed!important;top:78px!important;left:auto!important;right:20px!important;width:320px!important;height:auto!important;max-height:calc(100dvh - 90px)!important;overflow:auto!important;padding:16px!important;border:1px solid #604375!important;border-radius:12px!important;background:#15101e!important;color:#eee4f8!important;box-shadow:0 18px 50px #0006!important}
+ html body header>.akame-menu-panel.open{display:block!important}
+ html body header>.akame-menu-panel .akame-links{display:flex!important;flex-direction:column!important;gap:4px!important}
+ html body header>.akame-menu-panel .akame-links>a{display:flex!important;align-items:center!important;min-height:42px!important;padding:8px 12px!important;color:inherit!important;text-decoration:none!important;border-radius:8px!important;font:600 13px/1.4 system-ui!important}
+ html body header>.akame-menu-panel .akame-links>a:hover{background:#a982ff20!important}
+ html[data-akame-theme="light"] body header>.akame-menu-panel{background:#fff!important;color:#281c37!important;border-color:#ddcfee!important}
+}
+/* One scrollbar width on every page prevents the remaining 5px route shift.
+   Use the page background instead of an unpainted black reserved gutter. */
+html{scrollbar-gutter:auto!important;overflow-y:scroll!important;scrollbar-width:thin!important;scrollbar-color:#79569e var(--layout-bg,#0d0b13)!important;background:var(--layout-bg,#0d0b13)!important}
+html::-webkit-scrollbar{width:10px!important;height:10px!important;background:transparent!important}
+html::-webkit-scrollbar-track{background:var(--layout-bg,#0d0b13)!important}
+html::-webkit-scrollbar-thumb{background:#79569e!important;border:2px solid var(--layout-bg,#0d0b13)!important;border-radius:8px!important}
+html[data-akame-theme="light"]{background:var(--layout-bg,#f8f5fc)!important;scrollbar-color:#ad92c5 var(--layout-bg,#f8f5fc)!important}
+html[data-akame-theme="light"]::-webkit-scrollbar-track{background:var(--layout-bg,#f8f5fc)!important}
+html[data-akame-theme="light"]::-webkit-scrollbar-thumb{background:#ad92c5!important;border-color:var(--layout-bg,#f8f5fc)!important}
+
+html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span,html body header>.wrap.nav.akame-site-nav>.akame-menu-button svg{pointer-events:none!important}
+
+@media(max-width:1500px){html body header>.wrap.nav.akame-site-nav>.akame-menu-button{border:1px solid #70538f!important;border-radius:11px!important;background:#21162f!important;color:#eadcff!important}}
+/* Opening notifications preserves the same document scrollbar geometry. */
+html.akame-notifications-open{overflow-y:scroll!important}
+html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{color:#49335f!important;background:transparent!important;border-color:transparent!important}
