@@ -6,13 +6,27 @@ https://akamedevelopment.github.io/akamesmp-stats.html
 ## Installation
 
 1. Minecraft Java **26.3**, **Java 25**, Fabric Loader **0.20.1 oder neuer** und Fabric API für **26.3** installieren. Getesteter Build: Fabric API **0.166.2+26.3**.
-2. `akamesmp-stats-1.0.0.jar` in den `mods/`-Ordner des Servers legen. Spieler benötigen diese Mod nicht.
+2. `akamesmp-stats-1.0.1.jar` in den `mods/`-Ordner des Servers legen. Spieler benötigen diese Mod nicht.
 3. Server einmal starten. Die Mod erstellt `config/akamesmp-stats.json`. Ohne Token bleibt die Synchronisierung deaktiviert; der Minecraft-Server kann weiterlaufen.
-4. Im Supabase-Projekt `AkameDevelopment` unter **Edge Functions → Secrets** ein Secret mit Namen **AKAMESMP_SERVER_TOKEN** setzen. Einen eigenen zufälligen Token mit mindestens 32 Bytes verwenden, z. B. lokal mit `python -c "import secrets; print(secrets.token_urlsafe(48))"` erzeugen.
-5. Auf dem Minecraft-Server denselben Wert als Umgebungsvariable `AKAMESMP_SERVER_TOKEN` setzen. Alternativ in `config/akamesmp-stats.json` bei `serverToken` eintragen. Die Umgebungsvariable hat Vorrang. Den Token vertraulich behandeln und nicht ins Website-Repository hochladen.
-6. Server neu starten. Nach etwa 30 Sekunden und dem nächsten Website-Refresh werden Daten angezeigt. Das private Dashboard benötigt weiterhin Discord-Anmeldung und die bestehende Admin-/Owner-Rolle.
+4. Auf dem Minecraft-Server einen zufaelligen Token mit mindestens 32 Zeichen, empfohlen 48 Zeichen, als `serverToken` eintragen. Alternativ die Umgebungsvariable `AKAMESMP_SERVER_TOKEN` setzen; sie hat Vorrang.
+5. Den SHA-256-Pruefwert dieses Tokens in Supabase unter `private.akamesmp_mod_credentials` fuer `id = 1` hinterlegen lassen. Die Edge Function prueft den Bearer-Token serverseitig gegen diesen Hash. Den Klartext-Token nicht im Chat oder GitHub veroeffentlichen. Bei einer bereits eingerichteten Installation sind keine Token-Aenderungen erforderlich.
+6. Server neu starten. Die vollstaendige Synchronisierung beginnt automatisch. Das private Dashboard benoetigt weiterhin Discord-Anmeldung und die bestehende Admin-/Owner-Rolle.
 
-**Aktuell geprüft:** Die vorhandene Edge Function ist erreichbar, meldet aber HTTP 503 mit `server_token_not_configured`. Das Secret muss noch gesetzt werden. Es wurde keine produktive Datenbank oder Edge Function verändert.
+## Update von 1.0.0 und manuelle Synchronisierung
+
+Server stoppen, `akamesmp-stats-1.0.0.jar` aus `mods/` entfernen, neue `akamesmp-stats-1.0.1.jar` hineinlegen und neu starten. Die bestehende Config und der Token bleiben erhalten. Nicht beide Versionen gleichzeitig installieren.
+
+**Fehler behoben:** Minecraft 26.3 speichert Statistiken unter `<Welt>/players/stats/`. Version 1.0.0 hat nur unter `<Welt>/stats/` gesucht. Version 1.0.1 verwendet Minecrafts `PLAYER_STATS_DIR` und liest zusaetzlich den alten `stats/`-Ordner. Beide Ordner werden nur innerhalb der aktiven Welt gelesen. Daten aus beliebigen Welt-Backups werden nicht automatisch importiert.
+
+In der Server-Konsole:
+
+```text
+akamesmpstats sync
+```
+
+Im Spiel als OP mit Admin-Berechtigung (Level 3 oder hoeher): `/akamesmpstats sync`.
+
+Der Befehl fordert die naechste vollstaendige Synchronisierung an. Falls bereits eine laeuft, folgt sie danach. Die Konsole zeigt die gefundenen Ordner beim Start und nach Erfolg die Anzahl aller Spieler sowie der Offline-Spieler. Doppelte UUIDs werden einmal beruecksichtigt: aktuelle Online-Werte haben Vorrang, dann der aktuelle Minecraft-Ordner, dann der alte Ordner. Statistiken werden nicht addiert oder in Minecraft zurueckgeschrieben.
 
 Konfiguration:
 
@@ -32,7 +46,7 @@ Konfiguration:
 - Spieler: UUID, Name, Spielzeit in Sekunden, Spieler-Kills, Tode, Mob-Kills, abgebaute Blöcke, gelaufene Zentimeter und zuletzt gesehen.
 - Die bestehende Edge Function berechnet Gesamtwerte und speichert die Einträge für das Leaderboard und die öffentliche Gesamtstatistik.
 - Online-Werte werden auf dem Serverthread aus den Minecraft-Statistiken übernommen; Dateizugriffe und HTTPS laufen auf einem separaten Thread. Die Mod verändert keine Vanilla-Statistiken.
-- Offline-Werte stammen aus `<Welt>/stats/*.json`; Namen aus `usercache.json`. Fehlt ein alter Name im Cache, wird vorläufig der UUID-Anfang angezeigt. Beim nächsten Login wird der richtige Name gesendet.
+- Offline-Werte stammen aus `<Welt>/players/stats/*.json` und dem alten `<Welt>/stats/*.json`; Namen aus `usercache.json`. Fehlt ein alter Name im Cache, wird vorläufig der UUID-Anfang angezeigt. Beim nächsten Login wird der richtige Name gesendet.
 - Für Online-Spieler ist „zuletzt gesehen“ der Zeitpunkt der Erfassung. Für Offline-Spieler dient die Änderungszeit der gespeicherten Statistikdatei als Näherung; historische exakte Logout-Zeiten kann Vanilla daraus nicht rekonstruieren.
 - Die Laufzeit beginnt beim Serverstart. Der Spielerrekord seit Installation wird unter `<Welt>/akamesmp-stats-peak.json` gespeichert und überlebt Neustarts.
 - Vorhandene Vanilla-Statistiken werden beim ersten Sync übernommen, einschließlich Offline-Spielern. Voraussetzung ist, dass die Statistikdateien noch vorhanden sind.
@@ -43,8 +57,8 @@ Konfiguration:
 ## Fehlerbehebung
 
 - `Server-Token fehlt`: Token auf dem Minecraft-Server setzen und neu starten.
-- HTTP 503: Secret `AKAMESMP_SERVER_TOKEN` oder Backend-Konfiguration in Supabase fehlt.
-- HTTP 401: Token in Minecraft und Supabase stimmen nicht überein.
+- HTTP 503: Token-Pruefung oder Backend-Konfiguration in Supabase nicht erreichbar.
+- HTTP 401: Token ist kuerzer als 32 Zeichen oder sein SHA-256-Pruefwert stimmt nicht mit Supabase ueberein.
 - HTTP 400: Übertragene Daten passen nicht zur API-Validierung; z. B. geänderte Schnittstelle oder unzulässige Werte.
 - HTTP 502: Die Edge Function konnte Daten nicht speichern; ihre Supabase-Logs prüfen.
 - Keine Anzeige nach erfolgreichem Sync: Discord-Anmeldung und Admin-/Owner-Rechte prüfen.
@@ -57,12 +71,12 @@ Java 25 installieren, dann:
 ./gradlew build
 ```
 
-Unter Windows: `gradlew.bat build`. Ergebnis: `build/libs/akamesmp-stats-1.0.0.jar`. Keine `-sources.jar` als Server-Mod installieren.
+Unter Windows: `gradlew.bat build`. Ergebnis: `build/libs/akamesmp-stats-1.0.1.jar`. Keine `-sources.jar` als Server-Mod installieren.
 
 ## Prüfung
 
-`./gradlew build` erfolgreich gegen Minecraft 26.3. Vier automatisierte Tests prüfen Tick-Umrechnung, summierte Blockstatistiken, Übernahme von Offline-Spielern und Vorrang aktueller Online-Werte, fehlende/neue Statistiken sowie das Abbrechen bei beschädigten Dateien und negativen Werten.
+`./gradlew build` erfolgreich gegen Minecraft 26.3. Fuenf automatisierte Tests prüfen Tick-Umrechnung, summierte Blockstatistiken, Übernahme von Offline-Spielern und Vorrang aktueller Online-Werte, fehlende/neue Statistiken sowie das Abbrechen bei beschädigten Dateien und negativen Werten. Ein Regressionstest prueft Minecrafts tatsaechlichen 26.3-Statistikordner und das Zusammenfuehren mit alten Dateien ohne doppelte Spieler.
 
-Ein vollständiger Ingame-/Website-Test wurde noch nicht durchgeführt: Der produktiven Schnittstelle fehlt der Server-Token, und es stand kein laufender AkameSMP-Spielserver zur Verfügung.
+Ein vollständiger Ingame-/Website-Test wurde noch nicht durchgeführt: Diese neue JAR wurde nicht auf einem laufenden AkameSMP-Spielserver gestartet. Die bestehende produktive Schnittstelle ist eingerichtet; die Server-Installation der neuen Version erfolgt durch den Betreiber.
 
 Referenzen: https://meta.fabricmc.net/v2/versions/game · https://github.com/FabricMC/fabric-example-mod/tree/26.3 · https://supabase.com/docs/guides/functions/auth
