@@ -12,6 +12,7 @@ let loaded=false, loading=false, generation=0, admin=false;
 let errors={}, postCount=null,ticketCount=null,morePosts=false,moreTickets=false;
 const pageSize=12;
 function translate(){
+  $('dashboard-area').setAttribute('aria-label',tr('Dein Bereich','Your Space'));
   document.querySelectorAll('[data-personal-de]').forEach(n=>n.textContent=tr(n.dataset.personalDe,n.dataset.personalEn));
   document.querySelector('.personal-navigation')?.setAttribute('aria-label',tr('Persönliche Bereiche','Personal areas'));
 }

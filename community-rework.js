@@ -2,7 +2,7 @@
 const main=document.querySelector('main'),layout=document.querySelector('.community-main-layout');if(!main||!layout)return;
 let view='feed';
 const language=()=>window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang')||'de';
-function translate(){const english=language()==='en';document.querySelectorAll('[data-community-de][data-community-en]').forEach(el=>{const value=el.getAttribute(english?'data-community-en':'data-community-de');if(el.textContent!==value)el.textContent=value;});}
+function translate(){const english=language()==='en';document.getElementById('community-social-feed').setAttribute('aria-label',english?'Community feed':'Community-Feed');document.querySelectorAll('[data-community-de][data-community-en]').forEach(el=>{const value=el.getAttribute(english?'data-community-en':'data-community-de');if(el.textContent!==value)el.textContent=value;});}
 function activate(next,updateHash=false){
  if(!['feed','members','personal'].includes(next))return;view=next;layout.setAttribute('data-view',view);layout.hidden=view==='personal';
  layout.querySelector('.community-feed-column').hidden=view!=='feed';layout.querySelector('.community-sidebar').hidden=view!=='members';
