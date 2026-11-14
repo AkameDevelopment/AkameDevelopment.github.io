@@ -43,7 +43,7 @@ async function markNotificationRead(item){
  let query;
  if(source==="beta")query=client.from("beta_invitations").update({recipient_read_at:now}).eq("id",item.id).eq("user_id",user.id);
  else if(source==="beta-feedback")query=client.from("beta_invitations").update({sender_read_at:now}).eq("id",item.id).eq("invited_by",user.id);
- else query=client.from(source==="mod"?"mod_comment_notifications":"akamesmp_notifications").update({read_at:now}).eq("id",item.id).eq("recipient_id",user.id);
+ else query=client.from(source==="support"?"support_notifications":source==="mod"?"mod_comment_notifications":"akamesmp_notifications").update({read_at:now}).eq("id",item.id).eq("recipient_id",user.id);
  try{const {error}=await query;if(error)throw error;item.read_at=now;render();return true}catch(error){console.warn("Could not mark notification as read",error);return false}
 }
 function bindNotificationLink(link,item){link.addEventListener("click",async e=>{
@@ -59,10 +59,10 @@ function render(){
  filters.setAttribute("aria-label",tr("Benachrichtigungen filtern","Filter notifications"));
  sourceFilter.setAttribute("aria-label",tr("Bereich auswählen","Choose category"));
  sourceFilter.replaceChildren();
- for(const [key,de,en] of [["all","Alle Bereiche","All categories"],["community","Community","Community"],["beta","Beta-Einladungen","Beta invitations"],["updates","Updates","Updates"]]){
+ for(const [key,de,en] of [["all","Alle Bereiche","All categories"],["community","Community","Community"],["support","Support","Support"],["beta","Beta-Einladungen","Beta invitations"],["updates","Updates","Updates"]]){
   const option=document.createElement("option");option.value=key;option.textContent=tr(de,en);option.selected=key===activeType;sourceFilter.append(option);
  }
- const enabled=i=>(i.source==="beta"||i.source==="beta-feedback")?localStorage.getItem("akame-notify-beta")!=="false":i.source==="update"?localStorage.getItem("akame-notify-updates")!=="false":localStorage.getItem("akame-notify-community")!=="false";const unread=items.filter(i=>enabled(i)&&!i.read_at).length;
+ const enabled=i=>i.source==="support"?true:(i.source==="beta"||i.source==="beta-feedback")?localStorage.getItem("akame-notify-beta")!=="false":i.source==="update"?localStorage.getItem("akame-notify-updates")!=="false":localStorage.getItem("akame-notify-community")!=="false";const unread=items.filter(i=>enabled(i)&&!i.read_at).length;
  panel.querySelector(".akame-notify-subtitle").textContent=tr(unread+" ungelesen",unread+" unread");
  count.hidden=!unread;count.textContent=unread>99?"99+":String(unread);desktopCount.hidden=count.hidden;desktopCount.textContent=count.textContent;
  desktopBell.setAttribute("aria-label",tr("Benachrichtigungen","Notifications")+(unread?" ("+unread+")":""));read.disabled=!items.some(i=>!i.read_at);read.title=read.disabled?tr("Keine ungelesenen Benachrichtigungen","No unread notifications"):"";
@@ -75,12 +75,13 @@ function render(){
   button.addEventListener("click",()=>{activeFilter=key;render()});filters.append(button);
  }
  list.replaceChildren();
- const visible=items.filter(enabled).filter(i=>activeFilter!=="unread"||!i.read_at).filter(i=>activeType==="all"||activeType==="beta"&&(i.source==="beta"||i.source==="beta-feedback")||activeType==="community"&&(i.source==="smp"||i.source==="mod")||activeType==="updates"&&i.source==="update");
+ const visible=items.filter(enabled).filter(i=>activeFilter!=="unread"||!i.read_at).filter(i=>activeType==="all"||activeType==="beta"&&(i.source==="beta"||i.source==="beta-feedback")||activeType==="community"&&(i.source==="smp"||i.source==="mod")||activeType==="support"&&i.source==="support"||activeType==="updates"&&i.source==="update");
  if(!visible.length){const empty=document.createElement("div");empty.className="akame-notify-empty";empty.textContent=tr("Keine Benachrichtigungen in dieser Kategorie.","No notifications in this category.");list.append(empty);return;}
  for(const item of visible){
   const card=document.createElement("div");card.className="akame-notify-item"+(item.read_at?"":" unread");
   const title=document.createElement(item.source==="beta"?"div":"a");title.className="akame-notify-item-title";
-  if(item.source==="beta-feedback")title.textContent=item.status==="accepted"?tr("Akzeptiert","Accepted"):tr("Abgelehnt","Declined");
+  if(item.source==="support")title.textContent=item.ticket_number+" · "+(item.kind==="resolved"?tr("Anfrage erledigt","Ticket resolved"):item.kind==="reply"?tr("Neue Antwort vom Team","New team reply"):tr("Status aktualisiert","Status updated"));
+  else if(item.source==="beta-feedback")title.textContent=item.status==="accepted"?tr("Akzeptiert","Accepted"):tr("Abgelehnt","Declined");
   else if(item.source==="beta")title.textContent=tr("Beta-Einladung: ","Beta invitation: ")+(betaNames[item.project_slug]||item.project_slug);
   else title.textContent=item.source==="mod"?tr("Jemand hat auf deinen Kommentar geantwortet.","Someone replied to your comment."):item.kind==="like"?tr("Jemandem gefällt dein AkameSMP-Beitrag.","Someone liked your AkameSMP post."):tr("Dein AkameSMP-Beitrag hat einen neuen Kommentar.","Someone commented on your AkameSMP post.");
   const date=document.createElement("small");date.className="akame-notify-time";date.textContent=notificationTime(item.created_at);date.title=new Date(item.created_at).toLocaleString(localStorage.getItem("akame-lang")==="en"?"en-GB":"de-DE");
@@ -113,7 +114,7 @@ function render(){
    card.append(actions);
   }else{
    const a=document.createElement("a");a.className="akame-notify-open";
-   a.href=item.source==="beta-feedback"?"admin.html?member="+encodeURIComponent(item.user_id):item.source==="mod"?"project.html?mod="+encodeURIComponent(item.project_slug)+"&comment="+encodeURIComponent(item.reply_id)+"#mod-comments":"community.html?post="+encodeURIComponent(item.post_id)+"#community-social-feed";
+   a.href=item.source==="support"?"support.html?ticket="+encodeURIComponent(item.request_id):item.source==="beta-feedback"?"admin.html?member="+encodeURIComponent(item.user_id):item.source==="mod"?"project.html?mod="+encodeURIComponent(item.project_slug)+"&comment="+encodeURIComponent(item.reply_id)+"#mod-comments":"community.html?post="+encodeURIComponent(item.post_id)+"#community-social-feed";
    a.textContent=tr("Ansehen","View");
    title.href=a.href;title.classList.add("akame-notify-title-link");
    bindNotificationLink(title,item);
@@ -130,14 +131,15 @@ function render(){
 const betaNames={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"Hud+",info:"Infos",admin:"Admin",zoom:"Zoom"};
 async function refresh(){
  if(!user)return;
- const [smp,mod,beta,sent]=await Promise.all([
+ const [smp,mod,beta,sent,support]=await Promise.all([
   client.from("akamesmp_notifications").select("id,kind,actor_id,post_id,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50),
   client.from("mod_comment_notifications").select("id,actor_id,project_slug,comment_id,reply_id,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50),
   client.from("beta_invitations").select("id,project_slug,status,invited_by,created_at,responded_at,recipient_read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50),
-  client.from("beta_invitations").select("id,project_slug,status,user_id,created_at,responded_at,sender_read_at").eq("invited_by",user.id).neq("user_id",user.id).in("status",["accepted","declined"]).order("responded_at",{ascending:false}).limit(50)
+  client.from("beta_invitations").select("id,project_slug,status,user_id,created_at,responded_at,sender_read_at").eq("invited_by",user.id).neq("user_id",user.id).in("status",["accepted","declined"]).order("responded_at",{ascending:false}).limit(50),
+  client.from("support_notifications").select("id,actor_id,request_id,ticket_number,kind,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50)
  ]);
- if(smp.error&&mod.error&&beta.error&&sent.error)return;
- items=[...(smp.data||[]).map(i=>({...i,source:"smp"})),...(mod.data||[]).map(i=>({...i,source:"mod"})),...(beta.data||[]).map(i=>({...i,source:"beta",read_at:i.recipient_read_at||(i.status==="pending"?null:i.responded_at||i.created_at)})),...(sent.data||[]).map(i=>({...i,source:"beta-feedback",read_at:i.sender_read_at}))].sort((a,b)=>new Date(b.responded_at||b.created_at)-new Date(a.responded_at||a.created_at)).slice(0,100);
+ if(smp.error&&mod.error&&beta.error&&sent.error&&support.error)return;
+ items=[...(support.data||[]).map(i=>({...i,source:"support"})),...(smp.data||[]).map(i=>({...i,source:"smp"})),...(mod.data||[]).map(i=>({...i,source:"mod"})),...(beta.data||[]).map(i=>({...i,source:"beta",read_at:i.recipient_read_at||(i.status==="pending"?null:i.responded_at||i.created_at)})),...(sent.data||[]).map(i=>({...i,source:"beta-feedback",read_at:i.sender_read_at}))].sort((a,b)=>new Date(b.responded_at||b.created_at)-new Date(a.responded_at||a.created_at)).slice(0,100);
  await fetchProfiles();render();
 }
 function syncMobilePageLock(){
@@ -210,6 +212,7 @@ desktopBell.addEventListener("click",()=>{if(panel.hidden)openNotifications(desk
  read.disabled=true;read.textContent=tr("Wird gespeichert…","Saving…");
  const now=new Date().toISOString();
  const tasks=[
+  client.from("support_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
   client.from("akamesmp_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
   client.from("mod_comment_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
   client.from("beta_invitations").update({sender_read_at:now}).eq("invited_by",user.id).in("status",["accepted","declined"]).is("sender_read_at",null).select("id"),

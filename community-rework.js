@@ -11,7 +11,7 @@ function activate(next,updateHash=false){
  if(updateHash)history.replaceState(null,'',view==='feed'?'#community-social-feed':view==='members'?'#members':'#personal');
  document.dispatchEvent(new CustomEvent('akame-community-view',{detail:{view}}));
 }
-function fromHash(){const hash=location.hash;activate(hash==='#members'?'members':['#personal','#community-requests','#my-requests'].includes(hash)?'personal':'feed');}
+function fromHash(){const hash=location.hash;if(['#community-requests','#my-requests'].includes(hash)){location.replace('support.html#tickets');return;}activate(hash==='#members'?'members':['#personal','#community-requests','#my-requests'].includes(hash)?'personal':'feed');}
 for(const button of document.querySelectorAll('[data-community-view]'))button.addEventListener('click',()=>activate(button.getAttribute('data-community-view'),true));
 window.addEventListener('hashchange',fromHash);document.addEventListener('akame-language-change',translate);translate();fromHash();
 })();
