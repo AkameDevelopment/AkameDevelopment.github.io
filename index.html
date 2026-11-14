@@ -137,7 +137,38 @@ html body #projects #categoryIntro{margin-top:0!important}
 #projectGrid[data-visibility-pending="true"]>.project{display:none!important}
 #projectGrid>.project[hidden],
 #projectGrid>.project[data-admin-hidden="true"]{display:none!important}
-</style><link rel="stylesheet" href="accent-global.css?v=sitewide-20261113"><script src="accent-global.js?v=sitewide-20261113"></script><script src="site-theme.js?v=light-20261113"></script><link rel="stylesheet" href="site-theme.css?v=light-polish-20261113"><script src="header-page-indicator.js?v=1.0.39" defer></script></head>
+</style><link rel="stylesheet" href="accent-global.css?v=sitewide-20261113"><script src="accent-global.js?v=sitewide-20261113"></script><script src="site-theme.js?v=light-20261113"></script><link rel="stylesheet" href="site-theme.css?v=light-polish-20261113"><script src="header-page-indicator.js?v=1.0.39" defer></script><style id="akame-home-spacious-v1045">
+/* Desktop scale and readability — preserve the existing mobile layout. */
+@media(min-width:1100px){
+ html body main .wrap{width:min(1540px,calc(100% - 100px))!important;max-width:none!important}
+ html body main .hero{min-height:620px!important}
+ html body main .hero-inner{padding-top:95px!important;padding-bottom:88px!important}
+ html body main .hero h1{font-size:clamp(5.2rem,6.5vw,7rem)!important;max-width:1040px!important;line-height:1.03!important;margin:25px 0 25px!important}
+ html body main .hero-copy{font-size:19px!important;max-width:740px!important;line-height:1.75!important}
+ html body main .eyebrow{font-size:12px!important;padding:9px 17px!important}
+ html body main .hero .buttons{margin-top:32px!important;gap:15px!important}
+ html body main .hero .btn{min-height:53px!important;padding:14px 23px!important;font-size:14px!important}
+ html body main .hero-foot{margin-top:43px!important;gap:12px!important}
+ html body main .hero-foot span{font-size:13px!important;padding:10px 16px!important}
+ html body main .homepage-intro{padding-top:32px!important;padding-bottom:28px!important}
+ html body main .homepage-intro-inner{padding:30px 34px!important;gap:35px!important}
+ html body main .homepage-intro-inner h2{font-size:clamp(27px,2.6vw,35px)!important}
+ html body main .homepage-intro-inner p{font-size:15px!important}
+ html body main .homepage-shortcuts .shortcut-grid{gap:22px!important}
+ html body main .homepage-shortcuts .shortcut-card{padding:25px!important}
+ html body main .homepage-shortcuts .shortcut-card h3{font-size:19px!important}
+ html body main .homepage-shortcuts .shortcut-card p{font-size:14px!important;line-height:1.6!important}
+ html body main .section-head h2{font-size:clamp(2.5rem,3.8vw,3.8rem)!important}
+ html body main .section-head p{font-size:16px!important}
+}
+@media(min-width:1100px) and (max-width:1399px){
+ html body main .wrap{width:calc(100% - 72px)!important}
+ html body main .hero h1{font-size:clamp(4.7rem,6vw,6rem)!important}
+}
+@media(max-width:760px){
+ html body main .hero h1{font-size:clamp(2.9rem,10.5vw,4.6rem)!important}
+}
+</style></head>
 <body>
 <header><div class="wrap nav akame-site-nav"><a class="brand" href="#home" aria-label="AkameDevelopment Startseite"><span>Akame<b>Development</b></span></a><button class="mobile-toggle" id="menuToggle" aria-label="Menü öffnen" aria-expanded="false">☰</button><nav class="navlinks" id="navlinks" aria-label="Hauptnavigation"><a href="#home">Startseite</a><a href="news.html">Ankündigungen</a><a href="akamesmp.html">AkameSMP</a><a href="community.html">Community</a><a href="downloads.html">Downloads</a><a href="#projects">Projekte</a><a href="#roadmap">Roadmap</a><a href="#about">Über Akame</a></nav><div class="akame-header-actions"><a class="nav-action" href="https://github.com/AkameDevelopment" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></header>
 <main>
