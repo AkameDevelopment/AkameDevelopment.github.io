@@ -795,3 +795,13 @@ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
   padding:11px 1px!important;letter-spacing:.005em!important;
  }
 }
+
+/* v1.0.45: larger, comfortably spaced center navigation on wide screens. */
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{gap:30px!important}
+ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
+  font-size:17px!important;font-weight:750!important;
+  line-height:1.4!important;letter-spacing:0!important;
+  padding:10px 2px!important;
+ }
+}
