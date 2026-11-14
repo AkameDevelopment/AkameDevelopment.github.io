@@ -782,3 +782,16 @@ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
  html body header>.wrap.nav.akame-site-nav>.brand{gap:5px!important}
  html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{font-size:9px!important;padding:4px 5px!important}
 }
+
+/* v1.0.44 — more legible, breathable centered desktop navigation. */
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{
+  display:flex!important;gap:25px!important;
+  width:max-content!important;max-width:none!important;
+  align-items:center!important;justify-content:center!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
+  font:750 15.5px/1.35 Inter,system-ui,sans-serif!important;
+  padding:11px 1px!important;letter-spacing:.005em!important;
+ }
+}
