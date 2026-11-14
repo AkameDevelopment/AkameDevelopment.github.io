@@ -1,5 +1,4 @@
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0");
+import {db,getPublicProfile} from './community-session.js?v=1';
 const $=id=>document.getElementById(id),list=$("member-list"),search=$("member-search"),count=$("member-count");
 const en=()=>window.AkameLanguage?.get?.()==="en",tr=(de,english)=>en()?english:de;
 const roles={owner:["Owner","Owner"],admin:["Admin","Admin"],developer:["Developer","Developer"],staff:["Mitarbeiter","Staff"]},order={owner:0,admin:1,developer:2,staff:3};
@@ -36,5 +35,5 @@ for(const button of document.querySelectorAll('[data-member-layout]'))button.add
 document.addEventListener("akame-language-change",render);document.addEventListener("akame-community-view",()=>{page=1;render()});
 try{
  const {data,error}=await db.rpc("list_visible_members");failed=!!error;members=Array.isArray(data)?data.filter(x=>typeof x.display_name==="string"&&typeof x.user_id==="string"):[];render();
- if(!failed)for(let i=0;i<members.length;i+=8){await Promise.all(members.slice(i,i+8).map(async member=>{try{const {data,error}=await db.rpc("get_public_profile",{p_user_id:member.user_id});const p=Array.isArray(data)?data[0]:data;if(!error&&p){member.role=p.role||null;member.smp_member=p.smp_member===true}}catch{}}));render();}
+ if(!failed)for(let i=0;i<members.length;i+=8){await Promise.all(members.slice(i,i+8).map(async member=>{try{const {data,error}=await getPublicProfile(member.user_id);const p=Array.isArray(data)?data[0]:data;if(!error&&p){member.role=p.role||null;member.smp_member=p.smp_member===true}}catch{}}));render();}
 }catch{failed=true;render();}
