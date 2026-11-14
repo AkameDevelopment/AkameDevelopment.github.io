@@ -44,3 +44,13 @@ test('settings back button uses history and keeps a homepage fallback, with DE/E
     const a=document.getElementById('settings-back');assert.equal(a.textContent,expected);const event=new window.Event('click',{cancelable:true});event.button=0;a.dispatchEvent(event);assert.equal(back,length>1?1:0);assert.equal(a.getAttribute('href'),'index.html');assert.equal(event.defaultPrevented,length>1);
   }
 });
+
+test('profile editor back uses actual history with clean URLs or missing referrer; profile link stays separate',()=>{
+  const code=fs.readFileSync(path.join(root,'profile-back.js'),'utf8');
+  for(const [length,referrer,language,from,expected] of [[3,'https://akamedevelopment.github.io/community/','de','','index.html'],[2,'','en','','index.html'],[1,'','de','','index.html'],[1,'','en','?from=%2Fcommunity%2F%23personal','https://akamedevelopment.github.io/community/#personal'],[1,'','de','?from=https%3A%2F%2Fexample.com','index.html']]){
+    const {document,window}=parseHTML(fs.readFileSync(path.join(root,'profile.html'),'utf8'));Object.defineProperty(document,'baseURI',{value:'https://akamedevelopment.github.io/profile/'});Object.defineProperty(document,'referrer',{value:referrer});let back=0;
+    vm.runInNewContext(code,{document,window,URL,URLSearchParams,location:{origin:'https://akamedevelopment.github.io',search:from},localStorage:{getItem:()=>language},history:{length,back(){back++;}}});
+    const button=document.getElementById('profile-public-link');button.dataset.publicProfileUrl='/user/?id=self';assert.equal(button.getAttribute('href'),expected);
+    const click=new window.Event('click',{cancelable:true});click.button=0;button.dispatchEvent(click);assert.equal(back,length>1?1:0);assert.equal(click.defaultPrevented,length>1);assert.equal(document.getElementById('profile-public-back-label').textContent,language==='en'?'Back':'Zurück');
+  }
+});

@@ -3,7 +3,7 @@ async function resolveShowcaseUrl(value){try{const u=new URL(value);if(!["tenor.
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);
-$("profile-copy-link").addEventListener("click",async()=>{const link=$("profile-public-link").href;try{await navigator.clipboard.writeText(link);$("profile-link-message").textContent="Link kopiert ✓";}catch(e){$("profile-link-message").textContent="Kopieren nicht möglich. Öffne den Link und kopiere die Adresse.";}});
+$("profile-copy-link").addEventListener("click",async()=>{const link=new URL($("profile-public-link").dataset.publicProfileUrl||"user.html",document.baseURI).href;try{await navigator.clipboard.writeText(link);$("profile-link-message").textContent="Link kopiert ✓";}catch(e){$("profile-link-message").textContent="Kopieren nicht möglich. Öffne den Link und kopiere die Adresse.";}});
 const labels={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud",info:"AkameInfos",admin:"Server Admin",zoom:"AkameZoom"};
 const modOptions=[["modcore","Core"],["chest","Chest"],["crosshair","Crosshair+"],["chunkloader","ChunkLoader"],["items","Items"],["hud","AkameHud+"],["info","AkameInfos"],["admin","Admin"],["zoom","Zoom"]];
 async function loadProfileMods(user){
@@ -54,7 +54,7 @@ function showSignedOut(){
 function showError(message){$("save-message").textContent=message;$("save-message").dataset.state="error"}
 function avatarUrl(user){const meta=user.user_metadata||{};const src=String(meta.avatar_url||"");return /^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(src)?src:null}
 async function showProfile(user){
- $("profile-public-link").href="user.html?id="+encodeURIComponent(user.id);if($("profile-badges-link"))$("profile-badges-link").href="user.html?id="+encodeURIComponent(user.id);
+ $("profile-public-link").dataset.publicProfileUrl="user.html?id="+encodeURIComponent(user.id);if($("profile-badges-link"))$("profile-badges-link").href="user.html?id="+encodeURIComponent(user.id);
  $("profile-loading").hidden=true;$("profile-guest").hidden=true;$("profile-content").hidden=false;
  const meta=user.user_metadata||{};
  const name=String(meta.full_name||meta.name||meta.user_name||"Discord User");
@@ -71,7 +71,7 @@ async function showProfile(user){
  $("profile-bio").value=profileError?"":(existing?.bio||"");
  $("profile-display-name").value=profileError?"":(existing?.display_name||"");
  $("profile-name").textContent=existing?.display_name||name;
- if(existing?.display_name)$("profile-public-link").href="user.html?name="+encodeURIComponent(existing.display_name);
+ if(existing?.display_name)$("profile-public-link").dataset.publicProfileUrl="user.html?name="+encodeURIComponent(existing.display_name);
  $("profile-show-member-since").checked=existing?.show_member_since!==false; $("profile-show-discord-name").checked=existing?.show_discord_name===true;$("profile-show-member-list").checked=existing?.show_in_member_list===true; $("profile-spotify-track").value=existing?.favorite_spotify_track||""; $("profile-spotify-track-2").value=existing?.favorite_spotify_track_2||""; $("profile-spotify-track-3").value=existing?.favorite_spotify_track_3||""; $("profile-show-spotify").checked=existing?.show_favorite_spotify===true;
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
  savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked,showDiscordName:$("profile-show-discord-name").checked,showInMemberList:$("profile-show-member-list").checked,spotifyTrack:$("profile-spotify-track").value.trim(),spotifyTrack2:$("profile-spotify-track-2").value.trim(),spotifyTrack3:$("profile-spotify-track-3").value.trim(),showSpotify:$("profile-show-spotify").checked};updateSaveVisibility();await updateNameCooldown();await loadProfileMods(user);
@@ -149,7 +149,7 @@ $("profile-change-name").addEventListener("click",async()=>{
  }
  button.disabled=false;
  if(error||!updated||updated.display_name!==displayName){if(error?.message?.includes("NAME_COOLDOWN:")){input.disabled=true;message.textContent="Zwei Namensänderungen genutzt. Bitte eine Stunde warten.";await updateNameCooldown();return;}message.textContent=error?.code==="23505"?"Dieser Name ist bereits vergeben. Bitte wähle einen anderen.":"Speichern fehlgeschlagen: "+(error?.message||"Keine Änderung in der Datenbank bestätigt.");return}
- $("profile-name").textContent=displayName;$("profile-public-link").href="user.html?name="+encodeURIComponent(displayName);input.value=displayName;input.disabled=true;button.title="Namen bearbeiten";button.setAttribute("aria-label","Namen bearbeiten");$("profile-name-edit-icon").innerHTML='<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>';message.textContent="Anzeigename gespeichert ✓";await updateNameCooldown();
+ $("profile-name").textContent=displayName;$("profile-public-link").dataset.publicProfileUrl="user.html?name="+encodeURIComponent(displayName);input.value=displayName;input.disabled=true;button.title="Namen bearbeiten";button.setAttribute("aria-label","Namen bearbeiten");$("profile-name-edit-icon").innerHTML='<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>';message.textContent="Anzeigename gespeichert ✓";await updateNameCooldown();
  } catch(e){message.textContent="Speichern fehlgeschlagen: "+(e?.message||String(e));} finally {button.disabled=false;}
 });
 
