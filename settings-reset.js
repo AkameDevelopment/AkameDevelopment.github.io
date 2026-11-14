@@ -2,7 +2,7 @@
 (()=>{
 "use strict";
 const defaults={
-"akame-site-theme":"dark","akame-site-compact":"false","akame-site-motion":"false",
+"akame-site-theme":"dark","akame-site-motion":"false",
 "akame-notify-community":"true","akame-notify-beta":"true","akame-notify-updates":"true",
 "akame-lang-preference":"de","akame-lang":"de"
 };
@@ -10,11 +10,11 @@ function apply(){
  const theme=localStorage.getItem("akame-site-theme")==="light"?"light":"dark";
  document.documentElement.dataset.akameTheme=theme;
  const themeSelect=document.getElementById("setting-theme");if(themeSelect)themeSelect.value=theme;
- for(const [key,id] of [["akame-site-compact","setting-compact"],["akame-site-motion","setting-motion"],["akame-notify-community","setting-notify-community"],["akame-notify-beta","setting-notify-beta"],["akame-notify-updates","setting-notify-updates"]]){
+ for(const [key,id] of [["akame-site-motion","setting-motion"],["akame-notify-community","setting-notify-community"],["akame-notify-beta","setting-notify-beta"],["akame-notify-updates","setting-notify-updates"]]){
   const el=document.getElementById(id);if(el)el.checked=localStorage.getItem(key)==="true";
  }
  const language=document.getElementById("setting-language");if(language)language.value=localStorage.getItem("akame-lang")||"de";
- document.documentElement.classList.toggle("akame-compact",localStorage.getItem("akame-site-compact")==="true");
+ localStorage.removeItem("akame-site-compact");document.documentElement.classList.remove("akame-compact");
  document.documentElement.classList.toggle("akame-reduced-motion",localStorage.getItem("akame-site-motion")==="true");
 }
 function reset(){
