@@ -86,5 +86,21 @@ new MutationObserver(queue).observe(document.documentElement,{childList:true,sub
  header.querySelectorAll("a[href]").forEach(link=>{try{const url=new URL(link.href,location.href);if(url.hostname==="github.com"||url.hostname==="www.github.com")link.remove()}catch{}});
 })();
 
+/* Community shortcuts use the existing desktop dropdown styles; mobile navigation stays unchanged. */
+(()=>{
+ const nav=document.querySelector('header .akame-site-nav .navlinks');
+ if(!nav||nav.querySelector('.akame-community-dropdown'))return;
+ const community=[...nav.querySelectorAll(':scope > a')].find(a=>new URL(a.href,location.href).pathname.replace(/\/$/,'').match(/(?:^|\/)community(?:\.html)?$/));
+ if(!community)return;
+ const wrap=document.createElement('div');wrap.className='akame-home-dropdown akame-community-dropdown';
+ community.before(wrap);wrap.append(community);community.classList.add('akame-home-trigger');community.setAttribute('aria-haspopup','true');community.setAttribute('aria-controls','akame-community-submenu');
+ const menu=document.createElement('div');menu.id='akame-community-submenu';menu.className='akame-home-submenu';
+ const members=document.createElement('a');members.href='community.html#members';members.className='akame-home-submenu-link';members.setAttribute('data-no-translate','');
+ const dashboard=document.createElement('a');dashboard.href='community.html#personal';dashboard.className='akame-home-submenu-link';dashboard.setAttribute('data-no-translate','');
+ menu.append(members,dashboard);wrap.append(menu);
+ function labels(){const english=(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en';members.textContent=english?'Members':'Mitglieder';dashboard.textContent='Dashboard';community.setAttribute('aria-label',english?'Community, submenu with Members and Dashboard':'Community, Untermenü mit Mitgliedern und Dashboard')}
+ labels();document.addEventListener('akame-language-change',labels);
+})();
+
 /* All synchronous navigation setup has finished; reveal the canonical header. */
 document.dispatchEvent(new CustomEvent('akame-header-ready'));
