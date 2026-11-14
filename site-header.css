@@ -648,3 +648,15 @@ html body header>.akame-menu-panel details[open]>summary::after{transform:rotate
   flex:0 0 32px!important;border-radius:50%!important;object-fit:cover!important;
  }
 }
+
+
+/* Global header v1.0.39: preserve controls/navigation, move brand to far right. */
+html body header>.wrap.nav.akame-site-nav{display:flex!important;justify-content:flex-start!important;gap:18px!important}
+html body header>.wrap.nav.akame-site-nav>.navlinks{order:1!important;margin-left:0!important;margin-right:auto!important}
+html body header>.wrap.nav.akame-site-nav>.akame-menu-button{order:1!important}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions{order:2!important;margin-left:auto!important;position:static!important;transform:none!important;right:auto!important;left:auto!important}
+html body header>.wrap.nav.akame-site-nav>.brand{order:3!important;margin-left:0!important;margin-right:0!important;flex-shrink:0!important;display:inline-flex!important;align-items:center!important;gap:10px!important}
+html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{font:700 11px/1.2 Inter,system-ui,sans-serif!important;letter-spacing:0!important;color:#cdb3f1!important;padding:6px 9px!important;border:1px solid #a982ff44!important;border-radius:8px!important;background:#a982ff12!important;white-space:nowrap!important}
+@media(max-width:1350px){html body header>.wrap.nav.akame-site-nav>.akame-menu-button{margin-left:0!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions{margin-left:auto!important}}
+@media(max-width:700px){html body header>.wrap.nav.akame-site-nav{gap:8px!important}html body header>.wrap.nav.akame-site-nav>.brand{gap:6px!important;font-size:14px!important}html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{font-size:10px!important;padding:5px 6px!important}html body header>.wrap.nav.akame-site-nav>.akame-header-actions{gap:5px!important}}
+@media(max-width:470px){html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:none!important}html body header>.wrap.nav.akame-site-nav>.brand{font-size:12px!important}}
