@@ -119,3 +119,7 @@
 :root[data-akame-theme="light"] body #profile-avatar{background:#e1d7eb!important;color:var(--light-accent)!important}
 :root[data-akame-theme="light"] body #player-dialog :is(.profile-section-heading>span,.profile-dates span){color:var(--light-muted)!important}
 :root[data-akame-theme="light"] body header{background:#e4dfeb!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* Home is a navigation label; only its submenu gets a panel surface. */
+:root[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown{background:transparent!important;border:0!important;box-shadow:none!important}
+:root[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{background:transparent!important;border:0!important;box-shadow:none!important}
