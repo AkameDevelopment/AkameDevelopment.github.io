@@ -805,3 +805,16 @@ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
   padding:10px 2px!important;
  }
 }
+
+/* v1.0.46 — Home is a dropdown trigger, not a direct nav link. Match its typography. */
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{
+  font-family:Inter,system-ui,sans-serif!important;
+  font-size:17px!important;font-weight:750!important;line-height:1.4!important;
+  letter-spacing:0!important;padding:10px 2px!important;
+  min-height:0!important;gap:8px!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger::after{
+  width:7px!important;height:7px!important;border-width:0 1.8px 1.8px 0!important;
+ }
+}
