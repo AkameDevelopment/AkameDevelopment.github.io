@@ -376,7 +376,7 @@ html body header .akame-header-actions>.akame-account{
  html body header>.akame-menu-panel .akame-language-choices{display:flex!important;gap:10px!important;flex-wrap:wrap!important}
  html body header>.akame-menu-panel .akame-language-choices button{flex:1 1 110px!important;margin:0!important;padding:11px!important;border:1px solid #8e6eb2!important;border-radius:10px!important;background:#2d1c40!important;color:#eee1ff!important;font:650 13px system-ui,sans-serif!important}
  html body header>.akame-menu-panel .akame-language-choices button.selected{background:#7649b5!important;border-color:#b08ce7!important}
- html body.akame-menu-open{overflow:hidden!important}
+ html body.akame-menu-open{overflow-x:clip!important;overflow-y:visible!important}
 }
 
 
@@ -856,3 +856,9 @@ html body header .akame-site-nav .akame-mobile-menu a{
 }
 @media(max-width:520px){html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:none!important}html body header>.wrap.nav.akame-site-nav>.brand{font-size:15px!important}}
 @media(max-width:360px){html body header>.wrap.nav.akame-site-nav{gap:7px!important;width:calc(100% - 24px)!important}html body header>.wrap.nav.akame-site-nav>.brand{font-size:13px!important}}
+
+/* Nonmodal header overlays preserve the page scroll container and sticky header. */
+html.akame-notifications-open{overflow-y:auto!important;overscroll-behavior:auto!important}
+html.akame-notifications-open body,html body.akame-menu-open{overflow-x:clip!important;overflow-y:visible!important;overscroll-behavior:auto!important;touch-action:pan-y!important}
+html body header>.akame-menu-panel{max-height:var(--akame-menu-height,calc(100dvh - 90px))!important;overflow-y:auto!important;overscroll-behavior:contain!important}
+html body header .akame-account-dropdown{max-height:var(--akame-account-height,calc(100dvh - 100px))!important;overflow-y:auto!important;overscroll-behavior:contain!important;scrollbar-width:thin}
