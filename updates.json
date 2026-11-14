@@ -14,7 +14,9 @@
       "channel": "beta",
       "date": "2026-11-14",
       "summary": "TEST — Demo-Datei zum Prüfen des Downloads. Keine installierbare Minecraft-Mod. / TEST file for download checks; not an installable mod.",
-      "url": "https://raw.githubusercontent.com/AkameDevelopment/AkameDevelopment.github.io/main/test-downloads/CrosshairPlus-DEMO.txt"
+      "url": "https://raw.githubusercontent.com/AkameDevelopment/AkameDevelopment.github.io/main/test-downloads/CrosshairPlus-DEMO.txt",
+      "image": "assets/crosshair-demo.svg",
+      "demo": true
     }
   ]
 }
