@@ -57,7 +57,7 @@ if(root){
  `;document.head.append(styles);
  const toolbarSlot=document.getElementById("admin-approvals-slot");if(toolbarSlot)toolbarSlot.append(notification);else root.before(notification);
  notificationButton.removeAttribute("aria-expanded");
- notificationButton.addEventListener("click",async()=>{root.scrollIntoView({behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});root.setAttribute("tabindex","-1");root.focus({preventScroll:true});await refresh()});
+ notificationButton.addEventListener("click",async()=>{location.hash="media-review-manager";root.scrollIntoView({behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});root.setAttribute("tabindex","-1");root.focus({preventScroll:true});await refresh()});
  const {data:{user}}=await db.auth.getUser();
  if(user){const {data}=await db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle();if(["owner","admin"].includes(data?.role)){notification.hidden=false;root.hidden=false;root.querySelector("#media-review-refresh").onclick=refresh;await refresh();setInterval(()=>{if(!document.hidden)void refresh()},45000)}}
  document.addEventListener("akame-language-change",()=>{notification.querySelector(".media-review-button-label").textContent=tr("Freigaben","Approvals");if(!notification.hidden)void refresh()});
