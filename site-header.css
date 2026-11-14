@@ -831,3 +831,28 @@ html body header .akame-site-nav .akame-mobile-menu a{
 
 /* v1.0.49: larger AkameDevelopment wordmark on desktop only. */
 @media(min-width:1101px){html body header>.wrap.nav.akame-site-nav>.brand{font-size:23px!important;font-weight:850!important;letter-spacing:-.055em!important;line-height:1.15!important}html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:inherit!important}html body header>.wrap.nav.akame-site-nav>.brand b{font-size:inherit!important}}
+
+/* Mobile controls belong on the right. Override legacy centered absolute positioning. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 42px 44px!important;
+  align-items:center!important;justify-content:initial!important;gap:10px!important;
+  width:calc(100% - 32px)!important;max-width:none!important;margin:0 auto!important;padding:0!important;position:relative!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.brand{grid-column:1!important;grid-row:1!important;position:static!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;width:auto!important;margin:0!important;min-width:0!important;max-width:100%!important;overflow:hidden!important;gap:6px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  grid-column:2!important;grid-row:1!important;position:static!important;left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;transform:none!important;order:initial!important;margin:0!important;
+  display:grid!important;place-items:center!important;visibility:visible!important;width:42px!important;min-width:42px!important;
+  max-width:42px!important;height:42px!important;min-height:42px!important;padding:0!important;z-index:4!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  grid-column:3!important;grid-row:1!important;position:static!important;left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;transform:none!important;order:initial!important;margin:0!important;
+  width:44px!important;min-width:44px!important;max-width:44px!important;padding:0!important;
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{position:relative!important;transform:none!important;left:auto!important;right:auto!important;top:auto!important;margin:0!important}
+}
+@media(max-width:520px){html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:none!important}html body header>.wrap.nav.akame-site-nav>.brand{font-size:15px!important}}
+@media(max-width:360px){html body header>.wrap.nav.akame-site-nav{gap:7px!important;width:calc(100% - 24px)!important}html body header>.wrap.nav.akame-site-nav>.brand{font-size:13px!important}}
