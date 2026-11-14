@@ -1,7 +1,20 @@
 {
   "schemaVersion": 1,
   "channel": "stable",
-  "updatedAt": null,
+  "updatedAt": "2026-11-14",
   "announcements": [],
-  "releases": []
+  "releases": [
+    {
+      "mod": "Crosshair+",
+      "modId": "crosshair",
+      "version": "0.0.1-test",
+      "minecraftVersion": "26.3",
+      "loader": "Fabric",
+      "side": "client",
+      "channel": "beta",
+      "date": "2026-11-14",
+      "summary": "DEMO / TEST ONLY — text file to test the Downloads page. NOT an installable Minecraft mod. / Nur Testdatei, keine installierbare Mod.",
+      "url": "https://github.com/AkameDevelopment/AkameDevelopment.github.io/blob/main/test-downloads/CrosshairPlus-DEMO.txt"
+    }
+  ]
 }
