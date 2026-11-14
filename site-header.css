@@ -710,3 +710,43 @@ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
 @media(max-width:430px){
  html body header>.wrap.nav.akame-site-nav>.brand{font-size:12px!important;left:40px!important}
 }
+
+/* v1.0.42: full-viewport left brand, truly centered nav, independent right actions */
+html body header>.wrap.nav.akame-site-nav{
+ width:calc(100% - 40px)!important;max-width:none!important;
+ margin:0 20px!important;padding:0!important;
+ position:relative!important;display:flex!important;align-items:center!important;
+ justify-content:space-between!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand{
+ position:absolute!important;left:0!important;right:auto!important;top:50%!important;
+ transform:translateY(-50%)!important;margin:0!important;
+ max-width:none!important;width:max-content!important;z-index:2!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:none!important}
+html body header>.wrap.nav.akame-site-nav>.navlinks{
+ position:absolute!important;left:50%!important;right:auto!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;margin:0!important;
+ width:max-content!important;max-width:calc(100% - 650px)!important;z-index:1!important;
+}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+ position:absolute!important;right:0!important;left:auto!important;top:50%!important;
+ transform:translateY(-50%)!important;margin:0!important;z-index:3!important;
+}
+html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+ position:absolute!important;left:50%!important;right:auto!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;margin:0!important;z-index:4!important;
+}
+@media(max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important}
+}
+@media(min-width:1351px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{width:calc(100% - 28px)!important;margin:0 14px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{left:0!important;font-size:15px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{left:50%!important;right:auto!important;transform:translate(-50%,-50%)!important}
+}
+@media(max-width:470px){html body header>.wrap.nav.akame-site-nav>.brand{font-size:12px!important}}
