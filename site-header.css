@@ -869,3 +869,8 @@ html body header .akame-account-dropdown{max-height:var(--akame-account-height,c
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button::after{content:none!important;display:none!important;pointer-events:none!important}
  html body header>.wrap.nav.akame-site-nav>.akame-menu-button{overflow:hidden!important;isolation:isolate!important;touch-action:manipulation!important}
 }
+
+/* Project links and language selection live in Settings, not the global header. */
+html body header a[href^="https://github.com/"],
+html body header .akame-desktop-languages,
+html body header .akame-language-setting{display:none!important}
