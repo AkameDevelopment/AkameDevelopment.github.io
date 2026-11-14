@@ -35,7 +35,7 @@
     else { const stats = content.querySelector(':scope > .grid'); if (stats) page.append(stats); page.append(homeGrid); }
     content.append(page);
     let card;
-    if (target) { card = document.createElement('a'); card.href = '#' + id; card.className = 'admin-home-card'; homeGrid.append(card); }
+    if (target && id !== 'media-review-manager') { card = document.createElement('a'); card.href = '#' + id; card.className = 'admin-home-card'; homeGrid.append(card); }
     pages.push({id, page, target, link, title, description, back, unavailable, card, de, en, descriptionDe, descriptionEn});
   }
   // Keep the hidden account data available to the existing account scripts.
@@ -48,7 +48,13 @@
       p.link.hidden = !allowed; if (p.card) p.card.hidden = !allowed;
       p.page.hidden = p.id !== active; p.unavailable.hidden = allowed;
       p.unavailable.textContent = tr('Dieser Bereich wird geladen oder ist für dein Konto nicht verfügbar.', 'This area is loading or is unavailable for your account.');
-      p.link.textContent = tr(p.de, p.en); p.title.textContent = tr(p.de, p.en); p.description.textContent = tr(p.descriptionDe, p.descriptionEn); p.back.textContent = tr('← Zur Übersicht', '← Back to overview');
+      p.link.textContent = tr(p.de, p.en);
+      if (p.id === 'media-review-manager') {
+        const count = Number(document.getElementById('media-review-count')?.textContent || 0);
+        if (count > 0) { const badge = document.createElement('span'); badge.className = 'admin-nav-count'; badge.textContent = String(count); p.link.append(badge); }
+        p.link.setAttribute('aria-label', tr('Freigaben', 'Approvals') + (count > 0 ? ': ' + count + tr(' offen', ' pending') : ''));
+      }
+      p.title.textContent = tr(p.de, p.en); p.description.textContent = tr(p.descriptionDe, p.descriptionEn); p.back.textContent = tr('← Zur Übersicht', '← Back to overview');
       if (p.card) { const strong = document.createElement('strong'), small = document.createElement('span'), arrow = document.createElement('span'); strong.textContent = tr(p.de,p.en); small.textContent = tr(p.descriptionDe,p.descriptionEn); arrow.textContent = tr('Bereich öffnen →','Open area →'); arrow.className = 'admin-home-card-action'; p.card.replaceChildren(strong,small,arrow); }
       if (p.id === active) { p.link.setAttribute('aria-current','page'); if (focus) { p.title.focus({preventScroll:true}); content.scrollIntoView?.({block:'start',behavior:'auto'}); } }
       else p.link.removeAttribute('aria-current');
@@ -56,6 +62,8 @@
   }
   const observer = new MutationObserver(() => render());
   pages.forEach(p => { if (p.target) observer.observe(p.target, {attributes:true, attributeFilter:['hidden']}); });
+  const reviewCount = document.getElementById('media-review-count');
+  if (reviewCount) new MutationObserver(() => render()).observe(reviewCount, {childList:true,characterData:true,subtree:true});
   window.addEventListener('hashchange', () => render(true));
   document.addEventListener('akame-language-change', () => render());
   render();
