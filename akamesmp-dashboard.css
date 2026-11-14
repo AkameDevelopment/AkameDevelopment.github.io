@@ -16,3 +16,9 @@
 .smp-page .smp-guide-layout{grid-template-columns:minmax(0,1fr)}
 .smp-page #smp-guide-body{white-space:normal}
 @media(max-width:560px){.smp-quick-links{gap:8px}.smp-quick-links .smp-guide-button{flex:1 1 auto;padding:11px 12px}}
+
+/* Start hub holds the three guide cards; overview has one entry point. */
+.smp-page[data-smp-guide-page="start"] #smp-guide-body{padding:0;display:grid}
+.smp-page #guide.cards{display:flex;gap:12px}
+.smp-page[data-smp-guide-page="start"] #smp-guide-body h2{font-size:18px}
+.smp-page[data-smp-guide-page="start"] #smp-guide-body p{font-size:13px}
