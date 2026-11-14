@@ -1,0 +1,864 @@
+/* Shared desktop and mobile header — canonical AkameDevelopment navigation */
+header{height:78px!important;min-height:78px!important;padding:0!important;position:sticky!important;top:0!important;z-index:80!important;background:#090811dd!important;border-bottom:1px solid #ffffff10!important;backdrop-filter:blur(22px)!important;display:block!important}
+header>.nav,header>.wrap.nav,header .akame-site-nav{width:min(1180px,calc(100% - 44px))!important;max-width:1180px!important;min-height:78px!important;height:78px!important;padding:0!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-wrap:nowrap!important;gap:18px!important}
+header .brand{display:inline-flex!important;align-items:center!important;flex:none!important;white-space:nowrap!important;margin:0!important;font:850 18px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif!important;letter-spacing:-.055em!important;color:#fff!important;text-decoration:none!important}
+header .brand>span{color:#fff!important}header .brand b{color:#b58cff!important;font:inherit!important}
+header .navlinks{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:11px!important;color:#b7b0c5!important;font-size:12px!important;font-weight:650!important}
+header .navlinks a{white-space:nowrap!important;color:#b7b0c5!important;text-decoration:none!important}
+header .navlinks a:hover{color:#fff!important}
+header .navlinks .nav-action{border:1px solid #70538f!important;padding:9px 13px!important;border-radius:11px!important;background:#a982ff13!important;color:#f6edff!important}
+header .akame-menu-button{margin:0!important;flex-shrink:0!important}
+header .akame-account{margin-left:0!important;flex-shrink:0!important}
+header .akame-back-home{display:none!important}
+@media(max-width:1350px){header .navlinks{display:none!important}header .akame-menu-button{margin-left:auto!important}}
+@media(max-width:850px){header,header .nav,header .akame-site-nav{height:66px!important;min-height:66px!important}header .nav,header .akame-site-nav{width:calc(100% - 32px)!important;gap:10px!important}header .brand{font-size:15px!important}}
+
+/* One shared left edge for the logo, independent of each page's .wrap rules */
+html body header > .wrap.nav.akame-site-nav {
+  box-sizing:border-box!important;
+  width:min(1180px,calc(100% - 44px))!important;
+  max-width:1180px!important;
+  min-width:0!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+}
+html body header > .wrap.nav.akame-site-nav > a.brand {
+  position:static!important;
+  left:auto!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  padding-left:0!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+}
+@media(max-width:850px){
+  html body header > .wrap.nav.akame-site-nav {width:calc(100% - 32px)!important}
+}
+
+/* Normalize text and link alignment across pages with legacy global nav rules. */
+html body header .akame-site-nav > nav.navlinks{
+ margin:0 0 0 auto!important;
+ padding:0!important;
+ line-height:1.3!important;
+ align-self:center!important;
+ height:auto!important;
+ min-height:0!important;
+ position:static!important;
+ transform:none!important;
+}
+html body header .akame-site-nav > nav.navlinks > a{
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ margin:0!important;
+ vertical-align:middle!important;
+ line-height:1.3!important;
+}
+html body header .akame-site-nav > a.brand,
+html body header .akame-site-nav > a.brand > span{
+ line-height:1.2!important;
+ vertical-align:middle!important;
+}
+
+/* Keep viewport layout width stable when switching between pages with different scroll lengths. */
+html{scrollbar-gutter:stable!important}
+html body header>.wrap.nav.akame-site-nav{width:min(1180px,calc(100% - 44px))!important;max-width:1180px!important;margin-inline:auto!important}
+html body header>.wrap.nav.akame-site-nav>a.brand{align-self:center!important;flex-shrink:0!important;top:auto!important;translate:none!important}
+@media(max-width:850px){html body header>.wrap.nav.akame-site-nav{width:calc(100% - 32px)!important}}
+
+/* Header layout reset: exactly the same measurements regardless of page CSS. */
+html body header{box-sizing:border-box!important;line-height:normal!important}
+html body header .akame-site-nav,html body header .akame-site-nav *{box-sizing:border-box!important}
+html body header>.wrap.nav.akame-site-nav{
+ width:calc(100% - 44px)!important;
+ max-width:1180px!important;
+ min-height:78px!important;
+ height:78px!important;
+ padding:0!important;
+ margin-left:auto!important;
+ margin-right:auto!important;
+ column-gap:18px!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ flex-wrap:nowrap!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand{
+ font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ font-size:18px!important;
+ font-weight:850!important;
+ line-height:22px!important;
+ letter-spacing:-.055em!important;
+ text-align:left!important;
+ display:flex!important;
+ align-items:center!important;
+ height:32px!important;
+ min-height:32px!important;
+ padding:0!important;
+ border:0!important;
+ color:#fff!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand>span{font:inherit!important;line-height:22px!important;color:#fff!important;white-space:nowrap!important}
+html body header>.wrap.nav.akame-site-nav>.brand b{color:#b58cff!important;font:inherit!important}
+html body header>.wrap.nav.akame-site-nav>.navlinks{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;line-height:18px!important;gap:11px!important}
+html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+ font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ font-size:13px!important;
+ line-height:18px!important;
+ height:42px!important;
+ min-height:42px!important;
+ padding:10px 13px!important;
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{width:calc(100% - 32px)!important;height:66px!important;min-height:66px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{font-size:15px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:15px!important}
+}
+
+/* Desktop spacing: navigation closer to logo, account a little farther right. */
+@media(min-width:1351px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+   margin-left:30px!important;
+   margin-right:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+   margin-left:auto!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+   margin-left:0!important;
+   transform:translateX(38px)!important;
+ }
+}
+@media(max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>.akame-account{transform:none!important}
+}
+
+/* Final shared header ordering: navigation + Menu together, login anchored right. */
+@media(min-width:1351px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  display:flex!important;
+  flex:0 1 auto!important;
+  margin-left:30px!important;
+  margin-right:0!important;
+  gap:11px!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  display:inline-flex!important;
+  margin:0!important;
+  margin-left:0!important;
+  transform:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+  margin-left:auto!important;
+  margin-right:0!important;
+  transform:none!important;
+  flex-shrink:0!important;
+ }
+}
+@media(min-width:851px) and (max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  display:inline-flex!important;
+  margin-left:16px!important;
+  margin-right:0!important;
+  transform:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+  margin-left:auto!important;
+  margin-right:0!important;
+  transform:none!important;
+ }
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{margin-left:auto!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-account{margin-left:0!important;transform:none!important}
+}
+
+/* Keep Discord profile anchored to the viewport's right edge, not the centered content width. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav{position:static!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+   position:absolute!important;
+   top:50%!important;
+   right:clamp(16px,2vw,36px)!important;
+   left:auto!important;
+   margin:0!important;
+   transform:translateY(-50%)!important;
+   z-index:95!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{flex-shrink:0!important}
+}
+
+/* Desktop uses regular links only; the expandable Menu is mobile-exclusive. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  display:flex!important;
+  visibility:visible!important;
+  margin-left:30px!important;
+  margin-right:0!important;
+  padding:0!important;
+  gap:11px!important;
+  flex:0 1 auto!important;
+ }
+ html body header>.akame-menu-panel{display:none!important}
+}
+@media(min-width:1101px) and (max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4){display:none!important}
+}
+@media(min-width:851px) and (max-width:1100px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  gap:10px!important;
+  margin-left:auto!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(5),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important}
+}
+
+/* Mobile navigation override: legacy styles must not hide the real Menu button. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:110!important;
+  margin:0 0 0 auto!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:42px!important;
+  transform:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-account{
+  display:flex!important;
+  visibility:visible!important;
+  position:relative!important;
+  margin:0!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+ }
+ html body header>.akame-menu-panel{
+  position:absolute!important;
+  top:100%!important;
+  left:0!important;
+  right:0!important;
+  z-index:105!important;
+  display:none!important;
+ }
+ html body header>.akame-menu-panel.open{display:block!important}
+}
+
+/* Unified GitHub + Discord controls: a single right-anchored group on desktop. */
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ gap:12px!important;flex:0 0 auto!important;white-space:nowrap!important;
+}
+html body header .akame-header-actions>.nav-action{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ padding:9px 13px!important;border:1px solid #70538f!important;
+ background:#a982ff13!important;color:#f6edff!important;
+ border-radius:11px!important;font:650 12px/18px Inter,system-ui,sans-serif!important;
+ text-decoration:none!important;white-space:nowrap!important;
+}
+html body header .akame-header-actions>.akame-account{
+ position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ transform:none!important;margin:0!important;display:flex!important;visibility:visible!important;z-index:95!important;
+}
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:235px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  position:absolute!important;right:clamp(16px,2vw,34px)!important;top:50%!important;
+  transform:translateY(-50%)!important;margin:0!important;z-index:95!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{margin-left:26px!important;margin-right:0!important}
+}
+@media(min-width:1101px) and (max-width:1550px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  position:static!important;transform:none!important;gap:0!important;margin:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.nav-action{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{
+  position:relative!important;transform:none!important;margin:0!important;
+ }
+}
+
+/* Profile launch: sufficient space for GitHub, desktop language control and Discord. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:360px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  position:absolute!important;right:20px!important;top:50%!important;
+  transform:translateY(-50%)!important;max-width:calc(100vw - 240px)!important
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{
+  position:relative!important;left:auto!important;right:auto!important;top:auto!important;
+  transform:none!important;margin:0!important;flex:0 0 auto!important
+ }
+}
+@media(min-width:851px) and (max-width:1150px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(5),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{padding-right:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{gap:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages{display:none!important}
+}
+
+/* Mobile: logo | menu | Discord (Discord always rightmost). */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{order:0!important;flex:0 1 auto!important;min-width:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{order:1!important;margin-left:auto!important;margin-right:0!important;flex:0 0 auto!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{order:2!important;margin-left:0!important;margin-right:0!important;flex:0 0 auto!important;position:static!important;transform:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{position:relative!important;right:auto!important;left:auto!important;top:auto!important;transform:none!important}
+}
+
+/* Desktop header fix: never mix mobile hamburger with desktop navigation. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important;visibility:hidden!important;width:0!important;min-width:0!important;max-width:0!important;flex:0 0 0!important;margin:0!important;padding:0!important;border:0!important}
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:flex!important;visibility:visible!important;align-items:center!important;flex-wrap:nowrap!important;min-width:0!important;gap:12px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{flex:0 0 auto!important;white-space:nowrap!important}
+}
+@media(min-width:851px) and (max-width:1199px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(2),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(3),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(4),
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>a:nth-child(7){display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important;visibility:visible!important;width:auto!important;min-width:0!important;max-width:none!important;flex:0 0 auto!important}
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{display:none!important}
+}
+
+/* Shared mobile drawer: fully styled on every page, including AkameSMP. */
+@media(max-width:850px){
+ html body header>.akame-menu-panel.open{
+  display:block!important;position:fixed!important;top:66px!important;left:0!important;right:0!important;
+  width:100vw!important;height:calc(100dvh - 66px)!important;max-height:calc(100dvh - 66px)!important;
+  overflow-y:auto!important;overscroll-behavior:contain!important;
+  padding:18px 20px 35px!important;margin:0!important;
+  background:#120d1d!important;border:0!important;border-top:1px solid #a982ff35!important;
+  box-shadow:0 20px 50px #0009!important;z-index:105!important;
+  color:#f5eeff!important;font:14px/1.5 system-ui,sans-serif!important;
+ }
+ html body header>.akame-menu-panel details{display:block!important;position:static!important;margin:0 0 12px!important;padding:0!important;border:1px solid #9b79c43d!important;border-radius:13px!important;background:#21172e!important;overflow:hidden!important}
+ html body header>.akame-menu-panel summary{display:list-item!important;cursor:pointer!important;padding:13px 17px!important;color:#eee1ff!important;font-size:14px!important;font-weight:750!important}
+ html body header>.akame-menu-panel .akame-links{display:grid!important;grid-template-columns:1fr!important;gap:2px!important;padding:0 10px 12px!important}
+ html body header>.akame-menu-panel .akame-links a{display:block!important;position:static!important;padding:11px 13px!important;border-radius:9px!important;color:#d7c8e8!important;text-decoration:none!important;white-space:normal!important;overflow-wrap:anywhere!important;font:600 14px/1.4 system-ui,sans-serif!important}
+ html body header>.akame-menu-panel .akame-links a:hover,html body header>.akame-menu-panel .akame-links a[aria-current=page]{background:#a982ff25!important;color:#fff!important}
+ html body header>.akame-menu-panel .akame-language-setting{display:block!important;position:static!important;margin:15px 0!important;padding:16px!important;border:1px solid #9b79c43d!important;border-radius:13px!important;background:#21172e!important}
+ html body header>.akame-menu-panel .akame-language-setting>strong{display:block!important;margin:0 0 11px!important;color:#eee1ff!important;font-size:14px!important}
+ html body header>.akame-menu-panel .akame-language-choices{display:flex!important;gap:10px!important;flex-wrap:wrap!important}
+ html body header>.akame-menu-panel .akame-language-choices button{flex:1 1 110px!important;margin:0!important;padding:11px!important;border:1px solid #8e6eb2!important;border-radius:10px!important;background:#2d1c40!important;color:#eee1ff!important;font:650 13px system-ui,sans-serif!important}
+ html body header>.akame-menu-panel .akame-language-choices button.selected{background:#7649b5!important;border-color:#b08ce7!important}
+ html body.akame-menu-open{overflow-x:clip!important;overflow-y:visible!important}
+}
+
+
+/* Mobile navigation refresh: readable header and clean, contained drawer. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{width:calc(100% - 28px)!important;gap:8px!important;min-width:0!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{flex:1 1 auto!important;min-width:0!important;overflow:hidden!important;font-size:clamp(13px,3.7vw,16px)!important;text-overflow:ellipsis!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;order:1!important;flex:0 0 auto!important;width:auto!important;min-width:42px!important;max-width:none!important;height:42px!important;padding:0 12px!important;margin:0!important;border:1px solid #a985d470!important;border-radius:12px!important;background:#2b1b3d!important;color:#f6ebff!important;font:650 13px system-ui!important;white-space:nowrap!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:nth-child(2){display:inline!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{order:2!important;display:flex!important;align-items:center!important;gap:7px!important;margin:0!important;flex:0 0 auto!important}
+ html body header .akame-notify-bell{width:39px!important;height:39px!important}
+ html body header .akame-account-trigger{width:42px!important;height:42px!important;min-width:42px!important;padding:3px!important;justify-content:center!important}
+ html body header .akame-account-name{display:none!important}
+ html body header>.akame-menu-panel.open{top:66px!important;height:calc(100dvh - 66px)!important;max-height:calc(100dvh - 66px)!important;padding:20px max(16px,calc((100vw - 520px)/2)) 40px!important;background:#100c19!important;box-sizing:border-box!important}
+ html body header>.akame-menu-panel details{border-radius:14px!important;margin:0 0 12px!important}
+ html body header>.akame-menu-panel .akame-links{display:grid!important;grid-template-columns:1fr!important;gap:3px!important}
+ html body header>.akame-menu-panel .akame-links a{font-size:14px!important;line-height:1.4!important}
+ html body header>.akame-menu-panel .akame-language-setting{margin:12px 0!important}
+}
+@media(max-width:380px){
+ html body header>.wrap.nav.akame-site-nav{gap:5px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{padding:0 9px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:nth-child(2){display:none!important}
+ html body header .akame-notify-bell{width:36px!important;height:36px!important}
+ html body header .akame-account-trigger{width:38px!important;height:38px!important;min-width:38px!important}
+}
+
+/* Mobile header: logo left, menu and Discord avatar flush right. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{
+  display:flex!important;position:relative!important;left:auto!important;right:auto!important;
+  width:calc(100% - 28px)!important;max-width:none!important;min-width:0!important;
+  margin:0 14px!important;padding:0!important;justify-content:flex-end!important;
+  align-items:center!important;gap:8px!important;box-sizing:border-box!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>a.brand{
+  order:0!important;flex:0 1 auto!important;min-width:0!important;max-width:calc(100% - 104px)!important;
+  margin:0 auto 0 0!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  font-size:clamp(12px,3.5vw,15px)!important;white-space:nowrap!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  order:1!important;flex:0 0 42px!important;width:42px!important;min-width:42px!important;
+  max-width:42px!important;height:42px!important;padding:0!important;margin:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:nth-child(2){display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  order:2!important;flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+  margin:0!important;padding:0!important;display:flex!important;justify-content:flex-end!important;
+  position:static!important;transform:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{
+  margin:0!important;position:relative!important;display:flex!important;flex:0 0 42px!important;
+ }
+ html body header .akame-account-trigger{width:42px!important;min-width:42px!important;height:42px!important;padding:3px!important}
+ html body header .akame-account-dropdown{
+  position:absolute!important;right:0!important;left:auto!important;top:calc(100% + 12px)!important;
+  width:min(270px,calc(100vw - 28px))!important;max-width:calc(100vw - 28px)!important;
+ }
+}
+
+/* Consistent disclosure chevrons across all pages and browsers. */
+html body header>.akame-menu-panel summary{list-style:none!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;position:relative!important}
+html body header>.akame-menu-panel summary::-webkit-details-marker{display:none!important}
+html body header>.akame-menu-panel summary::marker{content:""!important}
+html body header>.akame-menu-panel summary::after{content:""!important;display:block!important;flex:none!important;width:8px!important;height:8px!important;border-right:2px solid #c9a9f2!important;border-bottom:2px solid #c9a9f2!important;transform:rotate(45deg)!important;transition:transform .18s ease!important;margin-right:4px!important}
+html body header>.akame-menu-panel details[open]>summary::after{transform:rotate(225deg)!important}
+
+/* Header v5: single canonical sizing across all pages, including iOS Safari. */
+@media(max-width:850px){
+ html body header{height:66px!important;min-height:66px!important;max-height:66px!important}
+ html body header>.wrap.nav.akame-site-nav{height:66px!important;min-height:66px!important;max-height:66px!important;display:flex!important;align-items:center!important;gap:10px!important;width:calc(100% - 32px)!important;margin-inline:16px!important;padding:0!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{flex:1 1 auto!important;min-width:0!important;max-width:none!important;margin:0!important;font-size:15px!important;line-height:22px!important;white-space:nowrap!important}
+ html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:15px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{appearance:none!important;-webkit-appearance:none!important;display:grid!important;place-items:center!important;position:relative!important;order:1!important;flex:0 0 42px!important;width:42px!important;min-width:42px!important;max-width:42px!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:0!important;border:1px solid #9167bd90!important;border-radius:12px!important;background:#291a3a!important;color:#e8d4ff!important;font-size:0!important;line-height:1!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:first-child{display:grid!important;place-items:center!important;width:22px!important;height:22px!important;font-size:0!important;line-height:0!important;visibility:visible!important;opacity:1!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button svg{display:block!important;width:21px!important;height:21px!important;visibility:visible!important;opacity:1!important;stroke:currentColor!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span:nth-child(2){display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{order:2!important;flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;display:flex!important;align-items:center!important;justify-content:center!important;margin:0!important;padding:0!important;gap:0!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{display:flex!important;align-items:center!important;justify-content:center!important;width:44px!important;height:44px!important;margin:0!important}
+ html body header .akame-account-trigger{display:grid!important;place-items:center!important;box-sizing:border-box!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-height:44px!important;padding:3px!important;border-radius:50%!important}
+ html body header .akame-account-trigger img{width:36px!important;height:36px!important;max-width:36px!important;max-height:36px!important;object-fit:cover!important;border-radius:50%!important}
+ html body header>.akame-menu-panel.open{top:66px!important;height:calc(100dvh - 66px)!important}
+}
+@media(max-width:380px){
+ html body header>.wrap.nav.akame-site-nav{gap:7px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand,html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:13px!important}
+}
+
+/* Mobile hamburger: larger invisible tap target, unchanged visible icon and button. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  overflow:visible!important;isolation:isolate!important;touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;cursor:pointer!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button::after{
+  content:""!important;position:absolute!important;inset:-5px!important;
+  border:0!important;background:transparent!important;border-radius:16px!important;
+  pointer-events:auto!important;z-index:1!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button svg,
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button>span{pointer-events:none!important}
+}
+
+/* Keep the profile control above the open mobile drawer. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{position:relative!important;z-index:125!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{z-index:126!important}
+ html body header .akame-account-dropdown:not([hidden]){z-index:150!important}
+}
+
+/* Desktop dropdown: continuous hover zone from Home to menu. */
+@media(min-width:851px){
+ html body header,
+ html body header>.wrap.nav.akame-site-nav,
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks{
+  overflow:visible!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-duplicate{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown{
+  display:inline-flex!important;position:relative!important;align-items:center!important;
+  align-self:stretch!important;flex:0 0 auto!important;width:auto!important;overflow:visible!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{
+  display:inline-flex!important;align-items:center!important;gap:7px!important;white-space:nowrap!important;
+  color:#dcd2ea!important;text-decoration:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger::after{
+  content:""!important;display:block!important;width:6px!important;height:6px!important;
+  border:solid currentColor!important;border-width:0 1.5px 1.5px 0!important;
+  transform:translateY(-2px) rotate(45deg)!important;opacity:.75!important;
+ }
+ /* Hover bridge extends below the dropdown anchor so there is no dead gap. */
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown::after{
+  content:""!important;position:absolute!important;left:-12px!important;right:-12px!important;
+  top:100%!important;height:18px!important;background:transparent!important;pointer-events:auto!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu{
+  position:absolute!important;z-index:1000!important;top:calc(100% - 4px)!important;left:-10px!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:2px!important;
+  width:154px!important;min-width:154px!important;height:auto!important;min-height:0!important;
+  padding:6px!important;margin:0!important;background:#191224f7!important;
+  backdrop-filter:blur(14px)!important;border:1px solid #7d5b9d7d!important;
+  border-radius:11px!important;box-shadow:0 12px 32px #0008!important;
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+  transform:translateY(0)!important;transition:opacity .14s ease,visibility .14s ease!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown:is(:hover,:focus-within)>.akame-home-submenu{
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu>a{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  width:100%!important;height:35px!important;min-height:35px!important;max-height:35px!important;
+  padding:0 11px!important;margin:0!important;border:0!important;border-radius:7px!important;
+  background:transparent!important;color:#d6c7e7!important;
+  font:600 12px/1.2 Inter,system-ui,sans-serif!important;white-space:nowrap!important;text-decoration:none!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu>a:is(:hover,:focus-visible){
+  background:#a982ff24!important;color:#fff!important;outline:none!important;
+ }
+}
+@media(max-width:850px){
+ html body header .akame-home-dropdown{display:contents!important}
+ html body header .akame-home-submenu{display:none!important}
+}
+
+/* Desktop Home submenu polish: aligned, compact, reachable with mouse. */
+@media(min-width:851px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown{
+  isolation:isolate!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{
+  min-height:36px!important;
+  padding:0 2px!important;
+  transition:color .16s ease!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown::after{
+  top:calc(100% - 4px)!important;
+  height:21px!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu{
+  top:calc(100% + 7px)!important;
+  left:-12px!important;
+  width:168px!important;min-width:168px!important;
+  gap:3px!important;
+  padding:7px!important;
+  border:1px solid rgba(168,118,223,.35)!important;
+  border-radius:12px!important;
+  background:rgba(24,17,37,.98)!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.04)!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu>a{
+  height:36px!important;min-height:36px!important;max-height:36px!important;
+  padding:0 12px!important;
+  border-radius:8px!important;
+  color:#ded2f0!important;
+  font-size:12px!important;
+  letter-spacing:.01em!important;
+  transition:background .13s,color .13s!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-submenu>a:is(:hover,:focus-visible){
+  background:rgba(161,111,238,.18)!important;
+  color:#fff!important;
+ }
+}
+
+/* Unified desktop action controls (Share, GitHub, DE/EN, account). */
+@media(min-width:901px){
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  flex-wrap:nowrap!important;gap:9px!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share,
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.nav-action{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:8px!important;box-sizing:border-box!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  padding:0 15px!important;margin:0!important;
+  border:1px solid #765596!important;border-radius:12px!important;
+  background:#20172d!important;color:#f0e3ff!important;
+  font:700 12px/1 Inter,system-ui,sans-serif!important;
+  white-space:nowrap!important;vertical-align:middle!important;
+  box-shadow:inset 0 1px #ffffff08!important;
+  transition:background .16s,border-color .16s!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share:hover,
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.nav-action:hover{
+  background:#352246!important;border-color:#a97ce1!important;color:#fff!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-page-share svg{
+  width:17px!important;height:17px!important;flex-shrink:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  gap:3px!important;padding:4px!important;margin:0!important;
+  background:#20172d!important;border:1px solid #765596!important;
+  border-radius:12px!important;box-sizing:border-box!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages>button{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  height:32px!important;min-height:32px!important;min-width:34px!important;
+  padding:0 8px!important;margin:0!important;border:0!important;border-radius:8px!important;
+  background:transparent!important;color:#baa9ce!important;font:750 11px/1 Inter,system-ui,sans-serif!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-desktop-languages>button.active{
+  background:#71509c!important;color:white!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  height:42px!important;min-height:42px!important;width:auto!important;margin:0!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;gap:9px!important;
+  width:auto!important;min-width:0!important;max-width:190px!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  padding:3px 13px 3px 4px!important;margin:0!important;
+  border:1px solid #765596!important;border-radius:999px!important;
+  background:#20172d!important;color:#f0e3ff!important;
+  font:700 12px/1 Inter,system-ui,sans-serif!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger:hover{
+  background:#352246!important;border-color:#a97ce1!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger>img,
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account>.akame-account-trigger>.akame-avatar-fallback{
+  width:32px!important;height:32px!important;min-width:32px!important;max-width:32px!important;
+  flex:0 0 32px!important;border-radius:50%!important;object-fit:cover!important;
+ }
+}
+
+
+/* v1.0.41: stable, independent header zones on every page.
+   Absolute zones prevent legacy flex/brand rules from pushing the nav around. */
+html body header>.wrap.nav.akame-site-nav{
+ display:flex!important;position:relative!important;align-items:center!important;
+ justify-content:space-between!important;gap:0!important;
+ width:min(1180px,calc(100% - 44px))!important;max-width:1180px!important;
+ margin-inline:auto!important;padding:0!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand{
+ order:0!important;position:absolute!important;left:0!important;right:auto!important;
+ top:50%!important;transform:translateY(-50%)!important;
+ display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
+ flex:none!important;width:max-content!important;max-width:calc(100% - 260px)!important;
+ margin:0!important;padding:0!important;gap:9px!important;
+ white-space:nowrap!important;z-index:2!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{
+ display:inline-flex!important;align-items:center!important;
+ font:700 11px/1.2 Inter,system-ui,sans-serif!important;letter-spacing:0!important;
+ color:#cdb3f1!important;padding:6px 9px!important;border:1px solid #a982ff44!important;
+ border-radius:8px!important;background:#a982ff12!important;white-space:nowrap!important;
+}
+html body header>.wrap.nav.akame-site-nav>.navlinks{
+ order:1!important;position:absolute!important;left:50%!important;right:auto!important;
+ top:50%!important;transform:translate(-50%,-50%)!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:max-content!important;max-width:calc(100% - 530px)!important;
+ margin:0!important;padding:0!important;flex:none!important;z-index:1!important;
+}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+ order:2!important;position:absolute!important;right:0!important;left:auto!important;
+ top:50%!important;transform:translateY(-50%)!important;
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ width:max-content!important;margin:0!important;flex:none!important;z-index:3!important;
+}
+html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+ order:1!important;position:absolute!important;left:50%!important;right:auto!important;
+ top:50%!important;transform:translate(-50%,-50%)!important;
+ margin:0!important;z-index:4!important;
+}
+@media(max-width:1500px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important}
+}
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{width:calc(100% - 32px)!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{max-width:calc(100% - 130px)!important}
+ html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{font-size:10px!important;padding:5px 6px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{left:auto!important;right:calc(100% - 42px)!important;transform:translateY(-50%)!important}
+}
+@media(max-width:650px){
+ html body header>.wrap.nav.akame-site-nav>.brand{left:42px!important;font-size:14px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:none!important}
+}
+@media(max-width:430px){
+ html body header>.wrap.nav.akame-site-nav>.brand{font-size:12px!important;left:40px!important}
+}
+
+/* v1.0.42: full-viewport left brand, truly centered nav, independent right actions */
+html body header>.wrap.nav.akame-site-nav{
+ width:calc(100% - 40px)!important;max-width:none!important;
+ margin:0 20px!important;padding:0!important;
+ position:relative!important;display:flex!important;align-items:center!important;
+ justify-content:space-between!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand{
+ position:absolute!important;left:0!important;right:auto!important;top:50%!important;
+ transform:translateY(-50%)!important;margin:0!important;
+ max-width:none!important;width:max-content!important;z-index:2!important;
+}
+html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:none!important}
+html body header>.wrap.nav.akame-site-nav>.navlinks{
+ position:absolute!important;left:50%!important;right:auto!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;margin:0!important;
+ width:max-content!important;max-width:calc(100% - 650px)!important;z-index:1!important;
+}
+html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+ position:absolute!important;right:0!important;left:auto!important;top:50%!important;
+ transform:translateY(-50%)!important;margin:0!important;z-index:3!important;
+}
+html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+ position:absolute!important;left:50%!important;right:auto!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;margin:0!important;z-index:4!important;
+}
+@media(max-width:1350px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important}
+}
+@media(min-width:1351px){
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important}
+}
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{width:calc(100% - 28px)!important;margin:0 14px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand{left:0!important;font-size:15px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{left:50%!important;right:auto!important;transform:translate(-50%,-50%)!important}
+}
+@media(max-width:470px){html body header>.wrap.nav.akame-site-nav>.brand{font-size:12px!important}}
+
+/* v1.0.43: restore page indicator and increase main navigation readability. */
+html body header>.wrap.nav.akame-site-nav>.brand{gap:11px!important}
+html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{
+ display:inline-flex!important;align-items:center!important;
+ padding:6px 10px!important;border-radius:9px!important;
+ border:1px solid #a982ff55!important;background:#a982ff15!important;
+ color:#d7baff!important;font:750 12px/1.2 Inter,system-ui,sans-serif!important;
+ letter-spacing:0!important;white-space:nowrap!important;
+}
+html body header>.wrap.nav.akame-site-nav>.navlinks{
+ gap:17px!important;max-width:calc(100% - 600px)!important;
+}
+html body header>.wrap.nav.akame-site-nav>.navlinks>a{
+ font:700 14px/1.3 Inter,system-ui,sans-serif!important;
+ padding:7px 0!important;white-space:nowrap!important;
+}
+@media(max-width:1500px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{display:none!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:inline-flex!important}
+}
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{display:flex!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{display:none!important}
+}
+@media(max-width:650px){
+ html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:inline-flex!important;font-size:10px!important;padding:5px 7px!important}
+}
+@media(max-width:470px){
+ html body header>.wrap.nav.akame-site-nav>.brand{gap:5px!important}
+ html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{font-size:9px!important;padding:4px 5px!important}
+}
+
+/* v1.0.44 — more legible, breathable centered desktop navigation. */
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{
+  display:flex!important;gap:25px!important;
+  width:max-content!important;max-width:none!important;
+  align-items:center!important;justify-content:center!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
+  font:750 15.5px/1.35 Inter,system-ui,sans-serif!important;
+  padding:11px 1px!important;letter-spacing:.005em!important;
+ }
+}
+
+/* v1.0.45: larger, comfortably spaced center navigation on wide screens. */
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>.navlinks{gap:30px!important}
+ html body header>.wrap.nav.akame-site-nav>.navlinks>a{
+  font-size:17px!important;font-weight:750!important;
+  line-height:1.4!important;letter-spacing:0!important;
+  padding:10px 2px!important;
+ }
+}
+
+/* v1.0.46 — Home is a dropdown trigger, not a direct nav link. Match its typography. */
+@media(min-width:1501px){
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger{
+  font-family:Inter,system-ui,sans-serif!important;
+  font-size:17px!important;font-weight:750!important;line-height:1.4!important;
+  letter-spacing:0!important;padding:10px 2px!important;
+  min-height:0!important;gap:8px!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown>.akame-home-trigger::after{
+  width:7px!important;height:7px!important;border-width:0 1.8px 1.8px 0!important;
+ }
+}
+
+/* v1.0.47 — consistent uppercase navigation across desktop and mobile. */
+html body header .akame-site-nav .navlinks>a,
+html body header .akame-site-nav .navlinks>.akame-home-dropdown>.akame-home-trigger,
+html body header .akame-site-nav .akame-home-submenu>a,
+html body header .akame-site-nav .mobile-menu a,
+html body header .akame-site-nav .akame-mobile-menu a{
+ text-transform:uppercase!important;
+ letter-spacing:.045em!important;
+}
+
+/* v1.0.49: larger AkameDevelopment wordmark on desktop only. */
+@media(min-width:1101px){html body header>.wrap.nav.akame-site-nav>.brand{font-size:23px!important;font-weight:850!important;letter-spacing:-.055em!important;line-height:1.15!important}html body header>.wrap.nav.akame-site-nav>.brand>span{font-size:inherit!important}html body header>.wrap.nav.akame-site-nav>.brand b{font-size:inherit!important}}
+
+/* Mobile controls belong on the right. Override legacy centered absolute positioning. */
+@media(max-width:850px){
+ html body header>.wrap.nav.akame-site-nav{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 42px 44px!important;
+  align-items:center!important;justify-content:initial!important;gap:10px!important;
+  width:calc(100% - 32px)!important;max-width:none!important;margin:0 auto!important;padding:0!important;position:relative!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.brand{grid-column:1!important;grid-row:1!important;position:static!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;width:auto!important;margin:0!important;min-width:0!important;max-width:100%!important;overflow:hidden!important;gap:6px!important}
+ html body header>.wrap.nav.akame-site-nav>.akame-menu-button{
+  grid-column:2!important;grid-row:1!important;position:static!important;left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;transform:none!important;order:initial!important;margin:0!important;
+  display:grid!important;place-items:center!important;visibility:visible!important;width:42px!important;min-width:42px!important;
+  max-width:42px!important;height:42px!important;min-height:42px!important;padding:0!important;z-index:4!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions{
+  grid-column:3!important;grid-row:1!important;position:static!important;left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;transform:none!important;order:initial!important;margin:0!important;
+  width:44px!important;min-width:44px!important;max-width:44px!important;padding:0!important;
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ }
+ html body header>.wrap.nav.akame-site-nav>.akame-header-actions>.akame-account{position:relative!important;transform:none!important;left:auto!important;right:auto!important;top:auto!important;margin:0!important}
+}
+@media(max-width:520px){html body header>.wrap.nav.akame-site-nav>.brand .akame-current-page{display:none!important}html body header>.wrap.nav.akame-site-nav>.brand{font-size:15px!important}}
+@media(max-width:360px){html body header>.wrap.nav.akame-site-nav{gap:7px!important;width:calc(100% - 24px)!important}html body header>.wrap.nav.akame-site-nav>.brand{font-size:13px!important}}
+
+/* Nonmodal header overlays preserve the page scroll container and sticky header. */
+html.akame-notifications-open{overflow-y:auto!important;overscroll-behavior:auto!important}
+html.akame-notifications-open body,html body.akame-menu-open{overflow-x:clip!important;overflow-y:visible!important;overscroll-behavior:auto!important;touch-action:pan-y!important}
+html body header>.akame-menu-panel{max-height:var(--akame-menu-height,calc(100dvh - 90px))!important;overflow-y:auto!important;overscroll-behavior:contain!important}
+html body header .akame-account-dropdown{max-height:var(--akame-account-height,calc(100dvh - 100px))!important;overflow-y:auto!important;overscroll-behavior:contain!important;scrollbar-width:thin}
