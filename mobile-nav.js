@@ -82,3 +82,6 @@ new MutationObserver(queue).observe(document.documentElement,{childList:true,sub
  header.querySelectorAll(".akame-desktop-languages,.akame-language-setting").forEach(el=>el.remove());
  header.querySelectorAll("a[href]").forEach(link=>{try{const url=new URL(link.href,location.href);if(url.hostname==="github.com"||url.hostname==="www.github.com")link.remove()}catch{}});
 })();
+
+/* All synchronous navigation setup has finished; reveal the canonical header. */
+document.dispatchEvent(new CustomEvent('akame-header-ready'));
