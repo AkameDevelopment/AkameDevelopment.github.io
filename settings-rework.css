@@ -8,3 +8,5 @@ html[data-akame-theme="light"] .settings-page .setting input[type="checkbox"]{bo
 /* Keep the thumb inside its track; legacy settings styles also used transform. */
 .settings-page .setting input[type="checkbox"]{box-sizing:border-box;border-width:1px!important;box-shadow:none!important;background:#ffffff10!important;border-color:#ffffff24!important}.settings-page .setting input[type="checkbox"]:checked{background:color-mix(in srgb,var(--s-accent) 35%,transparent)!important;border-color:var(--s-accent)!important}
 html[data-akame-theme="light"] .settings-page .setting input[type="checkbox"]{background:#eae2f1!important;border-color:#cebedc!important}html[data-akame-theme="light"] .settings-page .setting input[type="checkbox"]:checked{background:color-mix(in srgb,var(--s-accent) 25%,transparent)!important;border-color:var(--s-accent)!important}
+
+.settings-back{display:inline-flex;align-items:center;padding:8px 0;margin-bottom:12px;color:var(--s-accent);font-size:13px;font-weight:650;text-decoration:none}.settings-back:hover{text-decoration:underline}.settings-back:focus-visible{outline:2px solid var(--s-accent);outline-offset:4px}
