@@ -6,7 +6,7 @@ const tr=(de,en)=>(window.AkameLanguage?.get?.()||localStorage.getItem('akame-la
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const pages=[{id:'join',de:'Server beitreten',en:'Join the server',title:'Server beitreten',href:'akamesmp/join.html',description:['Minecraft starten und gemeinsam auf AkameSMP spielen.','Start Minecraft and play together on AkameSMP.']},{id:'mods',de:'Benötigte Mods',en:'Required mods',title:'Benötigte Mods',href:'akamesmp/mods.html',description:['Version, Mod-Auswahl und Hinweise zur Installation.','Version, required mods and installation notes.']},{id:'rules',de:'Serverregeln & Hilfe',en:'Server rules & help',title:'Serverregeln & Hilfe',href:'akamesmp/rules.html',description:['Ein paar einfache Regeln und Antworten auf häufige Fragen.','A few simple rules and answers to common questions.']}];
 let records=[],authorized=false,failed=false,access='checking';
-const href=id=>pages.some(p=>p.id===id)?'akamesmp/guide.html#'+id:'akamesmp.html';
+const href=id=>pages.some(p=>p.id===id)?(location.pathname.includes('/akamesmp/')?'guide.html#':'akamesmp/guide.html#')+id:(location.pathname.includes('/akamesmp/')?'../akamesmp.html':'akamesmp.html');
 function anchor(text,url){const a=node('a',text,'smp-guide-button');a.href=url;return a;}
 function content(id){const record=records.find(r=>r.title===pages.find(p=>p.id===id)?.title);if(!record?.body||/^Hier (folgen|kommt)/.test(record.body))return {};try{const value=JSON.parse(record.body);if(value&&typeof value==='object'&&!Array.isArray(value))return value;}catch{}return {de:record.body,en:record.body};}
 function localizedText(value){return tr(value.de||value.en||'',value.en||value.de||'');}
