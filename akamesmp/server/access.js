@@ -19,14 +19,14 @@ async function init(){
    db.from('smp_server_roles').select('role').eq('user_id',user.id)
   ]);
   if(member.error||staff.error||roles.error)throw member.error||staff.error||roles.error;
-  const owner=staff.data?.role==='owner';
+  const owner=['owner','developer'].includes(staff.data?.role);
   const assigned=new Set((roles.data||[]).map(row=>row.role));
   const main=owner||!!member.data||assigned.has('smp_admin');
   const second=owner||assigned.has('smp2')||assigned.has('smp_admin2');
   const admin=serverId==='1'?owner||assigned.has('smp_admin'):owner||assigned.has('smp_admin2');
   if(list){for(const card of list.querySelectorAll('[data-server]'))card.hidden=card.dataset.server==='1'?!main:!second;list.hidden=false;}
   if(detail&&((serverId==='1'&&main)||(serverId==='2'&&second))){detail.hidden=false;
-   const stats=document.getElementById('smp-admin-stats');if(stats)stats.hidden=!['owner','admin','developer'].includes(staff.data?.role);
+   const administration=document.getElementById('server-administration-link');if(administration)administration.hidden=!admin;
    if(serverId==='1'){window.akameSmpUserId=user.id;document.dispatchEvent(new Event('akamesmp-member-ready'));}
    const controls=document.getElementById('server-controls');if(controls)controls.hidden=!admin;}
   if((serverId==='1'&&!main)||(serverId==='2'&&!second)||(!serverId&&!main&&!second)){message('Du hast keine Berechtigung für diesen Serverbereich.','You do not have permission to access this server area.');return;}
