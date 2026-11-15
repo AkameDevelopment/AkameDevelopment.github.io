@@ -5,3 +5,10 @@
 
 /* One approvals entry; its live count belongs in the navigation. */
 #admin-approvals-slot{display:none!important}.admin-quicknav a{display:flex;align-items:center;justify-content:space-between;gap:10px}.admin-nav-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;padding:2px 6px;border-radius:99px;background:var(--accent);color:#160d24;font-size:11px;font-weight:850}.admin-page-back{display:inline-block;margin-bottom:10px}.admin-subpage{align-content:start}.admin-workspace-content{align-content:start}
+
+/* Admin workspace navigation uses buttons, not hash links, on mobile and desktop. */
+.admin-dashboard-toolbar .admin-quicknav button[data-admin-page]{display:block;width:100%;text-align:left;padding:12px 14px!important;font:700 13px system-ui;color:var(--text,#e9d8ff);background:transparent;border:1px solid transparent;border-radius:10px;cursor:pointer;white-space:normal}
+.admin-dashboard-toolbar .admin-quicknav button[data-admin-page][aria-current]{border-color:#a982ff60;background:#a982ff24}
+.admin-page-back{appearance:none;background:none;border:0;color:var(--accent,#b58cff);font:inherit;text-align:left;cursor:pointer;padding:0}
+.admin-home-card[data-admin-page]{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+@media(max-width:760px){.admin-dashboard-toolbar .admin-quicknav button[data-admin-page]{width:auto;padding:9px 11px!important}}
