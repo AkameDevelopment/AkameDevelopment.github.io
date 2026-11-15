@@ -26,21 +26,22 @@
     if (targetId && !target) continue;
     const page = document.createElement('section'); page.className = 'admin-subpage'; page.id = 'admin-page-' + id; page.hidden = true;
     const head = document.createElement('div'); head.className = 'admin-page-heading';
-    const back = document.createElement('a'); back.href = '#overview'; back.className = 'admin-page-back';
+    const back = document.createElement('button'); back.type = 'button'; back.className = 'admin-page-back'; back.dataset.adminPage = 'overview';
     const title = document.createElement('h2'); title.tabIndex = -1; const description = document.createElement('p');
     if (id !== 'overview') head.append(back); head.append(title, description); page.append(head);
-    const link = document.createElement('a'); link.href = '#' + id; nav.append(link);
+    const link = document.createElement('button'); link.type = 'button'; link.dataset.adminPage = id; nav.append(link);
     const unavailable = document.createElement('p'); unavailable.className = 'state'; unavailable.hidden = true; page.append(unavailable);
     if (target) page.append(target);
     else { const stats = content.querySelector(':scope > .grid'); if (stats) page.append(stats); page.append(homeGrid); }
     content.append(page);
     let card;
-    if (target && id !== 'media-review-manager') { card = document.createElement('a'); card.href = '#' + id; card.className = 'admin-home-card'; homeGrid.append(card); }
+    if (target && id !== 'media-review-manager') { card = document.createElement('button'); card.type = 'button'; card.dataset.adminPage = id; card.className = 'admin-home-card'; homeGrid.append(card); }
     pages.push({id, page, target, link, title, description, back, unavailable, card, de, en, descriptionDe, descriptionEn});
   }
   // Keep the hidden account data available to the existing account scripts.
   content.querySelectorAll(':scope > .layout').forEach(n => { n.hidden = true; });
-  function activeId() { const id = location.hash.slice(1); return pages.some(p => p.id === id) ? id : new URLSearchParams(location.search).has('member') ? 'admin-controls' : 'overview'; }
+  let selectedPage = (()=>{const id=location.hash.slice(1);return pages.some(p=>p.id===id)?id:new URLSearchParams(location.search).has('member')?'admin-controls':'overview'})();
+  function activeId(){return selectedPage;}
   function render(focus = false) {
     const active = activeId();
     for (const p of pages) {
@@ -64,7 +65,24 @@
   pages.forEach(p => { if (p.target) observer.observe(p.target, {attributes:true, attributeFilter:['hidden']}); });
   const reviewCount = document.getElementById('media-review-count');
   if (reviewCount) new MutationObserver(() => render()).observe(reviewCount, {childList:true,characterData:true,subtree:true});
-  window.addEventListener('hashchange', () => render(true));
+  function navigate(id){
+    if(!pages.some(p=>p.id===id))return;
+    selectedPage=id;
+    render(true);
+    // No fragment navigation: Safari and shared navigation handlers must not redirect.
+    if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);
+  }
+  dashboard.addEventListener('click',event=>{
+    const control=event.target.closest?.('[data-admin-page]');
+    if(!control||!dashboard.contains(control))return;
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(control.dataset.adminPage);
+  },true);
+  window.addEventListener('hashchange',()=>{
+    const id=location.hash.slice(1);
+    if(pages.some(p=>p.id===id))navigate(id);
+  });
   document.addEventListener('akame-language-change', () => render());
   render();
 })();
