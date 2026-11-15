@@ -1,12 +1,12 @@
 import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const db=createClient('https://wycdpuzlbivtfxwtarzn.supabase.co','sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0',{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 window.akameSmpDb=db;
-const $=id=>document.getElementById(id),page=document.body.dataset.smpGuidePage||'overview';
+const $=id=>document.getElementById(id);let page=document.body.dataset.smpGuidePage||'overview';
 const tr=(de,en)=>(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en'?en:de;
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const pages=[{id:'join',de:'Server beitreten',en:'Join the server',title:'Server beitreten',href:'akamesmp/join.html',description:['Minecraft starten und gemeinsam auf AkameSMP spielen.','Start Minecraft and play together on AkameSMP.']},{id:'mods',de:'Benötigte Mods',en:'Required mods',title:'Benötigte Mods',href:'akamesmp/mods.html',description:['Version, Mod-Auswahl und Hinweise zur Installation.','Version, required mods and installation notes.']},{id:'rules',de:'Serverregeln & Hilfe',en:'Server rules & help',title:'Serverregeln & Hilfe',href:'akamesmp/rules.html',description:['Ein paar einfache Regeln und Antworten auf häufige Fragen.','A few simple rules and answers to common questions.']}];
 let records=[],authorized=false,failed=false,access='checking';
-const href=id=>pages.find(p=>p.id===id)?.href||'akamesmp.html';
+const href=id=>pages.some(p=>p.id===id)?'akamesmp/guide.html#'+id:'akamesmp.html';
 function anchor(text,url){const a=node('a',text,'smp-guide-button');a.href=url;return a;}
 function content(id){const record=records.find(r=>r.title===pages.find(p=>p.id===id)?.title);if(!record?.body||/^Hier (folgen|kommt)/.test(record.body))return {};try{const value=JSON.parse(record.body);if(value&&typeof value==='object'&&!Array.isArray(value))return value;}catch{}return {de:record.body,en:record.body};}
 function localizedText(value){return tr(value.de||value.en||'',value.en||value.de||'');}
@@ -14,9 +14,9 @@ function labels(){if(page==='start'){$('smp-guide-title').textContent=tr('Dein S
 function render(){labels();if(!authorized){const state=$('state');state.hidden=false;state.replaceChildren();if(access==='login'){state.append(node('p',tr('Melde dich mit Discord an, um die AkameSMP-Informationen zu sehen.','Sign in with Discord to view the AkameSMP information.')),anchor(tr('Mit Discord anmelden','Sign in with Discord'),'profile.html'));}else state.textContent=access==='denied'?tr('Für diesen Bereich benötigst du die Zusatzrolle AkameSMP. Bitte wende dich an das Team.','You need the AkameSMP membership role to access this area. Please contact the team.'):access==='error'?tr('Die Zugangsprüfung ist momentan nicht verfügbar. Bitte versuche es später erneut.','Access verification is currently unavailable. Please try again later.'):tr('Berechtigung wird geprüft …','Checking access …');return;}const root=page==='overview'?$('guide'):$('smp-guide-body');root.replaceChildren();
  if(failed){root.append(node('p',tr('Die Serverinformationen konnten nicht geladen werden. Bitte versuche es später erneut.','Server information could not be loaded. Please try again later.')));return;}
  if(page==='overview'){root.append(anchor(tr('Loslegen →','Get started →'),'akamesmp/start.html'));return;}
- if(page==='start'){for(const p of pages){const card=node('section',undefined,'card');card.append(node('h2',tr(p.de,p.en)),node('p',tr(...p.description)),anchor(tr('Seite öffnen →','Open page →'),href(p.id)));root.append(card);}return;}
+ if(page==='start'){const sections=[];for(const p of pages){page=p.id;render();const section=node('section',undefined,'card smp-guide-section');section.id=p.id;section.append(...Array.from(root.childNodes));sections.push(section);}page='start';root.replaceChildren(...sections);labels();return;}
  // The header already provides navigation between guide pages.
- const nav=$('smp-guide-nav');nav.replaceChildren();nav.hidden=true;
+ const nav=$('smp-guide-nav');if(nav){nav.replaceChildren();nav.hidden=true;}
  const data=content(page),join=content('join');
  if(page==='join'){
   root.append(node('h2',tr('So kommst du auf den Server','How to join the server')));
