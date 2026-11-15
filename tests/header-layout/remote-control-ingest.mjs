@@ -1,0 +1,10 @@
+import {stripTypeScriptTypes} from 'node:module';import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
+let handler;const token='fixture-control-token-at-least-32-characters',calls=[];const source=fs.readFileSync(new URL('../../supabase/functions/smp-server-agent/index.ts',import.meta.url),'utf8');
+vm.runInNewContext(stripTypeScriptTypes(source),{Deno:{env:{get:k=>({SUPABASE_URL:'https://fixture.test',SUPABASE_SERVICE_ROLE_KEY:'fixture-service'})[k]},serve:fn=>handler=fn},Response,Request,TextEncoder,crypto,AbortSignal,console,fetch:async(url,options={})=>{calls.push({url,body:options.body?JSON.parse(options.body):null});if(url.includes('smp_control_credentials'))return Response.json(url.includes('server_id=eq.2')?[{token_hash:createHash('sha256').update(token).digest('hex')}]:[]);return Response.json({ok:true,server_id:2,command:null});}});
+const payload={server_id:2,agent_id:'11111111-1111-4111-8111-111111111111',state:'running',detail:'fixture',lines:['fixture console']};
+const send=(p=payload,key=token)=>handler(new Request('https://fixture.test',{method:'POST',headers:{authorization:`Bearer ${key}`},body:JSON.stringify(p)}));
+assert.equal((await send()).status,200);assert.match(calls[0].url,/server_id=eq\.2/);assert.equal(calls[1].body.p_server_id,2);assert.deepEqual(calls[1].body.p_lines,['fixture console']);calls.length=0;
+assert.equal((await send({...payload,server_id:1})).status,401);assert.equal(calls.length,1);calls.length=0;
+assert.equal((await send(payload,'not-the-key-but-long-enough-to-be-a-token')).status,401);assert.equal(calls.length,1);calls.length=0;
+assert.equal((await send({...payload,ack_id:'invalid',ack_ok:true,ack_result:'x'})).status,400);assert.equal((await send({...payload,lines:Array(41).fill('x')})).status,400);assert.equal((await send({...payload,server_id:3})).status,400);assert.equal(calls.length,0);
+console.log('PASS: separate control credential, scoped RPC payload, wrong-server rejection and bounded input.');

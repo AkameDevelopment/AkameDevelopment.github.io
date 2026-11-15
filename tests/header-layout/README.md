@@ -22,3 +22,5 @@ The two nested AkameSMP server detail pages share the same header checks as the 
 Run `npm run test:administration --prefix tests/header-layout` to check both server administration pages across guests, members, owners, developers, server admins, and unrelated global admins at mobile and desktop widths. Console commands stay disabled until the server connection is configured.
 
 Server 2 uses its own statistics tables, ingestion endpoint and credential. `npm run test:stats2 --prefix tests/header-layout` verifies endpoint routing and payload rejection. Administration tests also verify the private configuration download stores only the token hash.
+
+`npm run test:control --prefix tests/header-layout` checks remote-control authorization, server states, queued actions, console input and private agent setup downloads. `remote-control-rls.sql` is a rollback-only database policy test for privileged maintenance use; it never executes Minecraft commands.
