@@ -65,7 +65,7 @@ function setUser(user){if(user&&sessionStorage.getItem("akame-support-return")==
 
 /* AkameSMP guide navigation: same desktop dropdown geometry as Home. */
 (()=>{
- const items=[['Server beitreten','Join the server','akamesmp/join.html'],['Benötigte Mods','Required mods','akamesmp/mods.html'],['Serverregeln & Hilfe','Server rules & help','akamesmp/rules.html']];
+ const items=[['Server beitreten','Join the server','/akamesmp/guide/'],['Benötigte Mods','Required mods','akamesmp/mods.html'],['Serverregeln & Hilfe','Server rules & help','akamesmp/rules.html']];
  const nav=document.querySelector('header .akame-site-nav .navlinks');
  const key=value=>String(value||'').split(/[?#]/)[0].replace(/^\//,'').replace(/\.html$/,'').replace(/\/$/,'');
  const smp=nav&&[...nav.querySelectorAll(':scope > a')].find(a=>key(a.getAttribute('href'))==='akamesmp');
