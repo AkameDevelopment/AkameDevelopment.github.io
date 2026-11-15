@@ -5,6 +5,13 @@ $form=New-Object Windows.Forms.Form
 $form.Text='AkameSMP - Server Dashboard';$form.Size=New-Object Drawing.Size(940,650);$form.MinimumSize=New-Object Drawing.Size(880,620);$form.StartPosition='CenterScreen';$form.BackColor=[Drawing.Color]::FromArgb(13,11,19);$form.ForeColor=[Drawing.Color]::FromArgb(244,239,251);$form.Font=New-Object Drawing.Font('Segoe UI',10)
 $title=New-Object Windows.Forms.Label;$title.Text='AkameSMP. Deine Server.';$title.Font=New-Object Drawing.Font('Segoe UI',22,[Drawing.FontStyle]::Bold);$title.AutoSize=$true;$title.Location=New-Object Drawing.Point(24,22);$form.Controls.Add($title)
 $note=New-Object Windows.Forms.Label;$note.Text='Agenten starten automatisch mit Windows. Dieses Fenster kann geschlossen werden.';$note.AutoSize=$true;$note.ForeColor=[Drawing.Color]::FromArgb(167,157,183);$note.Location=New-Object Drawing.Point(28,78);$form.Controls.Add($note)
+$diagnose=New-Object Windows.Forms.Button;$diagnose.Text='Diagnose';$diagnose.Location=New-Object Drawing.Point(760,30);$diagnose.Size=New-Object Drawing.Size(120,32);$diagnose.FlatStyle='Flat';$diagnose.Anchor='Top,Right';$form.Controls.Add($diagnose)
+$diagnose.Add_Click({
+ $lines=@()
+ foreach($n in @(1,2)){try{$task=Get-ScheduledTask -TaskName ("AkameSMP-Agent-"+$n) -ErrorAction Stop;$info=$task | Get-ScheduledTaskInfo;$lines+=("Server {0}: Aufgabe {1}; Ergebnis {2}; letzter Start {3}" -f $n,$task.State,$info.LastTaskResult,$info.LastRunTime)}catch{$lines+=("Server {0}: Aufgabe nicht lesbar oder nicht eingerichtet." -f $n)}
+ try{$status=Get-Content -LiteralPath (Join-Path $PSScriptRoot ("status-server"+$n+".json")) -Raw -Encoding UTF8 -ErrorAction Stop | ConvertFrom-Json;$lines+=$status.detail}catch{$lines+='Noch keine Statusdatei. Bitte Installer erneut ausfuehren.'}}
+ [Windows.Forms.MessageBox]::Show(($lines -join [Environment]::NewLine),'Agent-Diagnose') | Out-Null
+})
 $grid=New-Object Windows.Forms.TableLayoutPanel;$grid.Location=New-Object Drawing.Point(24,120);$grid.Size=New-Object Drawing.Size(875,450);$grid.Anchor='Top,Bottom,Left,Right';$grid.ColumnCount=2;$grid.RowCount=1
 $grid.ColumnStyles.Add((New-Object Windows.Forms.ColumnStyle([Windows.Forms.SizeType]::Percent,50))) | Out-Null
 $grid.ColumnStyles.Add((New-Object Windows.Forms.ColumnStyle([Windows.Forms.SizeType]::Percent,50))) | Out-Null
@@ -50,5 +57,5 @@ $refresh={foreach($row in $rows){try{
  $labels=@{running='Minecraft laeuft';stopped='Minecraft gestoppt';starting='Minecraft startet';stopping='Minecraft stoppt';error='Verbindung pruefen'}
  if($online){$row.status.Text='Agent verbunden - '+$labels[[string]$data.state];$row.status.ForeColor=[Drawing.Color]::FromArgb(103,205,156)}else{$row.status.Text='Agent nicht verbunden';$row.status.ForeColor=[Drawing.Color]::FromArgb(214,154,169)}
  $row.detail.Text=[string]$data.detail;$row.last.Text='Letzte Pruefung: '+([DateTimeOffset]::Parse($data.updatedAt).ToLocalTime().ToString('HH:mm:ss'))
- }catch{$row.status.Text='Agent noch nicht eingerichtet';$row.detail.Text='Installieren.cmd als Administrator ausfuehren.';$row.last.Text=''}}}
+ }catch{if(Test-Path -LiteralPath (Join-Path $PSScriptRoot 'agent-config.json')){$row.status.Text='Noch keine Agent-Meldung';$row.detail.Text='Oben Diagnose oeffnen, um den Aufgabenstatus zu pruefen.'}else{$row.status.Text='Agent noch nicht eingerichtet';$row.detail.Text='Installieren.cmd als Administrator ausfuehren.'};$row.last.Text=''}}}
 $timer.Add_Tick($refresh);$form.Add_Shown({& $refresh;$timer.Start()});$form.Add_FormClosed({$timer.Stop();$timer.Dispose()});[void]$form.ShowDialog()

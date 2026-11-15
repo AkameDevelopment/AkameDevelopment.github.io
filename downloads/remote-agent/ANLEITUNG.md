@@ -13,7 +13,7 @@ Für die gemeinsame Windows-Maschine mit zwei getrennten Minecraft-Servern:
 4. **Installieren.cmd als Administrator ausführen.** Bei mehreren Startdateien pro Server die richtige `.bat` oder `.cmd` auswählen. Sie muss Java direkt aufrufen, ohne `start` zum Abtrennen des Java-Prozesses.
 5. Der Installer sichert `server.properties`, richtet getrennte lokale RCON-Zugänge ein und blockiert externe RCON-Verbindungen über die Windows-Firewall. Er übernimmt den Java-Pfad und schlägt erkannte RAM-Werte aus den Startdateien vor (sonst 4 GiB maximal / 1 GiB Start-RAM). Den maximalen RAM pro Server bestätigst oder änderst du bei der Installation. Zwei Aufgaben der Windows-Aufgabenplanung starten die Agenten sofort und künftig bei jedem Windows-Start als SYSTEM, auch ohne Anmeldung.
 6. In der Website sollte **Agent verbunden · Gestoppt** erscheinen. Minecraft über **Starten** in der jeweiligen Server-Administration starten.
-7. Optional **Dashboard.cmd** öffnen: beide Serverstatus, letzte Verbindung, Links zur Administration und getrennte RAM-Regler. Das Fenster darf geschlossen werden, ohne die Agenten zu beenden.
+7. Optional **Dashboard.vbs** öffnen (ohne Konsolenfenster; `Dashboard.cmd` bleibt als kompatibler Starter vorhanden): beide Serverstatus, letzte Verbindung, Links zur Administration und getrennte RAM-Regler. Das Fenster darf geschlossen werden, ohne die Agenten zu beenden.
 
 **Nach einem Windows-Neustart:** Die Agenten starten automatisch und stellen die Fernsteuerung bereit. Minecraft selbst bleibt gestoppt, bis du es in der Administration startest. Das Dashboard muss dafür nicht geöffnet sein.
 
@@ -42,7 +42,7 @@ Die Verbindung zur Website erfolgt ausschließlich ausgehend per HTTPS. Der Agen
 - Die Konsole zeigt die letzten übertragenen Logzeilen. Sehr lange Zeilen werden gekürzt; lokale vollständige Logs bleiben in `logs/latest.log` erhalten.
 - Die Agenten erkennen auch manuell gestartete Minecraft-Server, wenn deren RCON-Konfiguration aktiv ist.
 - Eine neue Agent-Konfiguration ersetzt die bisherigen Schlüssel **beider Agenten**. Danach beide Minecraft-Server stoppen und den Installer mit der neuen Datei erneut ausführen. Nicht erneut erstellen, wenn die Installation bereits funktioniert.
-- Aufgabenplanung: `AkameSMP-Agent-1` und `AkameSMP-Agent-2`. Die Aufgaben starten bei Windows-Start und werden bei einem Agentenabsturz neu gestartet. Falls nichts angezeigt wird, Aufgabenstatus und Windows-Ereignisanzeige prüfen.
+- Aufgabenplanung: `AkameSMP-Agent-1` und `AkameSMP-Agent-2`. Die Aufgaben starten bei Windows-Start und werden bei einem Agentenabsturz neu gestartet. Falls nichts angezeigt wird, im Dashboard **Diagnose** öffnen. Frühe Startfehler erscheinen zusätzlich in `startup-server1.log` bzw. `startup-server2.log` im geschützten Agentenordner.
 
 ## Validierung
 

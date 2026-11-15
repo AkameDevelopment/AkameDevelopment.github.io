@@ -4,6 +4,8 @@ Set-Location -LiteralPath $PSScriptRoot
 $setup=Join-Path $PSScriptRoot 'agent-setup.json'
 if(-not (Test-Path -LiteralPath $setup)){throw 'agent-setup.json fehlt. In der Administration Agent-Konfiguration herunterladen und in diesen Ordner legen.'}
 $config=Get-Content -LiteralPath $setup -Raw -Encoding UTF8 | ConvertFrom-Json
+$previousConfig=$null
+try{$previousConfig=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'agent-config.json') -Raw -Encoding UTF8 -ErrorAction Stop | ConvertFrom-Json}catch{}
 $java=Get-Command java.exe -ErrorAction SilentlyContinue
 $javaPath='';if($java){$javaPath=$java.Source}
 $config | Add-Member -NotePropertyName javaPath -NotePropertyValue $javaPath -Force
@@ -49,6 +51,8 @@ foreach($entry in $config.servers){
  if($memoryMatch.Success){$maxMemory=[int]$memoryMatch.Groups[1].Value;if($memoryMatch.Groups[2].Value -match '[gG]'){$maxMemory*=1024}}
  $memoryMatch=[regex]::Match($scriptText,'(?i)-Xms(\d+)([mg])')
  if($memoryMatch.Success){$minMemory=[int]$memoryMatch.Groups[1].Value;if($memoryMatch.Groups[2].Value -match '[gG]'){$minMemory*=1024}}
+ $saved=@($previousConfig.servers | Where-Object {$_.id -eq $entry.id -and $_.directory -eq $entry.directory})
+ if($saved.Count -eq 1 -and $saved[0].memoryMaxMiB -ge 1024 -and $saved[0].memoryMinMiB -ge 512 -and $saved[0].memoryMinMiB -le $saved[0].memoryMaxMiB){$maxMemory=[int]$saved[0].memoryMaxMiB;$minMemory=[int]$saved[0].memoryMinMiB}
  $answer=Read-Host ("Maximaler RAM fuer Server {0} in GiB [{1}]" -f $entry.id,($maxMemory/1024))
  if($answer){$amount=[decimal]0;if(-not [decimal]::TryParse($answer.Replace(',','.'),[Globalization.NumberStyles]::Number,[Globalization.CultureInfo]::InvariantCulture,[ref]$amount) -or $amount -lt 1){throw 'Ungueltiger RAM-Wert.'};$maxMemory=[int]($amount*1024)}
  if($maxMemory -lt 1024){throw 'Mindestens 1 GiB maximalen RAM pro Server einstellen.'}
@@ -88,7 +92,7 @@ $localConfig=Join-Path $PSScriptRoot 'agent-config.json'
 [IO.File]::WriteAllText($localConfig,($config | ConvertTo-Json -Depth 6),(New-Object Text.UTF8Encoding($false)))
 foreach($entry in $config.servers){
  $name="AkameSMP-Agent-$($entry.id)"
- $scriptPath=Join-Path $PSScriptRoot 'agent.ps1'
+ $scriptPath=Join-Path $PSScriptRoot 'agent-start.ps1'
  $action=New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ('-NoProfile -ExecutionPolicy Bypass -File "'+$scriptPath+'" -ServerId '+$entry.id) -WorkingDirectory $PSScriptRoot
  $trigger=New-ScheduledTaskTrigger -AtStartup
  $principal=New-ScheduledTaskPrincipal -UserId 'SYSTEM' -LogonType ServiceAccount -RunLevel Highest
@@ -97,5 +101,5 @@ foreach($entry in $config.servers){
  Register-ScheduledTask -TaskName $name -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
  Start-ScheduledTask -TaskName $name
 }
-Write-Host 'Fertig. Beide Agenten laufen und starten kuenftig auch ohne Windows-Anmeldung automatisch. Die Administration sollte innerhalb von 15 Sekunden Agent verbunden anzeigen.'
+Write-Host 'Fertig. Beide Autostart-Aufgaben sind eingerichtet und gestartet. Im Dashboard pruefen, ob die Agenten eine Verbindung aufgebaut haben.'
 Write-Host 'Minecraft jetzt ueber die jeweilige Administration starten. Agent-Konfiguration und RCON-Passwoerter privat aufbewahren.'
