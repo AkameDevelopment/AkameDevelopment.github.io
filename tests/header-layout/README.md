@@ -11,6 +11,8 @@ Set `CHROMIUM_PATH` to a compatible Chrome/Chromium executable on your machine. 
 
 The runner renders the actual repository HTML, scripts and CSS in Chromium, with a synthetic delayed Discord member and avatar. All requests are intercepted: no real login, credentials, backend reads or writes are used. External fonts/media are not needed for the header geometry. The header uses system fonts to avoid page-specific font metric changes.
 
-Coverage: 17 pages × 13 viewport widths (320, 360, 390, 768, 850, 851, 900, 901, 1024, 1280, 1500, 1501, 1920). The runner samples initial previews and initialized controls, checks position/size stability, compares positions across pages, and verifies all four main destination links are visible either in the desktop navigation or its menu.
+Coverage: 17 pages × 15 viewport widths (320, 360, 390, 768, 850, 851, 900, 901, 1024, 1359, 1360, 1400, 1500, 1501, 1920). The runner samples initial previews and initialized controls, checks position/size stability, compares positions across pages, and verifies all four main destination links are visible either in the desktop navigation or its menu.
 
 Additional task QA used the real Chromium browser for German/dark and English/light interactions at ten widths, 12 window-resize transitions, account/notification overlays, a short settings page, and long profile names. Safari and actual Discord OAuth were not tested by this layout suite.
+
+The full navigation is shown from 1360px, including windowed desktop layouts. The runner also checks that it never overlaps the wordmark or account actions. Narrower windows retain the menu.

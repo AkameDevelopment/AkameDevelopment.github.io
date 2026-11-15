@@ -12,7 +12,7 @@
 ## Changes
 
 - `site-header.css`: explicit identical grid slots for static and initialized controls; shared preview/live dimensions and padding; consistent system fonts, scrollbar width and background; one menu breakpoint; readable light-mode Home link.
-- `mobile-nav.js`: outside clicks use the event path, and the resize close threshold matches the 1500px navigation breakpoint.
+- `mobile-nav.js`: outside clicks use the event path, and the resize close threshold matches the 1360px navigation breakpoint.
 - All 17 root HTML pages with a header: remove obsolete GitHub header markup, load the shared header stylesheet last, and update shared asset cache versions.
 - Original support, community and authentication data flows remain intact. No database changes.
 
