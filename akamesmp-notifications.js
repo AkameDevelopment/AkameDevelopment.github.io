@@ -95,7 +95,7 @@ function render(){
   const displayName=(item.kind==="welcome"?"AkameDevelopment":actor.display_name||actor.name||tr("Mitglied","Member")).trim();
   avatar.textContent=displayName.slice(0,1).toUpperCase();
   if(item.kind==="welcome" || (actor.avatar_url&&/^https?:\/\//i.test(actor.avatar_url))){
-   const img=document.createElement("img");img.src=item.kind==="welcome"?"akame-favicon.svg":actor.avatar_url;img.alt="";img.referrerPolicy="no-referrer";img.loading="lazy";
+   const img=document.createElement("img");img.src=item.kind==="welcome"?new URL("/akame-favicon.svg",window.location.origin).href:actor.avatar_url;img.alt="";img.referrerPolicy="no-referrer";img.loading="lazy";
    img.onerror=()=>{img.remove();avatar.textContent=displayName.slice(0,1).toUpperCase()};avatar.replaceChildren(img);
   }
   const who=document.createElement("span");who.className="akame-notify-actor";who.textContent=displayName;
