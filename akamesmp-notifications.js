@@ -113,7 +113,7 @@ function render(){
  read.hidden=activeBox==="archive";const messages={saving:tr("Wird gespeichert …","Saving …"),archived:tr("Archiviert. Wird nach 30 Tagen automatisch gelöscht.","Archived. Automatically deleted after 30 days."),restored:tr("Nachricht wiederhergestellt.","Notification restored."),error:tr("Änderung fehlgeschlagen. Bitte erneut versuchen.","Could not save the change. Please try again.")};panel.querySelector(".akame-notify-status").textContent=messages[archiveMessage]||"";
  panel.querySelector(".akame-notify-subtitle").textContent=tr(unread+" ungelesen",unread+" unread");
  count.hidden=!unread;count.textContent=unread>99?"99+":String(unread);desktopCount.hidden=count.hidden;desktopCount.textContent=count.textContent;
- desktopBell.setAttribute("aria-label",tr("Benachrichtigungen","Notifications")+(unread?" ("+unread+")":""));read.disabled=!items.some(i=>!i.read_at);read.title=read.disabled?tr("Keine ungelesenen Benachrichtigungen","No unread notifications"):"";
+ desktopBell.setAttribute("aria-label",tr("Benachrichtigungen","Notifications")+(unread?" ("+unread+")":""));read.disabled=unread===0;read.title=read.disabled?tr("Keine ungelesenen Benachrichtigungen","No unread notifications"):"";
  bell.setAttribute("aria-label",tr("Benachrichtigungen","Notifications")+(unread?" ("+unread+")":""));
  filters.replaceChildren();
  for(const [key,de,en] of [["all","Alle","All"],["unread","Ungelesen","Unread"]]){
