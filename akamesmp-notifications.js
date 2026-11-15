@@ -42,6 +42,7 @@ async function markNotificationRead(item){
  const source=item.source;
  let query;
  if(source==="beta")query=client.from("beta_invitations").update({recipient_read_at:now}).eq("id",item.id).eq("user_id",user.id);
+ else if(source==="site")query=client.from("site_notifications").update({read_at:now}).eq("id",item.id).eq("recipient_id",user.id);
  else if(source==="beta-feedback")query=client.from("beta_invitations").update({sender_read_at:now}).eq("id",item.id).eq("invited_by",user.id);
  else query=client.from(source==="support"?"support_notifications":source==="mod"?"mod_comment_notifications":"akamesmp_notifications").update({read_at:now}).eq("id",item.id).eq("recipient_id",user.id);
  try{const {error}=await query;if(error)throw error;item.read_at=now;render();return true}catch(error){console.warn("Could not mark notification as read",error);return false}
@@ -80,7 +81,7 @@ function render(){
  for(const item of visible){
   const card=document.createElement("div");card.className="akame-notify-item"+(item.read_at?"":" unread");
   const title=document.createElement(item.source==="beta"||item.kind==="welcome"?"div":"a");title.className="akame-notify-item-title";
-  if(item.kind==="welcome")title.textContent=tr("Willkommen bei AkameDevelopment! Schön, dass du hier bist. Entdecke unsere Projekte, gestalte dein Profil und werde Teil der Community.","Welcome to AkameDevelopment! We’re glad you’re here. Explore our projects, make your profile your own and join the community.");
+  if(item.kind==="welcome")title.textContent=tr(item.title+" "+item.body,"Welcome to AkameDevelopment! 🎉 We’re glad you’re here! Discover our projects and mods on AkameDevelopment.");
   else if(item.source==="support")title.textContent=item.ticket_number+" · "+(item.kind==="resolved"?tr("Anfrage erledigt","Ticket resolved"):item.kind==="reply"?tr("Neue Antwort vom Team","New team reply"):tr("Status aktualisiert","Status updated"));
   else if(item.source==="beta-feedback")title.textContent=item.status==="accepted"?tr("Akzeptiert","Accepted"):tr("Abgelehnt","Declined");
   else if(item.source==="beta")title.textContent=tr("Beta-Einladung: ","Beta invitation: ")+(betaNames[item.project_slug]||item.project_slug);
@@ -132,15 +133,16 @@ function render(){
 const betaNames={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"Hud+",info:"Infos",admin:"Admin",zoom:"Zoom"};
 async function refresh(){
  if(!user)return;
- const [smp,mod,beta,sent,support]=await Promise.all([
+ const [smp,mod,beta,sent,support,site]=await Promise.all([
   client.from("akamesmp_notifications").select("id,kind,actor_id,post_id,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50),
   client.from("mod_comment_notifications").select("id,actor_id,project_slug,comment_id,reply_id,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50),
   client.from("beta_invitations").select("id,project_slug,status,invited_by,created_at,responded_at,recipient_read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50),
   client.from("beta_invitations").select("id,project_slug,status,user_id,created_at,responded_at,sender_read_at").eq("invited_by",user.id).neq("user_id",user.id).in("status",["accepted","declined"]).order("responded_at",{ascending:false}).limit(50),
-  client.from("support_notifications").select("id,actor_id,request_id,ticket_number,kind,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50)
+  client.from("support_notifications").select("id,actor_id,request_id,ticket_number,kind,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50),
+  client.from("site_notifications").select("id,kind,title,body,created_at,read_at").eq("recipient_id",user.id).order("created_at",{ascending:false}).limit(50)
  ]);
- if(smp.error&&mod.error&&beta.error&&sent.error&&support.error)return;
- items=[...(support.data||[]).map(i=>({...i,source:"support"})),...(smp.data||[]).map(i=>({...i,source:"smp"})),...(mod.data||[]).map(i=>({...i,source:"mod"})),...(beta.data||[]).map(i=>({...i,source:"beta",read_at:i.recipient_read_at||(i.status==="pending"?null:i.responded_at||i.created_at)})),...(sent.data||[]).map(i=>({...i,source:"beta-feedback",read_at:i.sender_read_at}))].sort((a,b)=>new Date(b.responded_at||b.created_at)-new Date(a.responded_at||a.created_at)).slice(0,100);
+ if(smp.error&&mod.error&&beta.error&&sent.error&&support.error&&site.error)return;
+ items=[...(site.data||[]).map(i=>({...i,source:"site"})),...(support.data||[]).map(i=>({...i,source:"support"})),...(smp.data||[]).map(i=>({...i,source:"smp"})),...(mod.data||[]).map(i=>({...i,source:"mod"})),...(beta.data||[]).map(i=>({...i,source:"beta",read_at:i.recipient_read_at||(i.status==="pending"?null:i.responded_at||i.created_at)})),...(sent.data||[]).map(i=>({...i,source:"beta-feedback",read_at:i.sender_read_at}))].sort((a,b)=>new Date(b.responded_at||b.created_at)-new Date(a.responded_at||a.created_at)).slice(0,100);
  await fetchProfiles();render();
 }
 function syncMobilePageLock(){
@@ -213,6 +215,7 @@ desktopBell.addEventListener("click",()=>{if(panel.hidden)openNotifications(desk
  read.disabled=true;read.textContent=tr("Wird gespeichert…","Saving…");
  const now=new Date().toISOString();
  const tasks=[
+  client.from("site_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
   client.from("support_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
   client.from("akamesmp_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
   client.from("mod_comment_notifications").update({read_at:now}).eq("recipient_id",user.id).is("read_at",null).select("id"),
