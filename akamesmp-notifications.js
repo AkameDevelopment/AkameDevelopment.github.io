@@ -151,7 +151,7 @@ function render(){
   }
   const who=document.createElement("span");who.className="akame-notify-actor";who.textContent=displayName;
   identity.append(avatar,who);if(actorId&&expanded)bindNotificationLink(identity,item);if(!(item.source==="smp"&&item.kind==="like"))card.append(identity);card.append(title,date);
-  if(item.source==="smp"&&item.kind==="like"){const actors=document.createElement("ul");actors.className="akame-notify-reactions";for(const id of reactionActors(item)){const row=document.createElement("li"),a=document.createElement("a");a.href="user.html?id="+encodeURIComponent(id);a.textContent=profiles.get(id)?.display_name||tr("Mitglied","Member");bindNotificationLink(a,item);row.append(a);actors.append(row);}details.append(actors);}
+  if(item.source==="smp"&&item.kind==="like"&&reactionActors(item).length>1){const actors=document.createElement("ul");actors.className="akame-notify-reactions";for(const id of reactionActors(item)){const row=document.createElement("li"),a=document.createElement("a");a.href="user.html?id="+encodeURIComponent(id);a.textContent=profiles.get(id)?.display_name||tr("Mitglied","Member");bindNotificationLink(a,item);row.append(a);actors.append(row);}details.append(actors);}
   if(item.source==="beta"){
    const actions=document.createElement("div");actions.className="akame-notify-actions";
    if(item.status==="pending"){
