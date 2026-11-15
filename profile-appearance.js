@@ -1,5 +1,5 @@
 /* AkameDevelopment — member profile banner customization. */
-import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import{createClient}from"/supabase-client.js";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const themes={
  violet:["#563485","#241734","#b981ff"],

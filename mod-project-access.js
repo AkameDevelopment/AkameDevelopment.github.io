@@ -1,4 +1,4 @@
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import {createClient} from "/supabase-client.js";
 const id=new URLSearchParams(location.search).get("mod");
 const slugs=new Set(["modcore","chest","crosshair","chunkloader","items","hud","info","admin","zoom"]);
 const main=document.querySelector("main");

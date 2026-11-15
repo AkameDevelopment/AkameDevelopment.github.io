@@ -8,7 +8,7 @@ function activate(next,updateHash=false){
  layout.querySelector('.community-feed-column').hidden=view!=='feed';layout.querySelector('.community-sidebar').hidden=view!=='members';
  document.querySelectorAll('[data-community-personal]').forEach(el=>el.hidden=view!=='personal');
  document.querySelectorAll('[data-community-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.getAttribute('data-community-view')===view)));
- if(updateHash){const hash=view==='feed'?'#community-social-feed':view==='members'?'#members':'#personal';if(location.hash!==hash)history.pushState(null,'',hash);}
+ if(updateHash){const hash=view==='feed'?'#community-social-feed':view==='members'?'#members':'#personal';if(location.hash!==hash)history.pushState(null,'',location.pathname+location.search+hash);}
  document.dispatchEvent(new CustomEvent('akame-community-view',{detail:{view}}));
 }
 function fromHash(){const hash=location.hash;if(['#community-requests','#my-requests'].includes(hash)){location.replace('support.html#tickets');return;}activate(hash==='#members'?'members':(hash==='#personal'||hash.startsWith('#personal-'))?'personal':'feed');}

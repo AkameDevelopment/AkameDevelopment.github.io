@@ -1,4 +1,4 @@
-import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import{createClient}from"/supabase-client.js";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id),lang=()=>window.AkameLanguage?.get()||localStorage.getItem("akame-lang")||"de",tr=(de,en)=>lang()==="en"?en:de;
 const serverId=document.body.dataset.serverId==="2"?2:1,tablePrefix=serverId===2?"akamesmp2_":"akamesmp_";

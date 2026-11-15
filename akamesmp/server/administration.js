@@ -1,4 +1,4 @@
-import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import {createClient} from '/supabase-client.js';
 const db=createClient('https://wycdpuzlbivtfxwtarzn.supabase.co','sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0',{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const server=Number(document.body.dataset.serverId),$=id=>document.getElementById(id);
 const tr=(de,en)=>(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en'?en:de;
@@ -39,4 +39,5 @@ document.querySelectorAll('[data-server-action]').forEach(button=>button.addEven
 $('console-command-form').addEventListener('submit',event=>{event.preventDefault();const text=$('console-command').value.trim().replace(/^\//,'');if(text&&text.length<=1000&&!/[\r\n]/.test(text))void send('console',text);});
 document.addEventListener('akame-language-change',render);
 db.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){clearInterval(timer);allowed=false;canWrite=false;output=[];agent=null;commands=[];mode='login';render();location.reload();}});
-render();void check();timer=setInterval(()=>void check(),3000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='hidden')void check();});
+render();void check();timer=setInterval(()=>{if(document.visibilityState!=='hidden')void check();},3000);

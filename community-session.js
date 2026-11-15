@@ -1,4 +1,4 @@
-import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import {createClient} from '/supabase-client.js';
 // One account lookup shared by the community feed and personal dashboard.
 export const db = createClient('https://wycdpuzlbivtfxwtarzn.supabase.co','sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0');
 export const userReady = db.auth.getUser().then(({data,error}) => error ? null : data?.user || null).catch(() => null);

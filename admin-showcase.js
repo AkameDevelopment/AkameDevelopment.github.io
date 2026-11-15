@@ -1,4 +1,4 @@
-import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import{createClient}from"/supabase-client.js";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0");
 const $=id=>document.getElementById(id),tr=(de,en)=>(window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang"))==="en"?en:de;
 const grid=$("selected-showcase-grid"),status=$("selected-showcase-status"),panel=$("selected-posts-panel");

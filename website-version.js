@@ -2,7 +2,7 @@
 (async()=>{"use strict";
 const endpoint="https://wycdpuzlbivtfxwtarzn.supabase.co",key="sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0";
 try{
- const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+ const {createClient}=await import("/supabase-client.js");
  const db=createClient(endpoint,key,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  const {data:{user}}=await db.auth.getUser();if(!user)return;
  const {data:staff,error:roleError}=await db.from("staff_access").select("role").eq("user_id",user.id).maybeSingle();

@@ -17,7 +17,7 @@ test('Pages build generates clean routes, working local links, versioned assets 
     for(const name of pages){
       const route=name==='index.html'?'/':'/'+name.replace(/\.html$/,'')+'/';
       const file=path.join(temp,route,'index.html');assert.ok(fs.existsSync(file),route);
-      const source=fs.readFileSync(file,'utf8'),{document}=parseHTML(source);assert.equal(document.querySelector('base').getAttribute('href'),'/');
+      const source=fs.readFileSync(file,'utf8'),{document}=parseHTML(source);assert.equal(document.querySelector('base').getAttribute('href'),'/');assert.equal(document.querySelectorAll('base').length,1);
       for(const a of document.querySelectorAll('a[href]')){
         const raw=a.getAttribute('href');if(!raw||raw.startsWith('#'))continue;
         const url=new URL(raw,'https://akamedevelopment.github.io/');if(url.origin!=='https://akamedevelopment.github.io')continue;
@@ -27,9 +27,11 @@ test('Pages build generates clean routes, working local links, versioned assets 
       assert.match(source,/site-routes\.js\?v=[a-f0-9]+/);
     }
     const code=fs.readFileSync(path.join(temp,'site-routes.js'),'utf8');
-    for(const [pathname,expected] of [['/community.html','/community/'],['/index.html','/'],['/downloads/index.html','/downloads/'],['/share/akame.html','/share/akame/']]){
+    for(const [pathname,expected] of [['/community.html','/community/'],['/index.html','/'],['/downloads/index.html','/downloads/'],['/share/akame.html','/share/akame/'],['/akamesmp/server/2/index.html','/akamesmp/server/2/']]){
       let replaced;vm.runInNewContext(code,{location:{pathname,search:'?code=abc&mod=crosshair',hash:'#versions'},history:{state:{x:1},replaceState(state,_,url){replaced=url;assert.equal(state.x,1)}}});assert.equal(replaced,expected+'?code=abc&mod=crosshair#versions');
     }
+    assert.match(fs.readFileSync(path.join(temp,'akamesmp/guide/index.html'),'utf8'),/id="smp-guide-body"/);
+    assert.match(fs.readFileSync(path.join(temp,'settings/index.html'),'utf8'),/rel="modulepreload" href="\/supabase-client\.js\?v=/);
     const feed=fs.readFileSync(path.join(temp,'akamesmp-gallery.js'),'utf8');assert.match(feed,/new URL\("\/community\/",location.href\)/);
     const mobile=fs.readFileSync(path.join(temp,'mobile-nav.js'),'utf8');assert.match(mobile,/redirectTo:"https:\/\/akamedevelopment.github.io\/index.html"/);
     const header=fs.readFileSync(path.join(temp,'header-page-indicator.js'),'utf8'),{document}=parseHTML('<header><div class="akame-site-nav"><a class="brand"></a></div></header>');vm.runInNewContext(header,{document,location:{pathname:'/community/'},localStorage:{getItem:()=> 'en'},window:{}});assert.equal(document.querySelector('.akame-current-page').textContent,'Community');
@@ -53,4 +55,13 @@ test('profile editor back uses actual history with clean URLs or missing referre
     const button=document.getElementById('profile-public-link');button.dataset.publicProfileUrl='/user/?id=self';assert.equal(button.getAttribute('href'),expected);
     const click=new window.Event('click',{cancelable:true});click.button=0;button.dispatchEvent(click);assert.equal(back,length>1?1:0);assert.equal(click.defaultPrevented,length>1);assert.equal(document.getElementById('profile-public-back-label').textContent,language==='en'?'Back':'Zurück');
   }
+});
+
+test('a changed JavaScript dependency invalidates the cached consumer URL',()=>{
+ const temp=fs.mkdtempSync(path.join(os.tmpdir(),'akame-cache-'));
+ try{const fixture=path.join(temp,'fixture');fs.mkdirSync(fixture);fs.writeFileSync(path.join(fixture,'index.html'),'<head></head><script type="module" src="entry.js"></script>');fs.writeFileSync(path.join(fixture,'entry.js'),'import "./child.js";');fs.writeFileSync(path.join(fixture,'child.js'),'export const value=1;');
+ const run=output=>execFileSync('python3',['-c','import importlib.util,pathlib,sys; s=importlib.util.spec_from_file_location("builder",sys.argv[1]); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); m.ROOT=pathlib.Path(sys.argv[2]); m.build(pathlib.Path(sys.argv[3]))',path.join(root,'scripts/build-pages.py'),fixture,output]);
+ const first=path.join(temp,'first'),second=path.join(temp,'second');run(first);fs.writeFileSync(path.join(fixture,'child.js'),'export const value=2;');run(second);
+ assert.notEqual(fs.readFileSync(path.join(first,'index.html'),'utf8').match(/entry\.js\?v=([a-f0-9]+)/)[1],fs.readFileSync(path.join(second,'index.html'),'utf8').match(/entry\.js\?v=([a-f0-9]+)/)[1]);
+ }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });

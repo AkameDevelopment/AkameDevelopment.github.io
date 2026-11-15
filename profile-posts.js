@@ -1,4 +1,4 @@
-import{createClient}from"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import{createClient}from"/supabase-client.js";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0");
 const $=id=>document.getElementById(id);
 const panel=$("profile-own-posts"),list=$("profile-own-posts-list"),message=$("profile-own-posts-message");

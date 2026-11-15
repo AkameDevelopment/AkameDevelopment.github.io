@@ -21,7 +21,8 @@ def build(output):
     if output == ROOT or output in ROOT.parents:
         raise ValueError('Output must not replace the source checkout or its parents')
     pages = sorted(p for p in ROOT.rglob('*.html') if not any(part in EXCLUDE for part in p.relative_to(ROOT).parts))
-    routes = {p.relative_to(ROOT).as_posix(): '/' if p.name == 'index.html' and p.parent == ROOT else '/' + p.relative_to(ROOT).with_suffix('').as_posix() + '/' for p in pages}
+    routes = {p.relative_to(ROOT).as_posix(): ('/' if p.parent == ROOT else '/' + p.parent.relative_to(ROOT).as_posix() + '/') if p.name == 'index.html' else '/' + p.relative_to(ROOT).with_suffix('').as_posix() + '/' for p in pages}
+    index_routes = {routes[p.relative_to(ROOT).as_posix()] for p in pages if p.name == 'index.html'}
     # Preserve the registered OAuth callback addresses. The route bootstrap below
     # cleans the address in place, keeping both the PKCE query and token hash.
     oauth = re.compile(r'''redirectTo\s*:\s*(?:["'][^"']+["']|location\.origin\s*\+\s*["'][^"']+["'])''')
@@ -55,9 +56,15 @@ def build(output):
             continue
         value = rewrite(path.read_text(encoding='utf-8'))
         if path.suffix == '.html':
-            value = re.sub(r'<head\b[^>]*>', lambda m: m[0] + '<base href="/"><script src="/site-routes.js"></script>', value, count=1, flags=re.I)
+            route = routes[relative.as_posix()]
+            value = re.sub(r'''(?i)(href\s*=\s*)(["'])#([^"']*)\2''', lambda m: m[1] + m[2] + route + '#' + m[3] + m[2], value)
+            value = re.sub(r'<base\b[^>]*>', '', value, flags=re.I)
+            hints = '<base href="/"><script src="/site-routes.js" defer></script>'
+            if 'mobile-nav.js' in value or 'supabase-client.js' in value:
+                hints += '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://wycdpuzlbivtfxwtarzn.supabase.co" crossorigin><link rel="modulepreload" href="/supabase-client.js">'
+            value = re.sub(r'<head\b[^>]*>', lambda m: m[0] + hints, value, count=1, flags=re.I)
         dest.write_text(value, encoding='utf-8')
-        if relative.as_posix() in routes and relative.as_posix() != 'index.html':
+        if relative.as_posix() in routes and relative.as_posix() != 'index.html' and (path.name == 'index.html' or routes[relative.as_posix()] not in index_routes):
             clean = output / routes[relative.as_posix()].lstrip('/') / 'index.html'
             clean.parent.mkdir(parents=True, exist_ok=True)
             clean.write_text(value, encoding='utf-8')
@@ -67,8 +74,10 @@ def build(output):
     (output / 'site-routes.js').write_text(bootstrap, encoding='utf-8')
     # Fresh asset URLs also invalidate cached modules whose internal links changed.
     salt = Path(__file__).read_bytes()
-    fingerprints = {p.relative_to(output).as_posix(): hashlib.sha256(p.read_bytes() + salt).hexdigest()[:12]
-                    for p in output.rglob('*') if p.is_file() and p.suffix in {'.js', '.css'}}
+    assets = sorted(p for p in output.rglob('*') if p.is_file() and p.suffix in {'.js', '.css'})
+    # A changed dependency must also invalidate cached consumers of its versioned URL.
+    revision = hashlib.sha256(salt + b''.join(p.relative_to(output).as_posix().encode() + hashlib.sha256(p.read_bytes()).digest() for p in assets)).digest()
+    fingerprints = {p.relative_to(output).as_posix(): hashlib.sha256(p.read_bytes() + revision).hexdigest()[:12] for p in assets}
     asset = re.compile(r"([\"'`])((?:\./|/)?[a-zA-Z0-9_/-]+\.(?:js|css))(?:\?[^\"'`<>\s]*)?\1")
     def version(match):
         path = match[2].removeprefix('./').removeprefix('/')

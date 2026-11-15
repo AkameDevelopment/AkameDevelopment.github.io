@@ -8,7 +8,7 @@ function apply(){
  for(const name of ["--akame-user-accent","--akame-accent","--settings-accent","--purple","--accent"])root.style.setProperty(name,value);
  root.style.accentColor=value;
 }
-function db(){return dbPromise||(dbPromise=import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm").then(({createClient})=>createClient(URL,PUBLISHABLE,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})));}
+function db(){return dbPromise||(dbPromise=import("/supabase-client.js").then(({createClient})=>createClient(URL,PUBLISHABLE,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})));}
 async function loadAccount(){
  const startingRevision=revision;
  try{

@@ -8,9 +8,9 @@ const root=fileURLToPath(new URL('../../',import.meta.url));
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
 const records=[{title:'Server beitreten',body:JSON.stringify({minecraftVersion:'26.3',serverAddress:null})},{title:'Benötigte Mods',body:JSON.stringify({mods:[]})},{title:'Serverregeln & Hilfe',body:JSON.stringify({de:'Seid nett. Kein Griefing.',en:'Be kind. No griefing.'})}];
 async function setup({page='join',user=true,member=true,role=null,language='de',rows=records,error=false}={}){
- const {document,window}=parseHTML(fs.readFileSync(root+(page==='overview'?'akamesmp.html':'akamesmp/'+page+'.html'),'utf8'));Object.defineProperty(document,'baseURI',{value:'https://akamedevelopment.github.io/'});const calls=[];let authCallback,lang=language;const copied=[];
+ const {document,window}=parseHTML(fs.readFileSync(root+(page==='overview'?'akamesmp.html':page==='start'?'akamesmp/guide/index.html':'akamesmp/'+page+'.html'),'utf8'));Object.defineProperty(document,'baseURI',{value:'https://akamedevelopment.github.io/'});const calls=[];let authCallback,lang=language;const copied=[];
  const db={auth:{getUser:async()=>({data:{user:user?{id:'self'}:null}}),onAuthStateChange(fn){authCallback=fn;}},from(table){const call={table,filters:[]};calls.push(call);const q={select(){return q},eq(k,v){call.filters.push([k,v]);return q},maybeSingle:async()=>({data:table==='staff_access'?{role}:member?{user_id:'self'}:null}),order:async()=>({data:rows,error:error?{message:'unavailable'}:null})};return q;}};
- const ctx={createClient:()=>db,window,document,Event:window.Event,navigator:{clipboard:{writeText:async value=>copied.push(value)}},URL,localStorage:{getItem:()=>lang},location:{reload(){}},console};
+ const ctx={createClient:()=>db,window,document,Event:window.Event,navigator:{clipboard:{writeText:async value=>copied.push(value)}},URL,localStorage:{getItem:()=>lang},location:{pathname:'/akamesmp/'+page+'/',reload(){}},console};
  const code=fs.readFileSync(root+'akamesmp-guide.js','utf8').replace(/^import[^\n]+\n/,'');vm.runInNewContext(code,ctx);await tick();await tick();return {document,window,calls,copied,signout:()=>authCallback('SIGNED_OUT'),english(){lang='en';document.dispatchEvent(new window.Event('akame-language-change'));}};
 }
 test('AkameSMP guide preserves membership and manager gates',async()=>{
@@ -27,7 +27,7 @@ test('confirmed address can be copied and unsafe mod download links are not rend
 });
 test('rules/help localize, overview links to three subpages, errors and logout clear private content',async()=>{
  const rules=await setup({page:'rules'});assert.match(rules.document.getElementById('smp-guide-body').textContent,/Kein Griefing/);rules.english();assert.match(rules.document.getElementById('smp-guide-body').textContent,/No griefing/);assert.equal(rules.document.querySelectorAll('#smp-guide-body details').length,3);rules.signout();assert.equal(rules.document.getElementById('guide').hidden,true);assert.equal(rules.document.getElementById('guide').textContent,'');
- const overview=await setup({page:'overview'});assert.equal(overview.document.querySelectorAll('#guide a').length,1);assert.equal(overview.document.querySelector('#guide a').getAttribute('href'),'akamesmp/start.html');const start=await setup({page:'start'});assert.equal(start.document.querySelectorAll('#smp-guide-body a').length,3);
+ const {document:overview}=parseHTML(fs.readFileSync(root+'akamesmp.html','utf8'));assert.equal(overview.querySelectorAll('.smp-welcome-help a').length,3);assert.equal(overview.querySelector('.smp-welcome-actions a').getAttribute('href'),'/akamesmp/guide/');const start=await setup({page:'start'});assert.equal(start.document.querySelectorAll('.smp-guide-section').length,3);
  const broken=await setup({error:true});assert.match(broken.document.getElementById('smp-guide-body').textContent,/nicht geladen/);assert.equal(broken.document.querySelectorAll('#smp-guide-body button').length,0);
  const guest=await setup({user:false});guest.english();assert.match(guest.document.getElementById('state').textContent,/Sign in with Discord/);
 });

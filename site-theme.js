@@ -50,7 +50,7 @@ document.addEventListener("akame-theme-user-change",e=>{
 });
 (async()=>{
  try{
-  const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+  const {createClient}=await import("/supabase-client.js");
   profileClient=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
   const load=async user=>{
    profileUser=user?.id||null;

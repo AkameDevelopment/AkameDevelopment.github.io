@@ -1,5 +1,5 @@
 import {enhanceLinks} from "./link-previews.js?v=20261113";
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import {createClient} from "/supabase-client.js";
 const slugs = new Set(["modcore","chest","crosshair","chunkloader","items","hud","info","admin","zoom"]);
 const slug = new URLSearchParams(location.search).get("mod");
 const root = document.getElementById("mod-comments");

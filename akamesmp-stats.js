@@ -1,4 +1,4 @@
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import {createClient} from "/supabase-client.js";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const serverId=document.body.dataset.serverId==="2"?2:1,tablePrefix=serverId===2?"akamesmp2_":"akamesmp_";
 const $=id=>document.getElementById(id);
@@ -67,7 +67,7 @@ function openProfile(id,updateHash=false){
   card.append(element("span",null,tr(...text)),element("strong",null,value));fragment.append(card);
  }
  $("profile-stats").replaceChildren(fragment);$("profile-last-seen").textContent=dt(player.last_seen_at);$("profile-updated").textContent=dt(player.updated_at);
- if(updateHash)window.history.pushState(null,"","#player="+encodeURIComponent(id));
+ if(updateHash)window.history.pushState(null,"",location.pathname+location.search+"#player="+encodeURIComponent(id));
  if(!$("player-dialog").open)$("player-dialog").showModal();
 }
 function openProfileFromHash(){

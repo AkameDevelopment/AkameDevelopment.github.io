@@ -25,6 +25,7 @@ function reset(){
   apply();
   window.AkameTheme?.apply?.();
   document.dispatchEvent(new CustomEvent("akame-settings-change"));
+  document.dispatchEvent(new CustomEvent("akame-theme-user-change",{detail:{theme:defaults["akame-site-theme"]}}));
   try{window.AkameLanguage?.set?.("de")}catch(e){console.warn("Language reset:",e)}
   const message="Standardeinstellungen wiederhergestellt.";
   const status=document.getElementById("save-status");if(status)status.textContent=message;
