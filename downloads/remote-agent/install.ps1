@@ -27,13 +27,20 @@ foreach($entry in $config.servers){
  $port=[int](Read-Property $lines 'server-port' '25565')
  $rcon=[int]$entry.rconPort
  if($rcon -lt 1024 -or $rcon -gt 65535 -or $rcon -eq $port){throw 'Ungueltiger oder doppelter RCON-/Minecraft-Port.'}
- $files=@(Get-ChildItem -LiteralPath $entry.directory -File | Where-Object {$_.Extension -in @('.bat','.cmd')})
+ $files=@(Get-ChildItem -LiteralPath $entry.directory -File | Where-Object {$_.Extension -in @('.bat','.cmd')} | Sort-Object Name)
  if(-not $files.Count){throw ('Keine .bat- oder .cmd-Startdatei gefunden in '+$entry.directory)}
  if($files.Count -eq 1){$start=$files[0]}else{
   Write-Host "Startdatei fuer Server $($entry.id) waehlen:"
   for($index=0;$index -lt $files.Count;$index++){Write-Host ("[{0}] {1}" -f ($index+1),$files[$index].Name)}
-  $choice=0;if(-not [int]::TryParse((Read-Host 'Nummer'),[ref]$choice) -or $choice -lt 1 -or $choice -gt $files.Count){throw 'Ungueltige Auswahl.'}
-  $start=$files[$choice-1]
+  Write-Host 'Die Datei waehlen, mit der du diesen Minecraft-Server normalerweise startest.'
+  $start=$null
+  while($null -eq $start){
+   $answer=([string](Read-Host 'Nummer oder Dateiname, z.B. 1 oder start.bat')).Trim().Trim('"').Trim("'")
+   $choice=0
+   if([int]::TryParse($answer.Trim('[',']'),[ref]$choice) -and $choice -ge 1 -and $choice -le $files.Count){$start=$files[$choice-1]}
+   else{$matches=@($files | Where-Object {$_.Name -eq $answer -or $_.FullName -eq $answer});if($matches.Count -eq 1){$start=$matches[0]}}
+   if($null -eq $start){Write-Host ("Nicht erkannt. Eine Nummer von 1 bis {0} oder einen Dateinamen aus der Liste eingeben. Mit Strg+C abbrechen." -f $files.Count) -ForegroundColor Yellow}
+  }
  }
  if([IO.File]::ReadAllText($start.FullName) -match '(?im)^\s*@?start\s'){throw 'Die Startdatei nutzt start und trennt Java vom Agenten. Eine .bat mit direktem java-Aufruf ohne start waehlen.'}
  $scriptText=[IO.File]::ReadAllText($start.FullName)
