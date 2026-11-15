@@ -18,3 +18,7 @@ html[data-akame-theme="light"] .settings-page .setting input[type="checkbox"]{ba
 @media(max-width:450px){.settings-page .setting:has(select),.settings-page .setting:has(.setting-go){align-items:stretch;flex-direction:column;gap:13px}.settings-page .setting select,.settings-page .setting-go{width:100%;max-width:none}.settings-page .setting small{font-size:12px}}
 
 .settings-sidebar{position:sticky;top:100px;min-width:0}.settings-sidebar .tabs{position:static}.settings-page .settings-profile-shortcut{display:block;padding:12px 13px;margin-top:10px;font-size:12px;line-height:1.5;color:var(--s-accent);text-decoration:none}.settings-profile-shortcut:hover{text-decoration:underline}@media(max-width:720px){.settings-sidebar{position:static}.settings-page .settings-profile-shortcut{padding:7px 4px;margin-top:5px}}
+
+/* Keep content comfortably inside the raised Light Mode setting rows. */
+html[data-akame-theme="light"] .settings-page .setting{margin-inline:0;padding:20px;box-sizing:border-box}
+@media(max-width:720px){html[data-akame-theme="light"] .settings-page .setting{padding:18px 14px}}
