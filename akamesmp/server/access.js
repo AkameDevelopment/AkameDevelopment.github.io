@@ -27,7 +27,7 @@ async function init(){
   if(list){for(const card of list.querySelectorAll('[data-server]'))card.hidden=card.dataset.server==='1'?!main:!second;list.hidden=false;}
   if(detail&&((serverId==='1'&&main)||(serverId==='2'&&second))){detail.hidden=false;
    const administration=document.getElementById('server-administration-link');if(administration)administration.hidden=!admin;
-   if(serverId==='1'){window.akameSmpUserId=user.id;document.dispatchEvent(new Event('akamesmp-member-ready'));}
+   if(['1','2'].includes(serverId)){window.akameSmpUserId=user.id;document.dispatchEvent(new Event('akamesmp-member-ready'));}
    const controls=document.getElementById('server-controls');if(controls)controls.hidden=!admin;}
   if((serverId==='1'&&!main)||(serverId==='2'&&!second)||(!serverId&&!main&&!second)){message('Du hast keine Berechtigung für diesen Serverbereich.','You do not have permission to access this server area.');return;}
   if(state)state.hidden=true;
