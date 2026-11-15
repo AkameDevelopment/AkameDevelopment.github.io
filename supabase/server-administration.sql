@@ -16,6 +16,7 @@ grant usage,select on sequence public.smp_console_lines_id_seq to service_role;
 drop policy if exists "Read console for managed server" on public.smp_console_lines;
 create policy "Read console for managed server" on public.smp_console_lines for select to authenticated using (
  exists(select 1 from public.staff_access s where s.user_id=(select auth.uid()) and s.role in ('owner','developer'))
+ or exists(select 1 from public.smp_server_roles r where r.user_id=(select auth.uid()) and r.role=case server_id when 1 then 'smp_admin' when 2 then 'smp_admin2' end)
 );
 -- Existing statistics belong to Server 1. A Server 2 admin cannot read them.
 alter policy "Owners developers and admins can view SMP stats" on public.akamesmp_player_stats to authenticated using (
