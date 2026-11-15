@@ -57,7 +57,7 @@
       }
       p.title.textContent = tr(p.de, p.en); p.description.textContent = tr(p.descriptionDe, p.descriptionEn); p.back.textContent = tr('← Zur Übersicht', '← Back to overview');
       if (p.card) { const strong = document.createElement('strong'), small = document.createElement('span'), arrow = document.createElement('span'); strong.textContent = tr(p.de,p.en); small.textContent = tr(p.descriptionDe,p.descriptionEn); arrow.textContent = tr('Bereich öffnen →','Open area →'); arrow.className = 'admin-home-card-action'; p.card.replaceChildren(strong,small,arrow); }
-      if (p.id === active) { p.link.setAttribute('aria-current','page'); if (focus) { p.title.focus({preventScroll:true}); content.scrollIntoView?.({block:'start',behavior:'auto'}); } }
+      if (p.id === active) { p.link.setAttribute('aria-current','page'); if (focus) { p.title.focus({preventScroll:true}); } }
       else p.link.removeAttribute('aria-current');
     }
   }
@@ -68,7 +68,7 @@
   function navigate(id){
     if(!pages.some(p=>p.id===id))return;
     selectedPage=id;
-    render(true);
+    render(false);
     // No fragment navigation: Safari and shared navigation handlers must not redirect.
     if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);
   }
