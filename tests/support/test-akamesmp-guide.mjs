@@ -18,8 +18,8 @@ test('AkameSMP guide preserves membership and manager gates',async()=>{
   const x=await setup({user,member,role});assert.equal(x.document.getElementById('guide').hidden,!allowed);assert.equal(x.calls.some(c=>c.table==='akamesmp_guide'),allowed);for(const c of x.calls.filter(c=>['staff_access','akamesmp_members'].includes(c.table)))assert.deepEqual(c.filters,[['user_id','self']]);
  }
 });
-test('join page shows 26.3, keeps unknown address disabled and shares a joining guide',async()=>{
- const x=await setup();assert.match(x.document.getElementById('smp-guide-body').textContent,/26.3/);const buttons=x.document.querySelectorAll('#smp-guide-body button');assert.equal(buttons[0].disabled,true);buttons[1].click();await tick();assert.equal(x.copied[0],'https://akamedevelopment.github.io/akamesmp/join.html');x.english();assert.equal(x.document.getElementById('smp-guide-title').textContent,'Join the server');assert.match(x.document.getElementById('smp-guide-body').textContent,/server address/);
+test('join page shows 26.3 and keeps the unknown address disabled',async()=>{
+ const x=await setup();assert.match(x.document.getElementById('smp-guide-body').textContent,/26.3/);const buttons=x.document.querySelectorAll('#smp-guide-body button');assert.equal(buttons[0].disabled,true);x.english();assert.equal(x.document.getElementById('smp-guide-title').textContent,'Join the server');assert.match(x.document.getElementById('smp-guide-body').textContent,/server address/);
 });
 test('confirmed address can be copied and unsafe mod download links are not rendered',async()=>{
  const rows=JSON.parse(JSON.stringify(records));rows[0].body=JSON.stringify({minecraftVersion:'26.3',serverAddress:'mc.example.test'});rows[1].body=JSON.stringify({mods:[{name:'Unsafe',url:'javascript:alert(1)'},{name:'Test mod',version:'1.0',url:'https://example.test/mod'}]});
@@ -27,7 +27,7 @@ test('confirmed address can be copied and unsafe mod download links are not rend
 });
 test('rules/help localize, overview links to three subpages, errors and logout clear private content',async()=>{
  const rules=await setup({page:'rules'});assert.match(rules.document.getElementById('smp-guide-body').textContent,/Kein Griefing/);rules.english();assert.match(rules.document.getElementById('smp-guide-body').textContent,/No griefing/);assert.equal(rules.document.querySelectorAll('#smp-guide-body details').length,3);rules.signout();assert.equal(rules.document.getElementById('guide').hidden,true);assert.equal(rules.document.getElementById('guide').textContent,'');
- const overview=await setup({page:'overview'});assert.equal(overview.document.querySelectorAll('#guide a').length,3);
+ const overview=await setup({page:'overview'});assert.equal(overview.document.querySelectorAll('#guide a').length,1);assert.equal(overview.document.querySelector('#guide a').getAttribute('href'),'akamesmp/start.html');const start=await setup({page:'start'});assert.equal(start.document.querySelectorAll('#smp-guide-body a').length,3);
  const broken=await setup({error:true});assert.match(broken.document.getElementById('smp-guide-body').textContent,/nicht geladen/);assert.equal(broken.document.querySelectorAll('#smp-guide-body button').length,0);
  const guest=await setup({user:false});guest.english();assert.match(guest.document.getElementById('state').textContent,/Sign in with Discord/);
 });
