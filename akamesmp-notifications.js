@@ -59,10 +59,10 @@ function render(){
  filters.setAttribute("aria-label",tr("Benachrichtigungen filtern","Filter notifications"));
  sourceFilter.setAttribute("aria-label",tr("Bereich auswählen","Choose category"));
  sourceFilter.replaceChildren();
- for(const [key,de,en] of [["all","Alle Bereiche","All categories"],["community","Community","Community"],["support","Support","Support"],["beta","Beta-Einladungen","Beta invitations"],["updates","Updates","Updates"]]){
+ for(const [key,de,en] of [["all","Alle Bereiche","All categories"],["system","System","System"],["community","Community","Community"],["support","Support","Support"],["beta","Beta-Einladungen","Beta invitations"],["updates","Updates","Updates"]]){
   const option=document.createElement("option");option.value=key;option.textContent=tr(de,en);option.selected=key===activeType;sourceFilter.append(option);
  }
- const enabled=i=>i.source==="support"?true:(i.source==="beta"||i.source==="beta-feedback")?localStorage.getItem("akame-notify-beta")!=="false":i.source==="update"?localStorage.getItem("akame-notify-updates")!=="false":localStorage.getItem("akame-notify-community")!=="false";const unread=items.filter(i=>enabled(i)&&!i.read_at).length;
+ const enabled=i=>i.kind==="welcome"?true:i.source==="support"?true:(i.source==="beta"||i.source==="beta-feedback")?localStorage.getItem("akame-notify-beta")!=="false":i.source==="update"?localStorage.getItem("akame-notify-updates")!=="false":localStorage.getItem("akame-notify-community")!=="false";const unread=items.filter(i=>enabled(i)&&!i.read_at).length;
  panel.querySelector(".akame-notify-subtitle").textContent=tr(unread+" ungelesen",unread+" unread");
  count.hidden=!unread;count.textContent=unread>99?"99+":String(unread);desktopCount.hidden=count.hidden;desktopCount.textContent=count.textContent;
  desktopBell.setAttribute("aria-label",tr("Benachrichtigungen","Notifications")+(unread?" ("+unread+")":""));read.disabled=!items.some(i=>!i.read_at);read.title=read.disabled?tr("Keine ungelesenen Benachrichtigungen","No unread notifications"):"";
@@ -75,12 +75,13 @@ function render(){
   button.addEventListener("click",()=>{activeFilter=key;render()});filters.append(button);
  }
  list.replaceChildren();
- const visible=items.filter(enabled).filter(i=>activeFilter!=="unread"||!i.read_at).filter(i=>activeType==="all"||activeType==="beta"&&(i.source==="beta"||i.source==="beta-feedback")||activeType==="community"&&(i.source==="smp"||i.source==="mod")||activeType==="support"&&i.source==="support"||activeType==="updates"&&i.source==="update");
+ const visible=items.filter(enabled).filter(i=>activeFilter!=="unread"||!i.read_at).filter(i=>activeType==="all"||activeType==="system"&&i.kind==="welcome"||activeType==="beta"&&(i.source==="beta"||i.source==="beta-feedback")||activeType==="community"&&(i.source==="smp"||i.source==="mod")||activeType==="support"&&i.source==="support"||activeType==="updates"&&i.source==="update");
  if(!visible.length){const empty=document.createElement("div");empty.className="akame-notify-empty";empty.textContent=tr("Keine Benachrichtigungen in dieser Kategorie.","No notifications in this category.");list.append(empty);return;}
  for(const item of visible){
   const card=document.createElement("div");card.className="akame-notify-item"+(item.read_at?"":" unread");
-  const title=document.createElement(item.source==="beta"?"div":"a");title.className="akame-notify-item-title";
-  if(item.source==="support")title.textContent=item.ticket_number+" · "+(item.kind==="resolved"?tr("Anfrage erledigt","Ticket resolved"):item.kind==="reply"?tr("Neue Antwort vom Team","New team reply"):tr("Status aktualisiert","Status updated"));
+  const title=document.createElement(item.source==="beta"||item.kind==="welcome"?"div":"a");title.className="akame-notify-item-title";
+  if(item.kind==="welcome")title.textContent=tr("Willkommen bei AkameDevelopment! Schön, dass du hier bist. Entdecke unsere Projekte, gestalte dein Profil und werde Teil der Community.","Welcome to AkameDevelopment! We’re glad you’re here. Explore our projects, make your profile your own and join the community.");
+  else if(item.source==="support")title.textContent=item.ticket_number+" · "+(item.kind==="resolved"?tr("Anfrage erledigt","Ticket resolved"):item.kind==="reply"?tr("Neue Antwort vom Team","New team reply"):tr("Status aktualisiert","Status updated"));
   else if(item.source==="beta-feedback")title.textContent=item.status==="accepted"?tr("Akzeptiert","Accepted"):tr("Abgelehnt","Declined");
   else if(item.source==="beta")title.textContent=tr("Beta-Einladung: ","Beta invitation: ")+(betaNames[item.project_slug]||item.project_slug);
   else title.textContent=item.source==="mod"?tr("Jemand hat auf deinen Kommentar geantwortet.","Someone replied to your comment."):item.kind==="like"?tr("Jemandem gefällt dein AkameSMP-Beitrag.","Someone liked your AkameSMP post."):tr("Dein AkameSMP-Beitrag hat einen neuen Kommentar.","Someone commented on your AkameSMP post.");
@@ -90,7 +91,7 @@ function render(){
   const identity=document.createElement(actorId?"a":"div");identity.className="akame-notify-identity";
   if(actorId){identity.href="user.html?id="+encodeURIComponent(actorId);identity.title=tr("Profil ansehen","View profile");identity.setAttribute("aria-label",tr("Profil von ","Profile of ")+(actor.display_name||tr("Mitglied","Member")));}
   const avatar=document.createElement("span");avatar.className="akame-notify-avatar";
-  const displayName=(actor.display_name||actor.name||tr("Mitglied","Member")).trim();
+  const displayName=(item.kind==="welcome"?"AkameDevelopment":actor.display_name||actor.name||tr("Mitglied","Member")).trim();
   avatar.textContent=displayName.slice(0,1).toUpperCase();
   if(actor.avatar_url&&/^https?:\/\//i.test(actor.avatar_url)){
    const img=document.createElement("img");img.src=actor.avatar_url;img.alt="";img.referrerPolicy="no-referrer";img.loading="lazy";
@@ -112,7 +113,7 @@ function render(){
     }
    }else{const state=document.createElement("span");state.textContent=item.status==="accepted"?tr("Angenommen","Accepted"):tr("Abgelehnt","Declined");actions.append(state);}
    card.append(actions);
-  }else{
+  }else if(item.kind!=="welcome"){
    const a=document.createElement("a");a.className="akame-notify-open";
    a.href=item.source==="support"?"support.html?ticket="+encodeURIComponent(item.request_id):item.source==="beta-feedback"?"admin.html?member="+encodeURIComponent(item.user_id):item.source==="mod"?"project.html?mod="+encodeURIComponent(item.project_slug)+"&comment="+encodeURIComponent(item.reply_id)+"#mod-comments":"community.html?post="+encodeURIComponent(item.post_id)+"#community-social-feed";
    a.textContent=tr("Ansehen","View");
