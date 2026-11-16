@@ -13,14 +13,14 @@ export function validateFile(file,image=false){
 export const assetUrl=path=>typeof path==='string'&&/^[a-z0-9-]+\/[a-f0-9-]+\.(png|jpg|jpeg|webp)$/.test(path)?db.storage.from('mod-assets').getPublicUrl(path).data.publicUrl:'';
 export async function loadCatalogue(){
  const [mods,versions]=await Promise.all([
-  db.from('mod_catalogue').select('slug,name,summary,description,gallery,visibility,published').eq('published',true).order('created_at',{ascending:false}),
+  db.from('mod_catalogue').select('slug,name,summary,description,gallery,visibility,published,release_status,release_note,expected_release_date').eq('published',true).order('created_at',{ascending:false}),
   db.from('mod_releases').select('id,mod_slug,version,minecraft_version,loader,channel,side,changelog,storage_path,file_name,file_size,created_at').eq('published',true).order('created_at',{ascending:false})
  ]);
  if(mods.error||versions.error)throw mods.error||versions.error;
  const bySlug=new Map((mods.data||[]).map(mod=>[mod.slug,mod]));
  return {mods:mods.data||[],releases:(versions.data||[]).filter(r=>bySlug.has(r.mod_slug)).map(r=>{
   const mod=bySlug.get(r.mod_slug);
-  return {...r,modId:r.mod_slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),minecraftVersion:r.minecraft_version,date:r.created_at.slice(0,10),catalogue:true};
+  return {...r,modId:r.mod_slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),minecraftVersion:r.minecraft_version,date:r.created_at.slice(0,10),catalogue:true,releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date};
  })};
 }
 export async function recordDownload(release,source='downloads'){

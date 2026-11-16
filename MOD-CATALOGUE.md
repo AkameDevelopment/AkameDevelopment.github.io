@@ -14,7 +14,7 @@ Both the mod and its version must be published to appear in **Downloads**.
 The download browser shows descriptions, gallery images, version filters and
 changelogs from the database alongside the existing static releases. Beta mods
 require a beta grant for that mod ID; hidden mods and drafts stay private.
-Existing static project visibility remains in the existing visibility section.
+The old home-screen visibility editor is removed. Existing home-screen visibility rules remain stored.
 
 Images use the public `mod-assets` bucket. Files use private `mod-files` storage
 with RLS-protected, short-lived download URLs. Only Owner and Developer may write
@@ -51,3 +51,16 @@ The baseline support suite currently has two unrelated failures: the AkameSMP
 navigation test expects three links after a fourth was added, and one generated
 route lacks the base element expected by the clean-URL test. Both reproduce on
 the unchanged base commit. The four new catalogue tests pass.
+
+Mods can be published before any file exists. Set their release status, optional
+expected release date and note; the public listing shows the announcement while
+the download action stays disabled until a published file version exists.
+
+“Delete entire mod” unpublishes the mod, deletes every file/image in its storage
+folders in batches, then removes the catalogue row and cascading versions. If
+cleanup fails, the mod stays unpublished and deletion can be retried.
+
+The default creation form now needs only a name. Its ID is generated automatically.
+An optional first file and its version can be published with the same Save action.
+Without a file, release announcements and dates are available. Further versions
+and technical options are grouped into expandable sections.
