@@ -117,9 +117,10 @@ new MutationObserver(queue).observe(document.documentElement,{childList:true,sub
  const wrap=document.createElement('div');wrap.className='akame-home-dropdown akame-community-dropdown';
  community.before(wrap);wrap.append(community);community.classList.add('akame-home-trigger');community.setAttribute('aria-haspopup','true');community.setAttribute('aria-controls','akame-community-submenu');
  const menu=document.createElement('div');menu.id='akame-community-submenu';menu.className='akame-home-submenu';
+ const communityHome=document.createElement('a');communityHome.href='community.html';communityHome.className='akame-home-submenu-link';communityHome.setAttribute('data-no-translate','');
  const members=document.createElement('a');members.href='community.html#members';members.className='akame-home-submenu-link';members.setAttribute('data-no-translate','');
  const dashboard=document.createElement('a');dashboard.href='community.html#personal';dashboard.className='akame-home-submenu-link';dashboard.setAttribute('data-no-translate','');
- menu.append(members,dashboard);wrap.append(menu);
+ menu.append(communityHome,members,dashboard);wrap.append(menu);
  // A pointer selection must not keep the CSS :focus-within menu open.
  const dismissStyle=document.createElement('style');dismissStyle.textContent='html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-home-dropdown.akame-community-dropdown[data-menu-dismissed]>.akame-home-submenu{opacity:0!important;visibility:hidden!important;pointer-events:none!important}';document.head.append(dismissStyle);
  function openMenu(){delete wrap.dataset.menuDismissed;community.setAttribute('aria-expanded','true')}
@@ -132,13 +133,13 @@ new MutationObserver(queue).observe(document.documentElement,{childList:true,sub
  wrap.addEventListener('click',event=>{if(event.target.closest('a'))closeMenu()});
  wrap.addEventListener('keydown',event=>{
   if(event.key==='Escape'){event.preventDefault();community.focus({preventScroll:true});closeMenu()}
-  else if(event.key==='ArrowDown'&&event.target===community){event.preventDefault();openMenu();members.focus()}
+  else if(event.key==='ArrowDown'&&event.target===community){event.preventDefault();openMenu();communityHome.focus()}
  });
  document.addEventListener('pointerdown',event=>{if(!event.composedPath().includes(wrap))closeMenu()});
  window.addEventListener('hashchange',closeMenu);
  window.addEventListener('blur',closeMenu);
 
- function labels(){const english=(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en';members.textContent=english?'Members':'Mitglieder';dashboard.textContent='Dashboard';community.setAttribute('aria-label',english?'Community, submenu with Members and Dashboard':'Community, Untermenü mit Mitgliedern und Dashboard')}
+ function labels(){const english=(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en';communityHome.textContent='Community';members.textContent=english?'Members':'Mitglieder';dashboard.textContent='Dashboard';community.setAttribute('aria-label',english?'Community, submenu with Community, Members and Dashboard':'Community, Untermenü mit Community, Mitgliedern und Dashboard')}
  labels();document.addEventListener('akame-language-change',labels);
 })();
 
