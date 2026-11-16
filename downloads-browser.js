@@ -21,8 +21,8 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
   }
   function button(text, action, cls = 'mod-button') { const b = el('button', text, cls); b.type = 'button'; b.addEventListener('click', action); return b; }
   function image(r) {
-    const n = el('img', undefined, 'mod-art'); n.alt = ''; n.loading = 'lazy';
-    n.src = (r.catalogue||r.catalogueMeta)&&r.image?r.image:typeof r.image === 'string' && /^assets\/[a-z0-9/_-]+\.(svg|png|jpg|webp)$/i.test(r.image) ? r.image : 'assets/crosshair-demo.svg'; return n;
+    const n = el('img', undefined, 'mod-art');if(r.catalogue||r.catalogueMeta)n.classList.add('mod-profile-image'); n.alt = ''; n.loading = 'lazy';
+    n.src = (r.catalogue||r.catalogueMeta)&&r.image?r.image:typeof r.image === 'string' && /^assets\/[a-z0-9/_-]+\.(svg|png|jpg|webp)$/i.test(r.image) ? r.image : 'assets/mod-placeholder.svg'; return n;
   }
   function chips(values) { const n = el('div', undefined, 'download-chips'); values.filter(Boolean).forEach(v => n.append(el('span', v, 'download-chip'))); return n; }
   function render() {
@@ -123,8 +123,8 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
    if(token!==loadToken)return;
    const replacement=new Set(managed.releases.map(r=>r.modId+'::'+r.version+'::'+r.loader+'::'+r.minecraftVersion));
    const catalogueBySlug=new Map(managed.mods.map(mod=>[mod.slug,mod]));
-   releases=[...managed.releases,...visibleOld.filter(r=>!replacement.has(key(r)+'::'+r.version+'::'+(r.loader||'')+'::'+(r.minecraftVersion||''))).map(r=>{const mod=catalogueBySlug.get(key(r));return mod?{...r,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogueMeta:true}:r})];
-   for(const mod of managed.mods){if(!releases.some(r=>key(r)===mod.slug))releases.push({modId:mod.slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogue:true,noRelease:true})}
+   releases=[...managed.releases,...visibleOld.filter(r=>!replacement.has(key(r)+'::'+r.version+'::'+(r.loader||'')+'::'+(r.minecraftVersion||''))).map(r=>{const mod=catalogueBySlug.get(key(r));return mod?{...r,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogueMeta:true}:r})];
+   for(const mod of managed.mods){if(!releases.some(r=>key(r)===mod.slug))releases.push({modId:mod.slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogue:true,noRelease:true})}
    render();
   }
   void load();db.auth.onAuthStateChange(event=>{if(event!=='INITIAL_SESSION')setTimeout(()=>void load(),0)});
