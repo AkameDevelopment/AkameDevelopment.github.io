@@ -50,15 +50,16 @@ function setUser(user){if(user&&sessionStorage.getItem("akame-support-return")==
  const wrap=document.createElement("div");wrap.className="akame-home-dropdown";
  home.before(wrap);wrap.append(home);
  const menu=document.createElement("div");menu.className="akame-home-submenu";
+ const startLink=document.createElement("a");startLink.href="/";startLink.className="akame-home-submenu-link";
  const projectLink=document.createElement("a");projectLink.href=projects.href;projectLink.className="akame-home-submenu-link";
  const roadmapLink=document.createElement("a");roadmapLink.href=roadmap.href;roadmapLink.className="akame-home-submenu-link";
  const aboutLink=document.createElement("a");aboutLink.href=about.href;aboutLink.className="akame-home-submenu-link";
- menu.append(projectLink,roadmapLink,aboutLink);wrap.append(menu);
+ menu.append(startLink,projectLink,roadmapLink,aboutLink);wrap.append(menu);
  projects.classList.add("akame-home-duplicate");roadmap.classList.add("akame-home-duplicate");about.classList.add("akame-home-duplicate");
  home.classList.add("akame-home-trigger");home.setAttribute("aria-haspopup","true");
  function translate(){const en=(window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang"))==="en";
- projectLink.textContent=en?"Projects":"Projekte";roadmapLink.textContent="Roadmap";aboutLink.textContent=en?"About Akame":"Über Akame";
- home.setAttribute("aria-label",en?"Home, submenu with Projects and Roadmap":"Startseite, Untermenü mit Projekte und Roadmap");
+ startLink.textContent=en?"Home":"Startseite";projectLink.textContent=en?"Projects":"Projekte";roadmapLink.textContent="Roadmap";aboutLink.textContent=en?"About Akame":"Über Akame";
+ home.setAttribute("aria-label",en?"Home, submenu with Home, Projects, Roadmap and About":"Startseite, Untermenü mit Startseite, Projekte, Roadmap und Über Akame");
  }
  translate();document.addEventListener("akame-language-change",translate);
 })();
