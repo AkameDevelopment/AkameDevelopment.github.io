@@ -5,12 +5,12 @@ select set_config('test.member',(select id::text from auth.users u where not exi
 select set_config('request.jwt.claim.sub',current_setting('test.owner'),true);
 set local role authenticated;
 insert into public.mod_catalogue(slug,name,published,visibility) values ('rls-fixture-public','Public fixture',true,'public'),('rls-fixture-draft','Draft fixture',false,'public'),('rls-fixture-beta','Beta fixture',true,'beta'),('rls-fixture-hidden','Hidden fixture',true,'hidden');
-update public.mod_catalogue set release_status='pending',cover_path='rls-fixture-public/cccccccc-cccc-cccc-cccc-cccccccccccc.png',release_note='First release pending',expected_release_date='2026-12-25' where slug='rls-fixture-public';
+update public.mod_catalogue set release_status='pending',banner_path='rls-fixture-public/dddddddd-dddd-dddd-dddd-dddddddddddd.png',cover_path='rls-fixture-public/cccccccc-cccc-cccc-cccc-cccccccccccc.png',release_note='First release pending',expected_release_date='2026-12-25' where slug='rls-fixture-public';
 insert into public.mod_releases(mod_slug,version,storage_path,file_name,file_size,published) values ('rls-fixture-public','1.0','rls-fixture-public/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jar','fixture.jar',10,true),('rls-fixture-draft','1.0','rls-fixture-draft/bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jar','draft.jar',10,true);
 insert into public.download_events(mod_slug,mod_name,version)values('rls-fixture-public','Public fixture','1.0');
 set local role anon;
 do $$begin
- if not exists(select 1 from public.mod_catalogue where slug='rls-fixture-public' and cover_path='rls-fixture-public/cccccccc-cccc-cccc-cccc-cccccccccccc.png' and release_status='pending' and expected_release_date='2026-12-25')then raise exception 'Release announcement unavailable';end if;
+ if not exists(select 1 from public.mod_catalogue where slug='rls-fixture-public' and banner_path='rls-fixture-public/dddddddd-dddd-dddd-dddd-dddddddddddd.png' and cover_path='rls-fixture-public/cccccccc-cccc-cccc-cccc-cccccccccccc.png' and release_status='pending' and expected_release_date='2026-12-25')then raise exception 'Release announcement unavailable';end if;
  if (select count(*) from public.mod_catalogue where slug like 'rls-fixture-%')<>1 then raise exception 'Anonymous catalogue visibility leaked';end if;
  if (select count(*) from public.mod_releases where mod_slug like 'rls-fixture-%')<>1 then raise exception 'Anonymous release visibility leaked';end if;
  begin perform 1 from public.download_events;raise exception 'Anonymous history access allowed';exception when insufficient_privilege then null;end;

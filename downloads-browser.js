@@ -88,6 +88,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
         content.append(entry);
       }
     } else if (view === 'description') {
+      if(r.bannerUrl){const banner=el('img',undefined,'mod-description-banner');banner.src=r.bannerUrl;banner.alt=t('Beschreibungs-Banner für ','Description banner for ')+(r.mod||id);banner.decoding='async';content.append(banner);}
       content.append(el('h3', r.mod || id), el('p', r.description || r.summary || t('Wähle unter Versionen die passende Datei für dein Minecraft aus.', 'Choose the right file for your Minecraft under Versions.')));
 
       if (selected.every(demo)) content.append(el('p', t('Hinweis: Aktuell sind nur Testdateien verfügbar. Diese Dateien sind keine installierbaren Minecraft-Mods.', 'Notice: Only test files are currently available. These files are not installable Minecraft mods.'), 'mod-warning'));
@@ -127,8 +128,8 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
    if(token!==loadToken)return;
    const replacement=new Set(managed.releases.map(r=>r.modId+'::'+r.version+'::'+r.loader+'::'+r.minecraftVersion));
    const catalogueBySlug=new Map(managed.mods.map(mod=>[mod.slug,mod]));
-   releases=[...managed.releases,...visibleOld.filter(r=>!replacement.has(key(r)+'::'+r.version+'::'+(r.loader||'')+'::'+(r.minecraftVersion||''))).map(r=>{const mod=catalogueBySlug.get(key(r));return mod?{...r,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogueMeta:true}:r})];
-   for(const mod of managed.mods){if(!releases.some(r=>key(r)===mod.slug))releases.push({modId:mod.slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogue:true,noRelease:true})}
+   releases=[...managed.releases,...visibleOld.filter(r=>!replacement.has(key(r)+'::'+r.version+'::'+(r.loader||'')+'::'+(r.minecraftVersion||''))).map(r=>{const mod=catalogueBySlug.get(key(r));return mod?{...r,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),bannerUrl:assetUrl(mod.banner_path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogueMeta:true}:r})];
+   for(const mod of managed.mods){if(!releases.some(r=>key(r)===mod.slug))releases.push({modId:mod.slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),bannerUrl:assetUrl(mod.banner_path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogue:true,noRelease:true})}
    render();
   }
   void load();db.auth.onAuthStateChange(event=>{if(event!=='INITIAL_SESSION')setTimeout(()=>void load(),0)});
