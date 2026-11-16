@@ -22,8 +22,16 @@ export function startPublicProfileReads(db,id) {
  const staff=viewer.then(({data:{user}})=>user
   ?read(()=>db.from('staff_access').select('role').eq('user_id',user.id).maybeSingle())
   :{data:null});
+ const posts=read(()=>db.from('akamesmp_posts').select('id,body,image_url,created_at').eq('author_id',id).order('created_at',{ascending:false}).limit(100));
+ const interactions=posts.then(({data})=>{
+  const ids=(data||[]).map(post=>post.id);
+  return ids.length?Promise.all([
+   read(()=>db.from('akamesmp_post_likes').select('post_id,user_id').in('post_id',ids)),
+   read(()=>db.from('akamesmp_post_comments').select('id,post_id,author_id,body,created_at').in('post_id',ids).order('created_at',{ascending:true}))
+  ]):[{data:[]},{data:[]}];
+ });
  return {
-  viewer,staff,
+  viewer,staff,posts,interactions,
   profile:read(()=>db.rpc('get_public_profile',{p_user_id:id})),
   comments:read(()=>db.from('mod_comments').select('id,project_slug,author_id,author_name,author_avatar_url,body,created_at,parent_id').eq('author_id',id).is('parent_id',null).order('created_at',{ascending:false}).limit(100)),
   gallery:read(()=>db.from('profile_gallery').select('slot,image_url').eq('user_id',id).order('slot')),
@@ -32,7 +40,6 @@ export function startPublicProfileReads(db,id) {
   badgeDefinitions:read(()=>badgeDefinitions(db)),
   badgeGrants:read(()=>db.from('profile_badge_grants').select('badge_id').eq('user_id',id)),
   discord:read(()=>db.rpc('get_profile_discord_name',{p_user_id:id})),
-  posts:read(()=>db.from('akamesmp_posts').select('id,body,image_url,created_at').eq('author_id',id).order('created_at',{ascending:false}).limit(100)),
   spotify:read(()=>db.rpc('get_public_favorite_spotify_tracks',{p_user_id:id})),
   visibility:read(()=>db.from('mod_visibility').select('project_slug,visibility,visible')),
   beta:viewer.then(({data:{user}})=>user
