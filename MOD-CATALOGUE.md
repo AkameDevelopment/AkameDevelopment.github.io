@@ -64,3 +64,11 @@ The default creation form now needs only a name. Its ID is generated automatical
 An optional first file and its version can be published with the same Save action.
 Without a file, release announcements and dates are available. Further versions
 and technical options are grouped into expandable sections.
+
+Each mod now has a separate optional profile/cover image in `cover_path`. The
+public mod card and heading use that image; gallery screenshots remain separate.
+Admin → Mods has explicit Profile image and Gallery images sections. Both show
+local previews before saving. Selected gallery files can be removed individually
+before upload, and removed/replaced saved assets are cleaned up after saving.
+The cover column migration is already applied; existing gallery entries are
+preserved and are not automatically reclassified as profile images.
