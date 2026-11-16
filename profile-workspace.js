@@ -44,7 +44,7 @@
  let stored;try{stored=sessionStorage.getItem(key)}catch{}
  let active=requested()||(valid(stored)?stored:'profile');
  function render(focus=false){
-  caption.textContent=tr('DEIN KONTO','YOUR ACCOUNT');nav.setAttribute('aria-label',tr('Profileinstellungen','Profile settings'));publicLink.textContent=tr('Profil ansehen ↗','View profile ↗');
+  const copyLabel=document.getElementById('profile-copy-label');if(copyLabel)copyLabel.textContent=tr('Link kopieren','Copy link');caption.textContent=tr('DEIN KONTO','YOUR ACCOUNT');nav.setAttribute('aria-label',tr('Profileinstellungen','Profile settings'));publicLink.textContent=tr('Profil ansehen ↗','View profile ↗');
   for(const page of pages){page.page.hidden=page.id!==active;page.button.textContent=tr(page.de,page.en);page.title.textContent=tr(page.de,page.en);page.description.textContent=tr(page.descDe,page.descEn);if(page.id===active){page.button.setAttribute('aria-current','page');if(focus)page.title.focus({preventScroll:true})}else page.button.removeAttribute('aria-current');}
   const note=document.querySelector('[data-profile-note]');if(note)note.textContent=tr('Hier bearbeitest du die Beschreibung deines öffentlichen Profils.','Edit the description of your public profile here.');
  }
