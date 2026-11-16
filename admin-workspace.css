@@ -12,3 +12,26 @@
 .admin-page-back{appearance:none;background:none;border:0;color:var(--accent,#b58cff);font:inherit;text-align:left;cursor:pointer;padding:0}
 .admin-home-card[data-admin-page]{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
 @media(max-width:760px){.admin-dashboard-toolbar .admin-quicknav button[data-admin-page]{width:auto;padding:9px 11px!important}}
+
+/* Activity replaces duplicate overview navigation cards. */
+.admin-activity-toolbar,.catalogue-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.admin-activity-toolbar h3,.catalogue-heading h2{margin:0 0 6px}.admin-activity-toolbar p{margin:0}
+.admin-download-metrics,.admin-activity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:20px 0}
+.admin-download-metrics>div,.admin-activity-grid>section{min-width:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:20px}
+.admin-download-metrics strong{display:block;font-size:28px}.admin-download-metrics span{color:var(--muted);font-size:12px}
+.admin-activity-grid h3{margin:0 0 16px}.admin-activity-list{list-style:none;padding:0;margin:0}
+.admin-activity-row{display:flex;justify-content:space-between;align-items:start;gap:16px;padding:13px 0;border-top:1px solid var(--line);min-width:0}
+.admin-activity-row:first-child{border-top:0}.admin-activity-row>div{min-width:0}.admin-activity-row strong,.admin-activity-row small{display:block;overflow-wrap:anywhere}
+.admin-activity-row strong{font-size:13px}.admin-activity-row small,.admin-activity-row time{font-size:11px;color:var(--muted)}
+.admin-activity-row time{flex-shrink:0;text-align:right;max-width:40%}.admin-activity-member{border:0;background:none;padding:0;color:var(--accent);font:700 13px system-ui;cursor:pointer;text-align:left;overflow-wrap:anywhere}
+#mods-manager{display:grid;gap:22px;min-width:0}#mods-manager>.panel{margin:0!important}#mod-catalogue-manager{min-width:0}
+.catalogue-workspace{display:grid;grid-template-columns:minmax(150px,220px) minmax(0,1fr);gap:22px;margin-top:24px}
+#catalogue-list{display:grid;gap:8px;align-content:start}.catalogue-mod-item{width:100%;text-align:left;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer}
+.catalogue-mod-item strong,.catalogue-mod-item small{display:block;overflow-wrap:anywhere}.catalogue-mod-item small{font-size:11px;color:var(--muted);margin-top:5px}.catalogue-mod-item.is-active{border-color:var(--accent)}
+.catalogue-editors{display:grid;gap:22px;min-width:0}.catalogue-editors fieldset{min-width:0;border:1px solid var(--line);border-radius:14px;padding:20px;margin:0}.catalogue-editors legend{font-weight:800;padding:0 7px}
+.catalogue-editors label{display:grid;gap:7px;margin:12px 0;font-size:13px}.catalogue-editors textarea{resize:vertical;font:inherit}.catalogue-editors .catalogue-check{display:flex;align-items:center;gap:9px}.catalogue-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.catalogue-editors input[type=file]{max-width:100%;white-space:normal;font-size:12px}
+.catalogue-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:12px}.catalogue-gallery-item{display:grid;gap:8px;min-width:0}.catalogue-gallery-item img{width:100%;height:110px;object-fit:cover;border-radius:9px}.catalogue-gallery-item input{width:100%;min-width:0;background:var(--panel);color:var(--text);border:1px solid var(--line);padding:8px}
+.catalogue-version-row{padding:15px 0;border-top:1px solid var(--line)}.catalogue-version-row strong,.catalogue-version-row small{display:block;overflow-wrap:anywhere}.catalogue-version-row small{color:var(--muted);margin:6px 0 10px}.catalogue-version-row button{margin-right:8px}
+html[data-akame-theme=light] .catalogue-mod-item,html[data-akame-theme=light] .admin-download-metrics>div,html[data-akame-theme=light] .admin-activity-grid>section{background:#fff;color:#241832}
+@media(max-width:850px){.catalogue-workspace{grid-template-columns:1fr}#catalogue-list{grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr))}}
+@media(max-width:650px){.admin-activity-grid,.admin-download-metrics,.catalogue-fields{grid-template-columns:1fr}.admin-activity-row{gap:10px}.catalogue-editors fieldset{padding:14px}}

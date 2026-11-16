@@ -10,16 +10,16 @@
   document.querySelectorAll('main.shell > .admin-section-heading').forEach(n => n.remove());
   const tr = (de, en) => localStorage.getItem('akame-lang') === 'en' ? en : de;
   const definitions = [
-    ['overview', 'Übersicht', 'Overview', null, 'Alle Bereiche deines Admin-Panels auf einen Blick.', 'All areas of your admin panel at a glance.'],
+    ['overview', 'Übersicht', 'Overview', null, 'Neue Mitglieder und Download-Aktivitäten auf einen Blick.', 'New members and download activity at a glance.'],
     ['admin-controls', 'Benutzerverwaltung', 'Users', 'admin-controls', 'Benutzer suchen und Profile, Rollen sowie Beta-Zugänge verwalten.', 'Search users and manage profiles, roles and beta access.'],
     ['media-review-manager', 'Freigaben', 'Approvals', 'media-review-manager', 'Eingereichte Bilder und Beiträge prüfen.', 'Review submitted images and posts.'],
     ['news-manager', 'News & Updates', 'News & Updates', 'news-manager', 'Meldungen und Releases erstellen und bearbeiten.', 'Create and edit announcements and releases.'],
-    ['mod-visibility-manager', 'Mods', 'Mods', 'mod-visibility-manager', 'Sichtbarkeit und Zugang deiner Projekte verwalten.', 'Manage visibility and access for your projects.'],
+    ['mod-visibility-manager', 'Mods', 'Mods', 'mods-manager', 'Mods, Bilder, Dateien und Versionen verwalten.', 'Manage mods, images, files and versions.'],
     ['requests-manager', 'Support', 'Support', 'requests-manager', 'Anfragen finden, beantworten und bearbeiten.', 'Find, reply to and manage tickets.'],
     ['admin-community-panel', 'Community', 'Community', 'admin-community-panel', 'Diskussionen und Community-Inhalte moderieren.', 'Moderate discussions and community content.'],
     ['owner-build-controls', 'Website', 'Website', 'owner-build-controls', 'Darstellung der Website-Version einstellen.', 'Configure website version visibility.']
   ];
-  const pages = [], homeGrid = document.createElement('div'); homeGrid.className = 'admin-home-grid';
+  const pages = [];
   nav.replaceChildren();
   for (const [id, de, en, targetId, descriptionDe, descriptionEn] of definitions) {
     const target = targetId ? document.getElementById(targetId) : null;
@@ -32,10 +32,10 @@
     const link = document.createElement('button'); link.type = 'button'; link.dataset.adminPage = id; nav.append(link);
     const unavailable = document.createElement('p'); unavailable.className = 'state'; unavailable.hidden = true; page.append(unavailable);
     if (target) page.append(target);
-    else { const stats = content.querySelector(':scope > .grid'); if (stats) page.append(stats); page.append(homeGrid); }
+    else { const stats = content.querySelector(':scope > .grid'); if (stats) page.append(stats); const activity = document.getElementById('admin-activity'); if (activity) page.append(activity); }
     content.append(page);
     let card;
-    if (target && id !== 'media-review-manager') { card = document.createElement('button'); card.type = 'button'; card.dataset.adminPage = id; card.className = 'admin-home-card'; homeGrid.append(card); }
+
     pages.push({id, page, target, link, title, description, back, unavailable, card, de, en, descriptionDe, descriptionEn});
   }
   // Keep the hidden account data available to the existing account scripts.
@@ -61,6 +61,12 @@
       else p.link.removeAttribute('aria-current');
     }
   }
+  const modParent = document.getElementById('mods-manager');
+  const modChildren = ['mod-visibility-manager','mod-catalogue-manager'].map(id=>document.getElementById(id)).filter(Boolean);
+  function updateMods(){if(modParent)modParent.hidden=modChildren.every(n=>n.hidden);}
+  const modObserver = new MutationObserver(updateMods);
+  modChildren.forEach(n=>modObserver.observe(n,{attributes:true,attributeFilter:['hidden']}));
+  updateMods();
   const observer = new MutationObserver(() => render());
   pages.forEach(p => { if (p.target) observer.observe(p.target, {attributes:true, attributeFilter:['hidden']}); });
   const reviewCount = document.getElementById('media-review-count');
