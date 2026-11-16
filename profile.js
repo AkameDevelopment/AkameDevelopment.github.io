@@ -74,7 +74,7 @@ async function showProfile(user){
  $("profile-show-spotify").disabled=true;
  if(cachedDisplay?.spotify){
   const tracks=cachedDisplay.spotify;
-  spotifyFields.forEach((field,i)=>{if(typeof tracks[i]==="string")$(field).value=tracks[i]});
+  spotifyFields.forEach((field,i)=>{if(typeof tracks.songs?.[i]==="string")$(field).value=tracks.songs[i]});
   $("profile-show-spotify").checked=tracks.visible===true;
  }
  $("profile-created").textContent=new Date(user.created_at).toLocaleDateString(lang()==="de"?"de-DE":"en-US",{day:"2-digit",month:"long",year:"numeric"});
@@ -89,7 +89,7 @@ async function showProfile(user){
  $("profile-bio").value=profileError?"":(existing?.bio||"");
  $("profile-display-name").value=profileError?"":(existing?.display_name||"");
  $("profile-name").textContent=existing?.display_name||name;
- if(!profileError)writeProfileDisplayCache(user.id,existing?.display_name||name,existing?.bio||"",Object.assign([existing?.favorite_spotify_track||"",existing?.favorite_spotify_track_2||"",existing?.favorite_spotify_track_3||""],{visible:existing?.show_favorite_spotify===true}));
+ if(!profileError)writeProfileDisplayCache(user.id,existing?.display_name||name,existing?.bio||"",{songs:[existing?.favorite_spotify_track||"",existing?.favorite_spotify_track_2||"",existing?.favorite_spotify_track_3||""],visible:existing?.show_favorite_spotify===true});
  spotifyFields.forEach(field=>$(field).disabled=false);
  $("profile-show-spotify").disabled=false;
  bioField.disabled=false;
