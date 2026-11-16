@@ -28,6 +28,10 @@ async function loadProfileMods(user){
  if(enabled)selected.add(slug);else selected.delete(slug);updateCount();message.textContent="Auswahl gespeichert.";message.dataset.state="success"
  })}
 }
+// Per-tab, account-scoped display cache. Never cache roles, grants or editable private fields.
+const profileDisplayCacheKey=id=>"akame-profile-display-v1:"+id;
+function readProfileDisplayCache(id){try{const data=JSON.parse(sessionStorage.getItem(profileDisplayCacheKey(id))||"null");return data&&Date.now()-data.savedAt<15*60*1000?data:null}catch{return null}}
+function writeProfileDisplayCache(id,displayName){try{sessionStorage.setItem(profileDisplayCacheKey(id),JSON.stringify({displayName,savedAt:Date.now()}))}catch{}}
 const fallback=$("profile-fallback"), avatar=$("profile-avatar");
 async function updateNameCooldown(){
  const button=$("profile-change-name"),message=$("profile-name-message");
@@ -58,7 +62,7 @@ async function showProfile(user){
  $("profile-loading").hidden=true;$("profile-guest").hidden=true;$("profile-content").hidden=false;
  const meta=user.user_metadata||{};
  const name=String(meta.full_name||meta.name||meta.user_name||"Discord User");
- $("profile-name").textContent=name;
+ $("profile-name").textContent=readProfileDisplayCache(user.id)?.displayName||name;
  $("profile-created").textContent=new Date(user.created_at).toLocaleDateString(lang()==="de"?"de-DE":"en-US",{day:"2-digit",month:"long",year:"numeric"});
  const url=avatarUrl(user);
  avatar.hidden=!url;fallback.hidden=!!url;if(url)avatar.src=url;
@@ -71,6 +75,7 @@ async function showProfile(user){
  $("profile-bio").value=profileError?"":(existing?.bio||"");
  $("profile-display-name").value=profileError?"":(existing?.display_name||"");
  $("profile-name").textContent=existing?.display_name||name;
+ if(!profileError)writeProfileDisplayCache(user.id,existing?.display_name||name);
  if(existing?.display_name)$("profile-public-link").dataset.publicProfileUrl="user.html?name="+encodeURIComponent(existing.display_name);
  $("profile-show-member-since").checked=existing?.show_member_since!==false; $("profile-show-discord-name").checked=existing?.show_discord_name===true;$("profile-show-member-list").checked=existing?.show_in_member_list===true; $("profile-spotify-track").value=existing?.favorite_spotify_track||""; $("profile-spotify-track-2").value=existing?.favorite_spotify_track_2||""; $("profile-spotify-track-3").value=existing?.favorite_spotify_track_3||""; $("profile-show-spotify").checked=existing?.show_favorite_spotify===true;
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
