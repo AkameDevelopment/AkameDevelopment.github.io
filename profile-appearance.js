@@ -96,7 +96,7 @@ if(document.getElementById("profile-content")){
  preview.addEventListener("pointerup",endDrag);preview.addEventListener("pointercancel",endDrag);
  select.addEventListener("change",render);customEnabled.addEventListener("change",render);customInput.addEventListener("input",render);outlineInput.addEventListener("input",render);input.addEventListener("input",render);for(const el of [xInput,yInput,zoomInput])el.addEventListener("input",render);panel.querySelector("#appearance-reset").addEventListener("click",()=>{xInput.value=50;yInput.value=50;zoomInput.value=100;render()});remove.addEventListener("click",()=>{input.value="";render()});
  translate();document.addEventListener("akame-language-change",translate);
- const profileSection=container.querySelector(".panel.lead");if(profileSection)profileSection.after(panel);else container.append(panel);
+ const appearanceSlot=document.getElementById("profile-appearance-slot");const profileSection=container.querySelector(".panel.lead");if(appearanceSlot)appearanceSlot.append(panel);else if(profileSection)profileSection.after(panel);else container.append(panel);
  (async()=>{const {data:{user},error}=await db.auth.getUser();if(error||!user)return;
  const appearanceKey="akame-appearance-v1:"+user.id;
  const applyAppearance=value=>{initial=value;outlineInput.value=value.outline;select.value=value.theme;input.value=value.url;customEnabled.checked=!!value.color;if(value.color)customInput.value=value.color;xInput.value=value.x;yInput.value=value.y;zoomInput.value=value.zoom;render()};
