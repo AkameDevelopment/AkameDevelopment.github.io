@@ -47,13 +47,13 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
       root.append(grid); return;
     }
     if (!selected) { root.append(el('p', t('Diese Mod wurde nicht gefunden.', 'This mod was not found.')), button(t('← Alle Mods', '← All mods'), () => navigate())); return; }
-    const r = selected[0], view = ['versions', 'changelog'].includes(p.get('view')) ? p.get('view') : 'description';
+    const r = selected[0], view = ['versions', 'changelog', 'gallery'].includes(p.get('view')) ? p.get('view') : 'description';
     root.append(button(t('← Alle Mods', '← All mods'), () => navigate(), 'mod-back'));
     const hero = el('div', undefined, 'mod-heading');
     const heading = el('div'); heading.append(el('h2', r.mod || id), el('p', r.summary || ''));
     const download=button(selected.some(item=>!item.noRelease)?t('↓ Download','↓ Download'):t('Release ausstehend','Release pending'),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease);hero.append(image(r),heading,download); root.append(hero);
     const tabs = el('nav', undefined, 'mod-tabs'); tabs.setAttribute('aria-label', t('Mod-Ansicht', 'Mod view'));
-    for (const [label, value] of [[t('Beschreibung', 'Description'), 'description'], ['Changelog', 'changelog'], [t('Versionen', 'Versions'), 'versions']]) {
+    for (const [label, value] of [[t('Beschreibung', 'Description'), 'description'], [t('Galerie','Gallery'),'gallery'], ['Changelog', 'changelog'], [t('Versionen', 'Versions'), 'versions']]) {
       const b = button(label, () => navigate(id, value), 'mod-tab'); if (view === value) b.setAttribute('aria-current', 'page'); tabs.append(b);
     }
     root.append(tabs);
@@ -61,7 +61,11 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
     const layout = el('div', undefined, 'mod-layout'), content = el('section', undefined, 'mod-content'), aside = el('aside', undefined, 'mod-content');
     aside.append(el('h3', t('Kompatibilität', 'Compatibility')), el('p', 'Minecraft: Java Edition'));
     aside.append(chips([...new Set(selected.map(x => x.minecraftVersion).filter(Boolean))]), el('h3', 'Modloader'), chips([...new Set(selected.map(x => x.loader).filter(Boolean))]), el('h3', t('Umgebung', 'Environment')), chips([...new Set(selected.map(x => x.side === 'both' ? 'Client & Server' : x.side === 'server' ? 'Server' : x.side === 'client' ? 'Client' : null))]));
-    if (view === 'changelog') {
+    if(view==='gallery'){
+      content.append(el('h3',t('Galerie','Gallery')));
+      if((r.catalogue||r.catalogueMeta)&&Array.isArray(r.gallery)&&r.gallery.length){const gallery=el('div',undefined,'mod-catalogue-gallery');for(const item of r.gallery){const url=assetUrl(item.path);if(!url)continue;const link=el('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';const img=el('img');img.src=url;img.alt=item.caption||r.mod;img.loading='lazy';link.append(img);if(item.caption)link.append(el('span',item.caption));gallery.append(link)}content.append(gallery)}
+      if(!content.querySelector('.mod-catalogue-gallery img'))content.append(el('p',t('Noch keine Galeriebilder vorhanden.','No gallery images yet.')));
+    } else if (view === 'changelog') {
       content.append(el('h3', 'Changelog'));
       const ordered = selected.filter(x=>!x.noRelease).slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.version || '').localeCompare(String(a.version || ''), undefined, {numeric: true}));
       for (const release of ordered) {
@@ -85,7 +89,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
       }
     } else if (view === 'description') {
       content.append(el('h3', r.mod || id), el('p', r.description || r.summary || t('Wähle unter Versionen die passende Datei für dein Minecraft aus.', 'Choose the right file for your Minecraft under Versions.')));
-      if((r.catalogue||r.catalogueMeta)&&Array.isArray(r.gallery)&&r.gallery.length){const gallery=el('div',undefined,'mod-catalogue-gallery');for(const item of r.gallery){const url=assetUrl(item.path);if(!url)continue;const link=el('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';const img=el('img');img.src=url;img.alt=item.caption||r.mod;img.loading='lazy';link.append(img);if(item.caption)link.append(el('span',item.caption));gallery.append(link)}content.append(gallery)}
+
       if (selected.every(demo)) content.append(el('p', t('Hinweis: Aktuell sind nur Testdateien verfügbar. Diese Dateien sind keine installierbaren Minecraft-Mods.', 'Notice: Only test files are currently available. These files are not installable Minecraft mods.'), 'mod-warning'));
       content.append(button(t('Download · Version auswählen', 'Download · Choose version'), () => navigate(id, 'versions')));
     } else {
