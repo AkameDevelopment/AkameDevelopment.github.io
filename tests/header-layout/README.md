@@ -24,3 +24,5 @@ Run `npm run test:administration --prefix tests/header-layout` to check both ser
 Server 2 uses its own statistics tables, ingestion endpoint and credential. `npm run test:stats2 --prefix tests/header-layout` verifies endpoint routing and payload rejection. Administration tests also verify the private configuration download stores only the token hash.
 
 `npm run test:control --prefix tests/header-layout` checks remote-control authorization, server states, queued actions, console input and private agent setup downloads. `remote-control-rls.sql` is a rollback-only database policy test for privileged maintenance use; it never executes Minecraft commands.
+
+`npm run test:avatars --prefix tests/header-layout` checks member-avatar loading on mobile/desktop, Discord animated URLs, uploaded GIFs, broken-image fallbacks, node reuse on layout changes, and reduced-motion canvases. Set `AVATAR_GIF_FIXTURE` to a local animated GIF to exercise a multi-frame asset.
