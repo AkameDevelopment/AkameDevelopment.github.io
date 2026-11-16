@@ -78,3 +78,10 @@ up to 5 MB, with an immediate preview, replacement and removal on Save mod. The
 public Description view starts with this full-width, uncropped banner. It is
 separate from the profile image and gallery; the existing wide layout is kept.
 The banner column migration has already been applied to the linked database.
+
+Published public and beta mods share public descriptions, galleries and version metadata.
+Private mod-files downloads require a beta grant for beta mods or beta/alpha releases;
+stable public releases remain public. Owner/admin/developer management access is retained.
+Storage policies enforce this even for direct signed-URL requests.
+Admin beta invitations use only current catalogue slugs and names. Catalogue deletion
+cascades to its beta grants and invitations; legacy grants without a catalogue mod are removed.

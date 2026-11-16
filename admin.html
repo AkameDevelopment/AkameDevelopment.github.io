@@ -161,7 +161,8 @@ import {createClient} from "/supabase-client.js";
 import {createAdminActivity} from "./admin-activity.js";
 const db=createClient("https://wycdpuzlbivtfxwtarzn.supabase.co","sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0",{auth:{flowType:"pkce",detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
 const $=id=>document.getElementById(id);
-const names={modcore:"Core",chest:"ChestScout",crosshair:"Crosshair+",chunkloader:"ChunkLoader",items:"AkameItems",hud:"AkameHud+",info:"AkameInfos",admin:"Admin",zoom:"AkameZoom"};
+const names={};
+function setCatalogueNames(mods){for(const key of Object.keys(names))delete names[key];for(const mod of mods||[])if(mod?.slug&&mod?.name)names[mod.slug]=mod.name;invitations=invitations.filter(i=>Object.hasOwn(names,i.project_slug));for(const slugs of betas.values())for(const slug of slugs)if(!Object.hasOwn(names,slug))slugs.delete(slug);}
 let current=null,role=null,people=[],roles=new Map(),betas=new Map(),invitations=[],smpMembers=new Set(),discordNames=new Map(),selected=null;
 const fallback="https://cdn.discordapp.com/embed/avatars/0.png";
 function avatar(url){return /^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\//.test(String(url||""))?url:fallback;}
@@ -246,6 +247,7 @@ function renderSelection(skipDetails=false){
  if(!skipDetails){activity?.select(p.user_id);resetSelectedPosts();void loadSelectedProfile(p.user_id)}
  const grid=$("beta-options");grid.replaceChildren();
  renderBetaInvitationSummary();
+ if(!Object.keys(names).length){const empty=document.createElement("p");empty.className="notice";empty.textContent=document.documentElement.lang==="en"?"No mods in the catalogue yet. Create a mod under Mods first.":"Noch keine Mods im Katalog. Lege zuerst unter Mods eine Mod an.";grid.append(empty)}
  for(const [key,value] of Object.entries(names)){
   const label=document.createElement("label"),input=document.createElement("input");input.type="checkbox";input.dataset.mod=key;
   const accepted=invitations.some(x=>x.user_id===p.user_id&&x.project_slug===key&&x.status==="accepted");
@@ -287,7 +289,7 @@ async function manageBetaInvitations(mode){
  const direct=mode==="direct",revoke=mode==="revoke",cancel=mode==="cancel";
  if(!selected||!["owner","admin"].includes(role))return;
  const target=selected,buttons=[$("beta-invite-selected"),$("beta-direct-selected"),$("beta-revoke-selected"),$("beta-cancel-selected"),$("beta-mode-toggle")];
- const keys=[...$("beta-options").querySelectorAll("input:checked:not(:disabled)")].map(x=>x.dataset.mod).filter(Boolean).filter(mod=>{const access=!!betas.get(target)?.has(mod),invite=invitations.some(x=>x.user_id===target&&x.project_slug===mod&&["pending","accepted"].includes(x.status));return revoke?(access||invite):cancel?invitations.some(x=>x.user_id===target&&x.project_slug===mod&&x.status==="pending"):!(access||invite)});
+ const keys=[...$("beta-options").querySelectorAll("input:checked:not(:disabled)")].map(x=>x.dataset.mod).filter(mod=>Object.hasOwn(names,mod)).filter(mod=>{const access=!!betas.get(target)?.has(mod),invite=invitations.some(x=>x.user_id===target&&x.project_slug===mod&&["pending","accepted"].includes(x.status));return revoke?(access||invite):cancel?invitations.some(x=>x.user_id===target&&x.project_slug===mod&&x.status==="pending"):!(access||invite)});
  if(!keys.length){msg("Bitte mindestens eine Mod auswählen.",true);return;}if(revoke&&!await confirmBetaRemoval(keys))return;
  buttons.forEach(x=>x.disabled=true);msg(cancel?"Einladungen werden zurückgezogen …":revoke?"Beta-Zugänge werden entzogen …":direct?"Beta-Zugänge werden freigeschaltet …":"Einladungen werden gesendet …");
  let successes=0,errors=[];
@@ -358,7 +360,7 @@ document.querySelectorAll("#role-quick-picker [data-role]").forEach(b=>b.addEven
  }catch(e){$("role-quick-status").textContent="Fehler: "+e.message;}
  finally{roleSaving=false;if(selected)renderRolePicker(selected);}
 }));
-document.addEventListener("akame-mod-catalogue-change",event=>{for(const mod of event.detail?.mods||[])names[mod.slug]=mod.name;if(selected)renderSelection(true);});
+document.addEventListener("akame-mod-catalogue-change",event=>{setCatalogueNames(event.detail?.mods);if(selected)renderSelection(true);});
 async function loadDirectory(){
  status("Benutzer und Freigaben werden geladen …");
  const [p,r,b,smp,smpExtra,dn,custom,inv,catalogue]=await Promise.all([
@@ -376,7 +378,7 @@ async function loadDirectory(){
  customNames=new Map((custom.data||[]).filter(x=>x.display_name).map(x=>[x.user_id,x.display_name]));people=p.data||[];invitations=inv.data||[];roles=new Map((r.data||[]).map(x=>[x.user_id,x.role]));betas=new Map();
  for(const record of b.data||[]){if(!betas.has(record.user_id))betas.set(record.user_id,new Set());betas.get(record.user_id).add(record.project_slug);}
  $("user-count").textContent=people.length;$("staff-count").textContent=roles.size;$("beta-count").textContent=(b.data||[]).length;
- for(const mod of catalogue.data||[])names[mod.slug]=mod.name;
+ setCatalogueNames(catalogue.data);
  activity?.update(people.map(p=>({...p,display_name:customNames.get(p.user_id)||p.display_name})));
  renderPeople();const requestedMember=new URLSearchParams(location.search).get("member");if(requestedMember&&/^[0-9a-f-]{36}$/i.test(requestedMember)){const match=people.find(p=>p.user_id===requestedMember);if(match){selected=match.user_id;renderPeople();renderSelection();$("selected").scrollIntoView({block:"start"});history.replaceState(null,"",location.pathname)}else status("Das Mitglied konnte in der Benutzerverwaltung nicht gefunden werden.");}status("Administratorzugriff bestätigt. Rollen und Beta-Freigaben werden sicher über Supabase geprüft.");
 }

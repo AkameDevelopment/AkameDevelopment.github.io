@@ -31,3 +31,7 @@ test('failed signed URLs never record a download; tracking failures do not block
  const x=setup({signError:true});x.api.attachDownload(x.anchor,release,{onError:error=>x.errors.push(error)});x.anchor.dispatchEvent(new x.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.equal(x.writes.length,0);assert.equal(x.errors.length,1);assert.deepEqual(x.opened,['closed']);
  const y=setup({insertError:true});y.api.attachDownload(y.anchor,release);y.anchor.dispatchEvent(new y.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.deepEqual(y.opened,['https://fixture.test/file']);
 });
+
+test('locked beta downloads do not request a signed URL or record an event',async()=>{
+ const x=setup();x.api.attachDownload(x.anchor,{...release,canDownload:false,signedIn:false},{onError:error=>x.errors.push(error)});x.anchor.dispatchEvent(new x.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.equal(x.opened.length,0);assert.equal(x.writes.length,0);assert.equal(x.anchor.getAttribute('aria-disabled'),'true');assert.match(x.errors[0].message,/Beta-Einladung/);
+});

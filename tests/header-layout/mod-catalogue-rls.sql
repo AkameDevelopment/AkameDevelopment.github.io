@@ -11,7 +11,7 @@ insert into public.download_events(mod_slug,mod_name,version)values('rls-fixture
 set local role anon;
 do $$begin
  if not exists(select 1 from public.mod_catalogue where slug='rls-fixture-public' and banner_path='rls-fixture-public/dddddddd-dddd-dddd-dddd-dddddddddddd.png' and cover_path='rls-fixture-public/cccccccc-cccc-cccc-cccc-cccccccccccc.png' and release_status='pending' and expected_release_date='2026-12-25')then raise exception 'Release announcement unavailable';end if;
- if (select count(*) from public.mod_catalogue where slug like 'rls-fixture-%')<>1 then raise exception 'Anonymous catalogue visibility leaked';end if;
+ if (select count(*) from public.mod_catalogue where slug like 'rls-fixture-%')<>2 then raise exception 'Anonymous catalogue visibility leaked';end if;
  if (select count(*) from public.mod_releases where mod_slug like 'rls-fixture-%')<>1 then raise exception 'Anonymous release visibility leaked';end if;
  begin perform 1 from public.download_events;raise exception 'Anonymous history access allowed';exception when insufficient_privilege then null;end;
  begin insert into public.mod_catalogue(slug,name)values('rls-forbidden','Forbidden');raise exception 'Anonymous catalogue insert allowed';exception when insufficient_privilege then null;end;
@@ -20,7 +20,7 @@ reset role;
 select set_config('request.jwt.claim.sub',current_setting('test.member'),true);
 set local role authenticated;
 do $$begin
- if (select count(*) from public.mod_catalogue where slug like 'rls-fixture-%')<>1 then raise exception 'Member sees unpublished/beta catalogue';end if;
+ if (select count(*) from public.mod_catalogue where slug like 'rls-fixture-%')<>2 then raise exception 'Member sees unpublished/beta catalogue';end if;
  if exists(select 1 from public.download_events where mod_slug='rls-fixture-public')then raise exception 'Member sees another user history';end if;
  begin insert into public.mod_catalogue(slug,name)values('rls-forbidden','Forbidden');raise exception 'Member catalogue write allowed';exception when insufficient_privilege then null;end;
  begin insert into public.download_events(user_id,mod_slug,mod_name,version)values(current_setting('test.owner')::uuid,'rls-fixture-public','Spoofed','1');raise exception 'Member can spoof identity';exception when insufficient_privilege then null;end;

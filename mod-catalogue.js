@@ -12,15 +12,19 @@ export function validateFile(file,image=false){
 }
 export const assetUrl=path=>typeof path==='string'&&/^[a-z0-9-]+\/[a-f0-9-]+\.(png|jpg|jpeg|webp)$/.test(path)?db.storage.from('mod-assets').getPublicUrl(path).data.publicUrl:'';
 export async function loadCatalogue(){
- const [mods,versions]=await Promise.all([
+ const [mods,versions,auth]=await Promise.all([
   db.from('mod_catalogue').select('slug,name,summary,description,gallery,cover_path,banner_path,visibility,published,release_status,release_note,expected_release_date').eq('published',true).order('created_at',{ascending:false}),
-  db.from('mod_releases').select('id,mod_slug,version,minecraft_version,loader,channel,side,changelog,storage_path,file_name,file_size,created_at').eq('published',true).order('created_at',{ascending:false})
+  db.from('mod_releases').select('id,mod_slug,version,minecraft_version,loader,channel,side,changelog,storage_path,file_name,file_size,created_at').eq('published',true).order('created_at',{ascending:false}),
+  db.auth.getUser()
  ]);
  if(mods.error||versions.error)throw mods.error||versions.error;
- const bySlug=new Map((mods.data||[]).map(mod=>[mod.slug,mod]));
- return {mods:mods.data||[],releases:(versions.data||[]).filter(r=>bySlug.has(r.mod_slug)).map(r=>{
+ const visibleMods=(mods.data||[]).filter(mod=>['public','beta'].includes(mod.visibility));
+ const uid=auth.data?.user?.id;let grants=new Set(),privileged=false;
+ if(uid){const [beta,staff]=await Promise.all([db.from('beta_access').select('project_slug').eq('user_id',uid),db.from('staff_access').select('role').eq('user_id',uid).maybeSingle()]);if(!beta.error)grants=new Set((beta.data||[]).map(row=>row.project_slug));privileged=!staff.error&&['owner','admin','developer'].includes(staff.data?.role);}
+ const bySlug=new Map(visibleMods.map(mod=>[mod.slug,mod]));
+ return {mods:visibleMods,releases:(versions.data||[]).filter(r=>bySlug.has(r.mod_slug)).map(r=>{
   const mod=bySlug.get(r.mod_slug);
-  return {...r,modId:r.mod_slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),bannerUrl:assetUrl(mod.banner_path),minecraftVersion:r.minecraft_version,date:r.created_at.slice(0,10),catalogue:true,releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date};
+  return {...r,modId:r.mod_slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),bannerUrl:assetUrl(mod.banner_path),minecraftVersion:r.minecraft_version,date:r.created_at.slice(0,10),catalogue:true,visibility:mod.visibility,betaRequired:mod.visibility==='beta'||['beta','alpha'].includes(r.channel),canDownload:privileged||grants.has(mod.slug)||(mod.visibility==='public'&&r.channel==='stable'),signedIn:!!uid,releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date};
  })};
 }
 export async function recordDownload(release,source='downloads'){
@@ -32,6 +36,7 @@ export async function recordDownload(release,source='downloads'){
 }
 export function attachDownload(anchor,release,{source='downloads',onError=()=>{}}={}){
  let busy=false,lastStarted=0;
+ if(release.canDownload===false){anchor.href='#';anchor.setAttribute('aria-disabled','true');anchor.classList.add('mod-download-locked');anchor.addEventListener('click',event=>{event.preventDefault();onError(Error(release.signedIn?'Für diesen Download benötigst du einen Beta-Zugang.':'Bitte anmelden und eine Beta-Einladung annehmen.'))});return;}
  anchor.href=release.catalogue?'#':release.url;anchor.target='_blank';anchor.rel='noopener noreferrer';
  anchor.addEventListener('click',async event=>{
   if(release.catalogue)event.preventDefault();
