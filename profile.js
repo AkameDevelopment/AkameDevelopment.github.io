@@ -61,6 +61,13 @@ function avatarUrl(user){const meta=user.user_metadata||{};const src=String(meta
 async function showProfile(user){
  $("profile-public-link").dataset.publicProfileUrl="user.html?id="+encodeURIComponent(user.id);if($("profile-badges-link"))$("profile-badges-link").href="user.html?id="+encodeURIComponent(user.id);
  $("profile-loading").hidden=true;$("profile-guest").hidden=true;$("profile-content").hidden=false;
+ // Reserve all authenticated sections in one paint; their data can hydrate independently.
+ for(const id of ["gallery-panel","profile-own-posts"]){const section=$(id);if(section)section.hidden=false}
+ const galleryGrid=$("gallery-grid"),galleryMessage=$("gallery-message");
+ if(galleryGrid&&!galleryGrid.children.length&&galleryMessage&&!galleryMessage.textContent)galleryMessage.textContent=lang()==="en"?"Loading showcase …":"Showcase wird geladen …";
+ const postsList=$("profile-own-posts-list"),postsMessage=$("profile-own-posts-message");
+ if(postsList&&!postsList.children.length&&postsMessage&&!postsMessage.textContent)postsMessage.textContent=lang()==="en"?"Loading posts …":"Beiträge werden geladen …";
+ 
  const meta=user.user_metadata||{};
  const name=String(meta.full_name||meta.name||meta.user_name||"Discord User");
  const cachedDisplay=readProfileDisplayCache(user.id);
