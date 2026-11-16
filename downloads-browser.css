@@ -3,3 +3,4 @@
 .mod-catalogue-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px;margin:22px 0}.mod-catalogue-gallery a{display:grid;align-content:start;gap:7px;font-size:12px;color:inherit}.mod-catalogue-gallery img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px}.mod-catalogue-gallery span{overflow-wrap:anywhere}.mod-button[aria-busy=true]{opacity:.6;cursor:progress}
 .mod-profile-image{object-fit:contain!important}.downloads-grid .mod-profile-image{padding:16px;background:radial-gradient(ellipse at center,#3a2755,#171020)}
 .mod-description-banner{display:block;width:100%;max-width:100%;height:auto;max-height:460px;object-fit:contain;margin:0 0 24px;border-radius:12px}
+.mod-download-locked{background:#a982ff12!important;border:1px solid #a982ff55!important;color:var(--muted,#bdaaca)!important;cursor:not-allowed;white-space:normal}.mod-release>.mod-warning{flex-basis:100%;font-size:12px;margin:8px 0}
