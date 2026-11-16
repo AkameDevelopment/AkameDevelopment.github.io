@@ -40,7 +40,10 @@
   }
   // Keep the hidden account data available to the existing account scripts.
   content.querySelectorAll(':scope > .layout').forEach(n => { n.hidden = true; });
-  let selectedPage = (()=>{const id=location.hash.slice(1);return pages.some(p=>p.id===id)?id:new URLSearchParams(location.search).has('member')?'admin-controls':'overview'})();
+  const selectionKey='akame-admin-workspace-page-v1';
+  let storedPage;try{storedPage=sessionStorage.getItem(selectionKey)}catch{}
+  let selectedPage = (()=>{const id=location.hash.slice(1);return pages.some(p=>p.id===id)?id:new URLSearchParams(location.search).has('member')?'admin-controls':pages.some(p=>p.id===storedPage)?storedPage:'overview'})();
+  try{sessionStorage.setItem(selectionKey,selectedPage)}catch{}
   function activeId(){return selectedPage;}
   function render(focus = false) {
     const active = activeId();
@@ -74,6 +77,7 @@
   function navigate(id){
     if(!pages.some(p=>p.id===id))return;
     selectedPage=id;
+    try{sessionStorage.setItem(selectionKey,id)}catch{}
     render(false);
     // No fragment navigation: Safari and shared navigation handlers must not redirect.
     if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);
