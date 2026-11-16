@@ -8,6 +8,11 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
   const el = (tag, text, cls) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; };
   const safeUrl = value => { try { const u = new URL(value); return u.protocol === 'https:' && ['github.com', 'objects.githubusercontent.com', 'raw.githubusercontent.com'].includes(u.hostname); } catch { return false; } };
   const key = r => r.modId || r.mod;
+  function releaseAnnouncement(r){
+    const status={planned:t('Release geplant','Release planned'),pending:t('Release ausstehend','Release pending'),in_development:t('In Entwicklung','In development')}[r.releaseStatus]||t('Release ausstehend','Release pending');
+    const date=/^\d{4}-\d{2}-\d{2}$/.test(r.releaseDate||'')?new Date(r.releaseDate+'T12:00:00').toLocaleDateString(lang==='en'?'en-GB':'de-DE',{dateStyle:'long'}):'';
+    return [status,date?t('Geplant: ','Expected: ')+date:'',r.releaseNote].filter(Boolean).join(' · ');
+  }
   const demo = r => r.demo === true || /test|demo/i.test(r.version || '');
   const params = () => new URLSearchParams(location.hash.slice(1));
   function navigate(id, view = 'description') {
@@ -36,6 +41,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
         const body = el('div', undefined, 'download-card-body');
         body.append(el('h3', r.mod || modId, 'download-card-title'), el('p', r.summary || '', 'download-description'));
         body.append(chips([...new Set(items.map(x => x.loader).filter(Boolean)), `${items.filter(x=>!x.noRelease).length} ${t('Version(en)', 'version(s)')}`, items.every(demo) ? t('Testdateien · keine installierbare Mod', 'Test files · not an installable mod') : null]));
+        if(r.noRelease)body.append(el('p',releaseAnnouncement(r),'mod-warning'));
         body.append(button(t('Mod auswählen →', 'Select mod →'), () => navigate(modId))); card.append(body); grid.append(card);
       }
       root.append(grid); return;
@@ -45,12 +51,13 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
     root.append(button(t('← Alle Mods', '← All mods'), () => navigate(), 'mod-back'));
     const hero = el('div', undefined, 'mod-heading');
     const heading = el('div'); heading.append(el('h2', r.mod || id), el('p', r.summary || ''));
-    hero.append(image(r), heading, button(t('↓ Download', '↓ Download'), () => navigate(id, 'versions'))); root.append(hero);
+    const download=button(selected.some(item=>!item.noRelease)?t('↓ Download','↓ Download'):t('Release ausstehend','Release pending'),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease);hero.append(image(r),heading,download); root.append(hero);
     const tabs = el('nav', undefined, 'mod-tabs'); tabs.setAttribute('aria-label', t('Mod-Ansicht', 'Mod view'));
     for (const [label, value] of [[t('Beschreibung', 'Description'), 'description'], ['Changelog', 'changelog'], [t('Versionen', 'Versions'), 'versions']]) {
       const b = button(label, () => navigate(id, value), 'mod-tab'); if (view === value) b.setAttribute('aria-current', 'page'); tabs.append(b);
     }
     root.append(tabs);
+    if(selected.every(item=>item.noRelease))root.append(el('p',releaseAnnouncement(r),'mod-warning'));
     const layout = el('div', undefined, 'mod-layout'), content = el('section', undefined, 'mod-content'), aside = el('aside', undefined, 'mod-content');
     aside.append(el('h3', t('Kompatibilität', 'Compatibility')), el('p', 'Minecraft: Java Edition'));
     aside.append(chips([...new Set(selected.map(x => x.minecraftVersion).filter(Boolean))]), el('h3', 'Modloader'), chips([...new Set(selected.map(x => x.loader).filter(Boolean))]), el('h3', t('Umgebung', 'Environment')), chips([...new Set(selected.map(x => x.side === 'both' ? 'Client & Server' : x.side === 'server' ? 'Server' : x.side === 'client' ? 'Client' : null))]));
@@ -116,8 +123,8 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
    if(token!==loadToken)return;
    const replacement=new Set(managed.releases.map(r=>r.modId+'::'+r.version+'::'+r.loader+'::'+r.minecraftVersion));
    const catalogueBySlug=new Map(managed.mods.map(mod=>[mod.slug,mod]));
-   releases=[...managed.releases,...visibleOld.filter(r=>!replacement.has(key(r)+'::'+r.version+'::'+(r.loader||'')+'::'+(r.minecraftVersion||''))).map(r=>{const mod=catalogueBySlug.get(key(r));return mod?{...r,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),catalogueMeta:true}:r})];
-   for(const mod of managed.mods){if(!releases.some(r=>key(r)===mod.slug))releases.push({modId:mod.slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),catalogue:true,noRelease:true})}
+   releases=[...managed.releases,...visibleOld.filter(r=>!replacement.has(key(r)+'::'+r.version+'::'+(r.loader||'')+'::'+(r.minecraftVersion||''))).map(r=>{const mod=catalogueBySlug.get(key(r));return mod?{...r,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogueMeta:true}:r})];
+   for(const mod of managed.mods){if(!releases.some(r=>key(r)===mod.slug))releases.push({modId:mod.slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.gallery?.[0]?.path),releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date,catalogue:true,noRelease:true})}
    render();
   }
   void load();db.auth.onAuthStateChange(event=>{if(event!=='INITIAL_SESSION')setTimeout(()=>void load(),0)});

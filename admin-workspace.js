@@ -62,7 +62,7 @@
     }
   }
   const modParent = document.getElementById('mods-manager');
-  const modChildren = ['mod-visibility-manager','mod-catalogue-manager'].map(id=>document.getElementById(id)).filter(Boolean);
+  const modChildren = ['mod-catalogue-manager'].map(id=>document.getElementById(id)).filter(Boolean);
   function updateMods(){if(modParent)modParent.hidden=modChildren.every(n=>n.hidden);}
   const modObserver = new MutationObserver(updateMods);
   modChildren.forEach(n=>modObserver.observe(n,{attributes:true,attributeFilter:['hidden']}));
