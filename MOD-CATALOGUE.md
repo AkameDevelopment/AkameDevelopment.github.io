@@ -72,3 +72,9 @@ local previews before saving. Selected gallery files can be removed individually
 before upload, and removed/replaced saved assets are cleaned up after saving.
 The cover column migration is already applied; existing gallery entries are
 preserved and are not automatically reclassified as profile images.
+
+Description banners are a separate optional upload in Admin → Mods. PNG/JPEG/WebP
+up to 5 MB, with an immediate preview, replacement and removal on Save mod. The
+public Description view starts with this full-width, uncropped banner. It is
+separate from the profile image and gallery; the existing wide layout is kept.
+The banner column migration has already been applied to the linked database.
