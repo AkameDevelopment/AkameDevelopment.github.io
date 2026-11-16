@@ -31,7 +31,7 @@ async function loadProfileMods(user){
 // Per-tab, account-scoped display cache. Never cache roles, grants or editable private fields.
 const profileDisplayCacheKey=id=>"akame-profile-display-v1:"+id;
 function readProfileDisplayCache(id){try{const data=JSON.parse(sessionStorage.getItem(profileDisplayCacheKey(id))||"null");return data&&Date.now()-data.savedAt<15*60*1000?data:null}catch{return null}}
-function writeProfileDisplayCache(id,displayName,bio){try{sessionStorage.setItem(profileDisplayCacheKey(id),JSON.stringify({displayName,bio,savedAt:Date.now()}))}catch{}}
+function writeProfileDisplayCache(id,displayName,bio,spotify){try{sessionStorage.setItem(profileDisplayCacheKey(id),JSON.stringify({displayName,bio,spotify,savedAt:Date.now()}))}catch{}}
 const fallback=$("profile-fallback"), avatar=$("profile-avatar");
 async function updateNameCooldown(){
  const button=$("profile-change-name"),message=$("profile-name-message");
@@ -69,6 +69,14 @@ async function showProfile(user){
  const bioField=$("profile-bio");
  bioField.disabled=true;
  if(typeof cachedDisplay?.bio==="string")bioField.value=cachedDisplay.bio;
+ const spotifyFields=["profile-spotify-track","profile-spotify-track-2","profile-spotify-track-3"];
+ for(const field of spotifyFields)$(field).disabled=true;
+ $("profile-show-spotify").disabled=true;
+ if(cachedDisplay?.spotify){
+  const tracks=cachedDisplay.spotify;
+  spotifyFields.forEach((field,i)=>{if(typeof tracks[i]==="string")$(field).value=tracks[i]});
+  $("profile-show-spotify").checked=tracks.visible===true;
+ }
  $("profile-created").textContent=new Date(user.created_at).toLocaleDateString(lang()==="de"?"de-DE":"en-US",{day:"2-digit",month:"long",year:"numeric"});
  const url=avatarUrl(user);
  avatar.hidden=!url;fallback.hidden=!!url;if(url)avatar.src=url;
@@ -81,7 +89,9 @@ async function showProfile(user){
  $("profile-bio").value=profileError?"":(existing?.bio||"");
  $("profile-display-name").value=profileError?"":(existing?.display_name||"");
  $("profile-name").textContent=existing?.display_name||name;
- if(!profileError)writeProfileDisplayCache(user.id,existing?.display_name||name,existing?.bio||"");
+ if(!profileError)writeProfileDisplayCache(user.id,existing?.display_name||name,existing?.bio||"",Object.assign([existing?.favorite_spotify_track||"",existing?.favorite_spotify_track_2||"",existing?.favorite_spotify_track_3||""],{visible:existing?.show_favorite_spotify===true}));
+ spotifyFields.forEach(field=>$(field).disabled=false);
+ $("profile-show-spotify").disabled=false;
  bioField.disabled=false;
  if(existing?.display_name)$("profile-public-link").dataset.publicProfileUrl="user.html?name="+encodeURIComponent(existing.display_name);
  $("profile-show-member-since").checked=existing?.show_member_since!==false; $("profile-show-discord-name").checked=existing?.show_discord_name===true;$("profile-show-member-list").checked=existing?.show_in_member_list===true; $("profile-spotify-track").value=existing?.favorite_spotify_track||""; $("profile-spotify-track-2").value=existing?.favorite_spotify_track_2||""; $("profile-spotify-track-3").value=existing?.favorite_spotify_track_3||""; $("profile-show-spotify").checked=existing?.show_favorite_spotify===true;
