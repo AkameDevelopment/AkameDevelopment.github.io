@@ -9,6 +9,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
   const safeUrl = value => { try { const u = new URL(value); return u.protocol === 'https:' && ['github.com', 'objects.githubusercontent.com', 'raw.githubusercontent.com'].includes(u.hostname); } catch { return false; } };
   const key = r => r.modId || r.mod;
   function releaseAnnouncement(r){
+    if(r.releaseStatus==='released')return '';
     const status={planned:t('Release geplant','Release planned'),pending:t('Release ausstehend','Release pending'),in_development:t('In Entwicklung','In development')}[r.releaseStatus]||t('Release ausstehend','Release pending');
     const date=/^\d{4}-\d{2}-\d{2}$/.test(r.releaseDate||'')?new Date(r.releaseDate+'T12:00:00').toLocaleDateString(lang==='en'?'en-GB':'de-DE',{dateStyle:'long'}):'';
     return [status,date?t('Geplant: ','Expected: ')+date:'',r.releaseNote].filter(Boolean).join(' · ');
@@ -42,7 +43,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
         body.append(el('h3', r.mod || modId, 'download-card-title'), el('p', r.summary || '', 'download-description'));
         if(r.visibility==='beta')body.append(chips(['Beta']));
         body.append(chips([...new Set(items.map(x => x.loader).filter(Boolean)), `${items.filter(x=>!x.noRelease).length} ${t('Version(en)', 'version(s)')}`, items.every(demo) ? t('Testdateien · keine installierbare Mod', 'Test files · not an installable mod') : null]));
-        if(r.noRelease)body.append(el('p',releaseAnnouncement(r),'mod-warning'));
+        if(r.noRelease&&releaseAnnouncement(r))body.append(el('p',releaseAnnouncement(r),'mod-warning'));
         body.append(button(t('Mod auswählen →', 'Select mod →'), () => navigate(modId))); card.append(body); grid.append(card);
       }
       root.append(grid); return;
@@ -52,13 +53,13 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
     root.append(button(t('← Alle Mods', '← All mods'), () => navigate(), 'mod-back'));
     const hero = el('div', undefined, 'mod-heading');
     const heading = el('div'); heading.append(el('h2', r.mod || id), el('p', r.summary || ''));
-    const download=button(selected.some(item=>!item.noRelease)?t('↓ Download','↓ Download'):t('Release ausstehend','Release pending'),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease);hero.append(image(r),heading,download); root.append(hero);if(r.visibility==='beta')heading.append(chips(['Beta']));
+    const download=button(selected.some(item=>!item.noRelease)?t('↓ Download','↓ Download'):(r.releaseStatus==='released'?t('Kein Download verfügbar','No download available'):t('Release ausstehend','Release pending')),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease);hero.append(image(r),heading,download); root.append(hero);if(r.visibility==='beta')heading.append(chips(['Beta']));
     const tabs = el('nav', undefined, 'mod-tabs'); tabs.setAttribute('aria-label', t('Mod-Ansicht', 'Mod view'));
     for (const [label, value] of [[t('Beschreibung', 'Description'), 'description'], [t('Galerie','Gallery'),'gallery'], ['Changelog', 'changelog'], [t('Versionen', 'Versions'), 'versions']]) {
       const b = button(label, () => navigate(id, value), 'mod-tab'); if (view === value) b.setAttribute('aria-current', 'page'); tabs.append(b);
     }
     root.append(tabs);
-    if(selected.every(item=>item.noRelease))root.append(el('p',releaseAnnouncement(r),'mod-warning'));
+    if(selected.every(item=>item.noRelease)&&releaseAnnouncement(r))root.append(el('p',releaseAnnouncement(r),'mod-warning'));
     const layout = el('div', undefined, 'mod-layout'), content = el('section', undefined, 'mod-content'), aside = el('aside', undefined, 'mod-content');
     aside.append(el('h3', t('Kompatibilität', 'Compatibility')), el('p', 'Minecraft: Java Edition'));
     aside.append(chips([...new Set(selected.map(x => x.minecraftVersion).filter(Boolean))]), el('h3', 'Modloader'), chips([...new Set(selected.map(x => x.loader).filter(Boolean))]), el('h3', t('Umgebung', 'Environment')), chips([...new Set(selected.map(x => x.side === 'both' ? 'Client & Server' : x.side === 'server' ? 'Server' : x.side === 'client' ? 'Client' : null))]));
