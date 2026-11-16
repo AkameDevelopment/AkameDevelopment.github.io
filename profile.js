@@ -96,10 +96,10 @@ async function showProfile(user){
  if(existing?.display_name)$("profile-public-link").dataset.publicProfileUrl="user.html?name="+encodeURIComponent(existing.display_name);
  $("profile-show-member-since").checked=existing?.show_member_since!==false; $("profile-show-discord-name").checked=existing?.show_discord_name===true;$("profile-show-member-list").checked=existing?.show_in_member_list===true; $("profile-spotify-track").value=existing?.favorite_spotify_track||""; $("profile-spotify-track-2").value=existing?.favorite_spotify_track_2||""; $("profile-spotify-track-3").value=existing?.favorite_spotify_track_3||""; $("profile-show-spotify").checked=existing?.show_favorite_spotify===true;
  $("member-since-visibility-note").textContent=existing?.show_member_since===false?"Nur für dich und Administratoren sichtbar":"Für andere sichtbar";
- savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked,showDiscordName:$("profile-show-discord-name").checked,showInMemberList:$("profile-show-member-list").checked,spotifyTrack:$("profile-spotify-track").value.trim(),spotifyTrack2:$("profile-spotify-track-2").value.trim(),spotifyTrack3:$("profile-spotify-track-3").value.trim(),showSpotify:$("profile-show-spotify").checked};updateSaveVisibility();await updateNameCooldown();await loadProfileMods(user);
+ savedProfileState={bio:$("profile-bio").value.trim(),showMemberSince:$("profile-show-member-since").checked,showDiscordName:$("profile-show-discord-name").checked,showInMemberList:$("profile-show-member-list").checked,spotifyTrack:$("profile-spotify-track").value.trim(),spotifyTrack2:$("profile-spotify-track-2").value.trim(),spotifyTrack3:$("profile-spotify-track-3").value.trim(),showSpotify:$("profile-show-spotify").checked};updateSaveVisibility();void updateNameCooldown();void loadProfileMods(user);
  const role=staff.data?.role;
  $("profile-role").textContent=role==="owner"?"Owner":role==="admin"?"Administrator":role==="staff"?"Team":"Community";
- await loadBetaInvitations(user);
+ void loadBetaInvitations(user);
  const betas=beta.error?[]:(beta.data||[]);
  $("profile-beta-count").textContent=String(betas.length);
  const container=$("profile-beta-list");container.replaceChildren();
