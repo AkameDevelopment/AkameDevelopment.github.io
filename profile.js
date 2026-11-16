@@ -54,6 +54,8 @@ function updateSaveVisibility(){const changed=$("profile-bio").value.trim()!==sa
 function lang(){return window.AkameLanguage?.get?.()||localStorage.getItem("akame-lang")||"de"}
 function showSignedOut(){
  $("profile-bio").disabled=true;
+ if($("profile-own-posts")){$("profile-own-posts").hidden=true;$("profile-own-posts-list")?.replaceChildren()}
+ if($("gallery-panel"))$("gallery-panel").hidden=true;
  $("profile-loading").hidden=true;$("profile-guest").hidden=false;$("profile-content").hidden=true;
 }
 function showError(message){$("save-message").textContent=message;$("save-message").dataset.state="error"}
