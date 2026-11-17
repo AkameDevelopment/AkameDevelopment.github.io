@@ -53,7 +53,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
     root.append(button(t('← Alle Mods', '← All mods'), () => navigate(), 'mod-back'));
     const hero = el('div', undefined, 'mod-heading');
     const heading = el('div'); heading.append(el('h2', r.mod || id), el('p', r.summary || ''));
-    const download=button(selected.some(item=>!item.noRelease)?t('↓ Download','↓ Download'):(r.releaseStatus==='released'?t('Kein Download verfügbar','No download available'):t('Release ausstehend','Release pending')),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease);hero.append(image(r),heading,download); root.append(hero);if(r.visibility==='beta')heading.append(chips(['Beta']));
+    const download=button(selected.some(item=>!item.noRelease&&item.hasFile!==false)?t('↓ Download','↓ Download'):((r.hasFile===false||r.releaseStatus==='released')?t('Kein Download verfügbar','No download available'):t('Release ausstehend','Release pending')),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease&&item.hasFile!==false);hero.append(image(r),heading,download); root.append(hero);if(r.visibility==='beta')heading.append(chips(['Beta']));
     const tabs = el('nav', undefined, 'mod-tabs'); tabs.setAttribute('aria-label', t('Mod-Ansicht', 'Mod view'));
     for (const [label, value] of [[t('Beschreibung', 'Description'), 'description'], [t('Galerie','Gallery'),'gallery'], ['Changelog', 'changelog'], [t('Versionen', 'Versions'), 'versions']]) {
       const b = button(label, () => navigate(id, value), 'mod-tab'); if (view === value) b.setAttribute('aria-current', 'page'); tabs.append(b);
