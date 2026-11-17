@@ -12,6 +12,7 @@
   const label=document.getElementById(id).closest('label'),hint=label.nextElementSibling;
   privacy.append(label);if(hint?.classList.contains('privacy'))privacy.append(hint);
  }
+ const badgeVisibility=document.getElementById('profile-badge-visibility-panel');if(badgeVisibility)privacy.append(badgeVisibility);
  const spotify=document.getElementById('profile-spotify-track').parentElement;spotify.classList.add('panel','profile-spotify-settings');
  const saveActions=document.getElementById('profile-save').closest('.actions');saveActions.classList.add('profile-settings-save');
  const note=biography.querySelector(':scope > .privacy:last-child');if(note){note.dataset.profileNote='';note.textContent=tr('Hier bearbeitest du die Beschreibung deines öffentlichen Profils.','Edit the description of your public profile here.');}
