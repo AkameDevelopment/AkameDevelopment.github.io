@@ -58,3 +58,7 @@ Edge Function source: `supabase/functions/mod-download/`. Gateway JWT verificati
 ## Limits
 
 Historical client-generated download rows remain unverified and do not unlock new download achievements. Existing badge grants are preserved instead of silently revoked. A verified event attests an authorised download start/issued URL, not completed transfer or installation. There is no client installation detector. A signed-in production download smoke test requires the actual user's Discord session; server behaviour is covered by unit/RLS tests and anonymous/invalid-token live checks.
+
+## Personal list clearing
+
+`20261117223927_clear_personal_download_list.sql` adds a private-list visibility flag to the existing download ledger. “Clear my list” changes only that user's flags through a self-scoped invoker RPC. The admin history and achievement queries continue to include these events; no records or achievements are deleted. Column-level UPDATE grants prevent users from changing trusted event metadata. A later verified download unhides the existing same-day event or inserts a new visible event without duplication. Transactional RLS tests cover owner-only clearing, admin retention, preserved grants, immutable metadata, anonymous denial and same-day re-downloads. Three client tests cover success, errors and logout races; responsive browser tests cover clearing and reload persistence.
