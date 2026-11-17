@@ -40,7 +40,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
   }
   function betaBadge(){const badge=channelChip('beta');badge.title=t('Beta-Version · kann noch Fehler enthalten','Beta version · may still contain bugs');return badge;}
   function isBeta(r){return r.visibility==='beta'||r.channel==='beta'||/(?:^|[.\s-])beta(?:[.\s-]|$)/i.test(r.version||'');}
-  function versionChips(r){const n=chips([r.minecraftVersion?`Minecraft ${r.minecraftVersion}`:null]);if(r.loader)n.append(loaderChip(r.loader));n.append(channelChip(r.channel==='alpha'?'alpha':isBeta(r)?'beta':r.channel||'stable'));if(r.date)n.append(el('span',r.date,'download-chip'));return n;}
+  function versionChips(r){const n=chips([r.minecraftVersion?`Minecraft ${r.minecraftVersion}`:null]);if(r.loader)n.append(loaderChip(r.loader));n.append(channelChip(r.channel||(isBeta(r)?'beta':'stable')));if(r.date)n.append(el('span',r.date,'download-chip'));return n;}
   function render() {
     root.replaceChildren();
     document.getElementById('downloads-intro').textContent = t('Wähle eine Mod aus, entdecke die Details und lade die passende Version herunter.', 'Choose a mod, explore its details and download the right version.');
