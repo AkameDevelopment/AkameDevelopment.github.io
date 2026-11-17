@@ -110,6 +110,7 @@ if(root){
   const controls=fieldset.querySelector('.controls');fieldset.append(cover,images,initial,releaseOptions,advanced,controls);fieldset.insertBefore(banner,$('description').closest('label'));
   const identity=node('section');identity.id='catalogue-identity';const identityTitle=node('h3');identityTitle.dataset.de='Name & Mod-ID';identityTitle.dataset.en='Name & mod ID';identity.append(identityTitle,nameLabel,$('slug').closest('label'));fieldset.insertBefore(identity,fieldset.querySelector('legend').nextSibling);
   const media=node('details',undefined,'catalogue-advanced');media.id='catalogue-media';const mediaSummary=node('summary');mediaSummary.dataset.de='Bilder verwalten';mediaSummary.dataset.en='Manage images';media.append(mediaSummary,cover,banner,images);identity.after(media);
+  const publish=$('published'),publishLabel=publish.closest('label');publishLabel.classList.add('catalogue-publish-switch');publish.setAttribute('role','switch');publishLabel.append(publish);controls.before(publishLabel);
   $('description').rows=3;
  }
  simplifyEditor();
