@@ -8,7 +8,7 @@
  const identity=root.querySelector('.panel.lead');if(!biography||!identity)return;
  document.body.classList.add('profile-workspace');
  const privacy=node('section','panel');
- for(const id of ['profile-show-member-since','profile-show-discord-name','profile-show-member-list']){
+ for(const id of ['profile-show-member-since','profile-show-discord-name','profile-show-member-list','profile-show-badges']){
   const label=document.getElementById(id).closest('label'),hint=label.nextElementSibling;
   privacy.append(label);if(hint?.classList.contains('privacy'))privacy.append(hint);
  }
