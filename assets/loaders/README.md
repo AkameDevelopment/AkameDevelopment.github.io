@@ -1,0 +1,1 @@
+Loader SVG icons from https://github.com/modrinth/code/tree/main/packages/assets/icons/tags/loaders (Modrinth contributors), distributed unchanged under GPL-3.0; see LICENSE. These standalone image assets retain their own license. Brand names and marks belong to their respective projects.

@@ -26,6 +26,21 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
     n.src = (r.catalogue||r.catalogueMeta)&&r.image?r.image:typeof r.image === 'string' && /^assets\/[a-z0-9/_-]+\.(svg|png|jpg|webp)$/i.test(r.image) ? r.image : 'assets/mod-placeholder.svg'; return n;
   }
   function chips(values) { const n = el('div', undefined, 'download-chips'); values.filter(Boolean).forEach(v => n.append(el('span', v, 'download-chip'))); return n; }
+  function loaderChip(value) {
+    const label=String(value),id=label.toLowerCase().replace(/[\s_-]/g,'');
+    const known={fabric:'Fabric',forge:'Forge',neoforge:'NeoForge',quilt:'Quilt'};
+    const chip=el('span',undefined,'download-chip mod-loader-chip');
+    if(known[id]){const icon=el('span',undefined,'mod-loader-icon');icon.dataset.loader=id;icon.setAttribute('aria-hidden','true');chip.append(icon);}
+    chip.append(document.createTextNode(known[id]||label));return chip;
+  }
+  function loaderChips(values){const n=el('div',undefined,'download-chips');[...new Set(values.filter(Boolean))].forEach(v=>n.append(loaderChip(v)));return n;}
+  function channelChip(channel='stable'){
+    const key=String(channel).toLowerCase(),label={stable:t('Release','Release'),beta:'Beta',alpha:'Alpha'}[key]||channel;
+    const chip=el('span',label,'download-chip mod-channel');chip.dataset.channel=key;return chip;
+  }
+  function betaBadge(){const badge=channelChip('beta');badge.title=t('Beta-Version · kann noch Fehler enthalten','Beta version · may still contain bugs');return badge;}
+  function isBeta(r){return r.visibility==='beta'||r.channel==='beta'||/(?:^|[.\s-])beta(?:[.\s-]|$)/i.test(r.version||'');}
+  function versionChips(r){const n=chips([r.minecraftVersion?`Minecraft ${r.minecraftVersion}`:null]);if(r.loader)n.append(loaderChip(r.loader));n.append(channelChip(r.channel==='alpha'?'alpha':isBeta(r)?'beta':r.channel||'stable'));if(r.date)n.append(el('span',r.date,'download-chip'));return n;}
   function render() {
     root.replaceChildren();
     document.getElementById('downloads-intro').textContent = t('Wähle eine Mod aus, entdecke die Details und lade die passende Version herunter.', 'Choose a mod, explore its details and download the right version.');
@@ -41,8 +56,8 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
         const r = items[0], card = el('article', undefined, 'entry'); card.append(image(r));
         const body = el('div', undefined, 'download-card-body');
         body.append(el('h3', r.mod || modId, 'download-card-title'), el('p', r.summary || '', 'download-description'));
-        if(r.visibility==='beta')body.append(chips(['Beta']));
-        body.append(chips([...new Set(items.map(x => x.loader).filter(Boolean)), `${items.filter(x=>!x.noRelease).length} ${t('Version(en)', 'version(s)')}`, items.every(demo) ? t('Testdateien · keine installierbare Mod', 'Test files · not an installable mod') : null]));
+        if(isBeta(r)){const badges=chips([]);badges.append(betaBadge());body.append(badges);}
+        body.append(loaderChips(items.map(x=>x.loader)),chips([ `${items.filter(x=>!x.noRelease).length} ${t('Version(en)', 'version(s)')}`, items.every(demo) ? t('Testdateien · keine installierbare Mod', 'Test files · not an installable mod') : null]));
         if(r.noRelease&&releaseAnnouncement(r))body.append(el('p',releaseAnnouncement(r),'mod-warning'));
         body.append(button(t('Mod auswählen →', 'Select mod →'), () => navigate(modId))); card.append(body); grid.append(card);
       }
@@ -53,7 +68,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
     root.append(button(t('← Alle Mods', '← All mods'), () => navigate(), 'mod-back'));
     const hero = el('div', undefined, 'mod-heading');
     const heading = el('div'); heading.append(el('h2', r.mod || id), el('p', r.summary || ''));
-    const download=button(selected.some(item=>!item.noRelease&&item.hasFile!==false)?t('↓ Download','↓ Download'):((r.hasFile===false||r.releaseStatus==='released')?t('Kein Download verfügbar','No download available'):t('Release ausstehend','Release pending')),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease&&item.hasFile!==false);hero.append(image(r),heading,download); root.append(hero);if(r.visibility==='beta')heading.append(chips(['Beta']));
+    const download=button(selected.some(item=>!item.noRelease&&item.hasFile!==false)?t('↓ Download','↓ Download'):((r.hasFile===false||r.releaseStatus==='released')?t('Kein Download verfügbar','No download available'):t('Release ausstehend','Release pending')),()=>navigate(id,'versions'));download.disabled=!selected.some(item=>!item.noRelease&&item.hasFile!==false);hero.append(image(r),heading,download); root.append(hero);if(isBeta(r)){const badges=chips([]);badges.append(betaBadge());heading.append(badges);}
     const tabs = el('nav', undefined, 'mod-tabs'); tabs.setAttribute('aria-label', t('Mod-Ansicht', 'Mod view'));
     for (const [label, value] of [[t('Beschreibung', 'Description'), 'description'], [t('Galerie','Gallery'),'gallery'], ['Changelog', 'changelog'], [t('Versionen', 'Versions'), 'versions']]) {
       const b = button(label, () => navigate(id, value), 'mod-tab'); if (view === value) b.setAttribute('aria-current', 'page'); tabs.append(b);
@@ -62,7 +77,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
     if(selected.every(item=>item.noRelease)&&releaseAnnouncement(r))root.append(el('p',releaseAnnouncement(r),'mod-warning'));
     const layout = el('div', undefined, 'mod-layout'), content = el('section', undefined, 'mod-content'), aside = el('aside', undefined, 'mod-content');
     aside.append(el('h3', t('Kompatibilität', 'Compatibility')), el('p', 'Minecraft: Java Edition'));
-    aside.append(chips([...new Set(selected.map(x => x.minecraftVersion).filter(Boolean))]), el('h3', 'Modloader'), chips([...new Set(selected.map(x => x.loader).filter(Boolean))]), el('h3', t('Umgebung', 'Environment')), chips([...new Set(selected.map(x => x.side === 'both' ? 'Client & Server' : x.side === 'server' ? 'Server' : x.side === 'client' ? 'Client' : null))]));
+    aside.append(chips([...new Set(selected.map(x => x.minecraftVersion).filter(Boolean))]), el('h3', 'Modloader'), loaderChips(selected.map(x=>x.loader)), el('h3', t('Umgebung', 'Environment')), chips([...new Set(selected.map(x => x.side === 'both' ? 'Client & Server' : x.side === 'server' ? 'Server' : x.side === 'client' ? 'Client' : null))]));
     if(view==='gallery'){
       content.append(el('h3',t('Galerie','Gallery')));
       if((r.catalogue||r.catalogueMeta)&&Array.isArray(r.gallery)&&r.gallery.length){const gallery=el('div',undefined,'mod-catalogue-gallery');for(const item of r.gallery){const url=assetUrl(item.path);if(!url)continue;const link=el('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';const img=el('img');img.src=url;img.alt=item.caption||r.mod;img.loading='lazy';link.append(img);if(item.caption)link.append(el('span',item.caption));gallery.append(link)}content.append(gallery)}
@@ -72,7 +87,7 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
       const ordered = selected.filter(x=>!x.noRelease).slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.version || '').localeCompare(String(a.version || ''), undefined, {numeric: true}));
       for (const release of ordered) {
         const entry = el('article', undefined, 'mod-changelog-entry');
-        entry.append(el('h4', `v${release.version || '—'}`), chips([release.date, release.minecraftVersion ? `Minecraft ${release.minecraftVersion}` : null, release.loader, release.channel || 'stable']));
+        entry.append(el('h4', `v${release.version || '—'}`), versionChips(release));
         let notes = release.changelog;
         if (notes && typeof notes === 'object' && !Array.isArray(notes)) notes = notes[lang] || notes.de || notes.en;
         if (demo(release)) entry.append(el('p', t('TESTDATEI · Keine installierbare Mod', 'TEST FILE · Not an installable mod'), 'mod-warning'));
@@ -108,9 +123,9 @@ import {db,loadCatalogue,assetUrl,attachDownload} from './mod-catalogue.js';
         const shown = selected.filter(x => !x.noRelease && controls.every(({field,select}) => !select.value || (x[field] || (field === 'channel' ? 'stable' : '')) === select.value)).slice().sort((a,b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.version || '').localeCompare(String(a.version || ''), undefined, {numeric:true}));
         if (!shown.length) list.append(el('p', t('Keine Version passt zu diesen Filtern.', 'No versions match these filters.')));
         shown.forEach(x => {
-          const row = el('article', undefined, 'mod-release'), info = el('div'); info.append(el('h4', `${x.mod || id} · ${x.version || '—'}`), chips([x.minecraftVersion ? `Minecraft ${x.minecraftVersion}` : null, x.loader, x.channel || 'stable', x.date]));
+          const row = el('article', undefined, 'mod-release'), info = el('div'); info.append(el('h4', `${x.mod || id} · ${x.version || '—'}`), versionChips(x));
           if (demo(x)) info.append(el('p', t('TESTDATEI · Keine installierbare Mod', 'TEST FILE · Not an installable mod'), 'mod-warning'));
-          const a = el('a', x.canDownload===false?t('Beta-Zugang erforderlich','Beta access required'):demo(x) ? t('Testdatei öffnen ↗', 'Open test file ↗') : t('Herunterladen ↗', 'Download ↗'), 'mod-button'); attachDownload(a,x,{onError:()=>{const message=el('p',t('Download konnte nicht gestartet werden. Bitte erneut versuchen oder den Zugang prüfen.','Download could not start. Please retry or check your access.'),'mod-warning');row.append(message)}}); row.append(info,a);if(x.canDownload===false){row.append(el('p',x.signedIn?t('Zum Herunterladen benötigst du eine Beta-Einladung für diese Mod.','Downloading requires a beta invitation for this mod.'):t('Melde dich an und nimm eine Beta-Einladung an, um diese Version herunterzuladen.','Sign in and accept a beta invitation to download this version.'),'mod-warning'));if(!x.signedIn){const login=el('a',t('Anmelden','Sign in'));login.href='profile.html';row.append(login)}}list.append(row);
+          const a = el('a', x.canDownload===false?t('Beta-Zugang erforderlich','Beta access required'):demo(x) ? t('Testdatei öffnen ↗', 'Open test file ↗') : t('Herunterladen ↗', 'Download ↗'), 'mod-button'); if(x.canDownload===false)a.classList.add('mod-beta-lock');attachDownload(a,x,{onError:()=>{const message=el('p',t('Download konnte nicht gestartet werden. Bitte erneut versuchen oder den Zugang prüfen.','Download could not start. Please retry or check your access.'),'mod-warning');row.append(message)}}); row.append(info,a);if(x.canDownload===false){row.append(el('p',x.signedIn?t('Zum Herunterladen benötigst du eine Beta-Einladung für diese Mod.','Downloading requires a beta invitation for this mod.'):t('Melde dich an und nimm eine Beta-Einladung an, um diese Version herunterzuladen.','Sign in and accept a beta invitation to download this version.'),'mod-warning'));if(!x.signedIn){const login=el('a',t('Anmelden','Sign in'));login.href='profile.html';row.append(login)}}list.append(row);
         });
       };
       controls.forEach(({select}) => select.addEventListener('change', show)); content.append(filters, list); show();

@@ -4,3 +4,20 @@
 .mod-profile-image{object-fit:contain!important}.downloads-grid .mod-profile-image{padding:16px;background:radial-gradient(ellipse at center,#3a2755,#171020)}
 .mod-description-banner{display:block;width:100%;max-width:100%;height:auto;max-height:460px;object-fit:contain;margin:0 0 24px;border-radius:12px}
 .mod-download-locked{background:#a982ff12!important;border:1px solid #a982ff55!important;color:var(--muted,#bdaaca)!important;cursor:not-allowed;white-space:normal}.mod-release>.mod-warning{flex-basis:100%;font-size:12px;margin:8px 0}
+/* Release status and loader marks share one compact, readable badge layout. */
+#mod-browser .download-chips{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+#mod-browser .download-chip{display:inline-flex;align-items:center;gap:6px;min-height:28px;line-height:1.3;padding:5px 10px}
+#mod-browser .mod-channel{font-weight:750;letter-spacing:.02em}
+#mod-browser .mod-channel::before{content:"";width:6px;height:6px;flex-shrink:0;border-radius:50%;background:currentColor}
+#mod-browser .mod-channel[data-channel="beta"]{color:#fcd58c;background:#f4ad2817;border-color:#efbb615c}
+#mod-browser .mod-channel[data-channel="alpha"]{color:#f3a6bf;background:#e25a8c17;border-color:#e25a8c5c}
+#mod-browser .mod-channel[data-channel="stable"]{color:#9ae4be;background:#45b88017;border-color:#45b8805c}
+.mod-loader-icon{display:inline-block;width:17px;height:17px;flex-shrink:0;background:currentColor;mask:var(--loader-icon) center/contain no-repeat;-webkit-mask:var(--loader-icon) center/contain no-repeat}
+.mod-loader-icon[data-loader="fabric"]{--loader-icon:url("assets/loaders/fabric.svg")}
+.mod-loader-icon[data-loader="forge"]{--loader-icon:url("assets/loaders/forge.svg")}
+.mod-loader-icon[data-loader="neoforge"]{--loader-icon:url("assets/loaders/neoforge.svg")}
+.mod-loader-icon[data-loader="quilt"]{--loader-icon:url("assets/loaders/quilt.svg")}
+.mod-beta-lock::before{content:"";width:15px;height:15px;flex-shrink:0;background:currentColor;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='4' y='10' width='16' height='11' rx='2'/%3E%3Cpath d='M8 10V6a4 4 0 0 1 8 0v4M12 14v3'/%3E%3C/svg%3E") center/contain no-repeat}
+html[data-akame-theme="light"] #mod-browser .mod-channel[data-channel="beta"]{color:#805000;background:#fff1d6;border-color:#d1ad65}
+html[data-akame-theme="light"] #mod-browser .mod-channel[data-channel="alpha"]{color:#943152;background:#ffe6ee;border-color:#d19aaf}
+html[data-akame-theme="light"] #mod-browser .mod-channel[data-channel="stable"]{color:#216642;background:#e4f5eb;border-color:#8abea0}
