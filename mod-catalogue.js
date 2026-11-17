@@ -27,12 +27,12 @@ export async function loadCatalogue(){
   return {...r,modId:r.mod_slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),bannerUrl:assetUrl(mod.banner_path),minecraftVersion:r.minecraft_version,date:r.created_at.slice(0,10),catalogue:true,hasFile:!!r.storage_path,visibility:mod.visibility,betaRequired:mod.visibility==='beta'||['beta','alpha'].includes(r.channel),canDownload:privileged||grants.has(mod.slug)||(mod.visibility==='public'&&r.channel==='stable'),signedIn:!!uid,releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date};
  })};
 }
-export async function recordDownload(release,source='downloads'){
- try{
-  const {data}=await db.auth.getSession();if(!data?.session)return;
-  const {error}=await db.from('download_events').insert({release_id:release.catalogue?release.id:null,mod_slug:String(release.modId||release.mod).slice(0,100),mod_name:String(release.mod||release.modId).slice(0,100),version:String(release.version||'—').slice(0,80),minecraft_version:String(release.minecraftVersion||'').slice(0,60),loader:String(release.loader||'').slice(0,40),source});
-  if(error)console.warn('Download-Verlauf konnte nicht gespeichert werden',error);
- }catch(error){console.warn('Download-Verlauf nicht verfügbar',error);}
+export async function requestDownload(release,source='downloads'){
+ const session=await db.auth.getSession();if(session.error)throw session.error;
+ const headers={'Content-Type':'application/json','apikey':'sb_publishable_NBEO1vyOgowogxmZyr9ycA_DgObmPT0'};
+ if(session.data?.session?.access_token)headers.Authorization='Bearer '+session.data.session.access_token;
+ const response=await fetch('https://wycdpuzlbivtfxwtarzn.supabase.co/functions/v1/mod-download',{method:'POST',headers,body:JSON.stringify({release_id:release.id,source})});
+ const result=await response.json();if(!response.ok||!result.url)throw Error(result.error||'Download unavailable');return result;
 }
 export function attachDownload(anchor,release,{source='downloads',onError=()=>{}}={}){
  let busy=false,lastStarted=0;
@@ -42,13 +42,13 @@ export function attachDownload(anchor,release,{source='downloads',onError=()=>{}
  anchor.addEventListener('click',async event=>{
   if(release.catalogue)event.preventDefault();
   if(busy||Date.now()-lastStarted<1500){event.preventDefault();return;}
-  if(!release.catalogue){lastStarted=Date.now();void recordDownload(release,source);return;}
+  if(!release.catalogue){lastStarted=Date.now();return;}
   busy=true;anchor.setAttribute('aria-busy','true');
   try{
-   const {data,error}=await db.storage.from('mod-files').createSignedUrl(release.storage_path,60,{download:release.file_name});
-   if(error||!data?.signedUrl)throw error||Error('Download konnte nicht vorbereitet werden.');
-   window.location.assign(data.signedUrl);
-   lastStarted=Date.now();void recordDownload(release,source);
+   const result=await requestDownload(release,source);
+   window.location.assign(result.url);
+   lastStarted=Date.now();
+
   }catch(error){onError(error);}
   finally{busy=false;anchor.removeAttribute('aria-busy');}
  });

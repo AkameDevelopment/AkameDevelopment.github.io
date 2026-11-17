@@ -8,11 +8,11 @@
  const identity=root.querySelector('.panel.lead');if(!biography||!identity)return;
  document.body.classList.add('profile-workspace');
  const privacy=node('section','panel');
- for(const id of ['profile-show-member-since','profile-show-discord-name','profile-show-member-list','profile-show-badges']){
+ for(const id of ['profile-show-member-since','profile-show-discord-name','profile-show-member-list']){
   const label=document.getElementById(id).closest('label'),hint=label.nextElementSibling;
   privacy.append(label);if(hint?.classList.contains('privacy'))privacy.append(hint);
  }
- const badgeVisibility=document.getElementById('profile-badge-visibility-panel');if(badgeVisibility)privacy.append(badgeVisibility);
+ const badgeVisibility=document.getElementById('profile-badge-visibility-panel');const badgeSection=node('section','panel');const badgeToggle=document.getElementById('profile-show-badges').closest('label');const badgeHint=badgeToggle.nextElementSibling;badgeSection.append(badgeToggle);if(badgeHint?.classList.contains('privacy'))badgeSection.append(badgeHint);if(badgeVisibility)badgeSection.append(badgeVisibility);
  const spotify=document.getElementById('profile-spotify-track').parentElement;spotify.classList.add('panel','profile-spotify-settings');
  const saveActions=document.getElementById('profile-save').closest('.actions');saveActions.classList.add('profile-settings-save');
  const note=biography.querySelector(':scope > .privacy:last-child');if(note){note.dataset.profileNote='';note.textContent=tr('Hier bearbeitest du die Beschreibung deines öffentlichen Profils.','Edit the description of your public profile here.');}
@@ -24,6 +24,7 @@
   ['appearance','Aussehen','Appearance','Profilhintergrund, Farben und Namenskontur anpassen.','Customize your profile background, colors and name outline.',[]],
   ['spotify','Spotify','Spotify','Deine Lieblingssongs für dein öffentliches Profil auswählen.','Choose favorite songs for your public profile.',[spotify]],
   ['visibility','Sichtbarkeit','Visibility','Festlegen, welche Profilangaben öffentlich sichtbar sind.','Choose which profile details are visible publicly.',[privacy]],
+  ['badges','Badges','Badges','Sichtbarkeit, Badge-Favoriten und Achievements verwalten.','Manage badge visibility, favorites and achievements.',[badgeSection]],
   ['showcase','Showcase','Showcase','Bilder und GIFs auf deinem Profil verwalten.','Manage images and GIFs on your profile.',[document.getElementById('gallery-panel')]],
   ['mods','Meine Mods','My mods','Die Mod-Auswahl in deinem öffentlichen Profil bearbeiten.','Edit the mod selection on your public profile.',[document.getElementById('profile-mod-list').closest('section')]],
   ['posts','Meine Beiträge','My posts','Deine Community-Beiträge verwalten.','Manage your Community posts.',[document.getElementById('profile-own-posts')]],

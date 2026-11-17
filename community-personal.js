@@ -1,12 +1,17 @@
+import {mountModLibrary} from './mod-library.js';
+import {loadCatalogue} from './mod-catalogue.js';
+import {renderPublicBadgeList} from './badge-ui.js';
 import {db,userReady,getPublicProfile} from './community-session.js?v=1';
 const $ = id => document.getElementById(id);
-const tr = (de,en) => (window.AkameLanguage?.get?.() || localStorage.getItem('akame-lang')) === 'en' ? en : de;
+const tr = (de,en) => (window.AkameLanguage?.get?.() || localStorage.getItem('akame-lang')) === 'de' ? de : en;
 const node = (tag,value,cls) => { const n=document.createElement(tag); if(value!==undefined)n.textContent=value; if(cls)n.className=cls; return n; };
 const link = (label,href) => { const n=node('a',label,'personal-button'); n.href=href; return n; };
 const action = (label,fn) => { const n=node('button',label,'personal-button'); n.type='button'; n.addEventListener('click',fn); return n; };
 const canonical = value => ({core:'modcore',chestscout:'chest',akameitems:'items',akamezoom:'zoom'})[String(value||'').toLowerCase()] || String(value||'').toLowerCase();
 const names={modcore:'ModCore',chest:'ChestScout',crosshair:'Crosshair+',chunkloader:'ChunkLoader',items:'AkameItems',hud:'Hud+',info:'Infos',admin:'Admin',zoom:'AkameZoom',akamesmp:'AkameSMP'};
 const safeUrl = value => { try {const u=new URL(value); return u.protocol==='https:'&&!u.username&&!u.password;} catch{return false;} };
+const library=mountModLibrary(db,$('my-mods-feed'));
+let catalogueMods=[],publicBadges=[];
 let user=null, profile=null, posts=[], tickets=[], mods=[], betas=[], rules=[], releases=[], definitions=[], grants=[];
 let loaded=false, loading=false, generation=0, admin=false;
 let errors={}, postCount=null,ticketCount=null,morePosts=false,moreTickets=false;
@@ -16,16 +21,11 @@ function translate(){
   document.querySelectorAll('[data-personal-de]').forEach(n=>n.textContent=tr(n.dataset.personalDe,n.dataset.personalEn));
   document.querySelector('.personal-navigation')?.setAttribute('aria-label',tr('Persönliche Bereiche','Personal areas'));
 }
-function allowed(slug,betaOnly=false){
-  const rule=rules.find(r=>canonical(r.project_slug)===canonical(slug));
-  if(!rule)return false;
-  const mode=rule.visible===false?'hidden':rule.visibility || (rule.visible?'public':'hidden');
-  const hasBeta=betas.some(b=>canonical(b.project_slug)===canonical(slug));
-  return betaOnly ? hasBeta && (mode==='public'||mode==='beta'||admin) : admin || mode==='public' || mode==='beta'&&hasBeta;
-}
+function allowed(slug,betaOnly=false){const mod=catalogueMods.find(m=>m.slug===slug);if(!mod||!['public','beta'].includes(mod.visibility))return false;return !betaOnly||betas.some(b=>b.project_slug===slug)||['owner','admin','developer'].includes(profile?.role);}
+
 function matching(slug,betaOnly=false){
   if(!allowed(slug,betaOnly))return [];
-  return releases.filter(r=>[r.project_slug,r.mod_slug,r.modId,r.slug,r.mod].some(v=>canonical(v)===canonical(slug)) && safeUrl(r.url) && (r.channel!=='beta'||admin||betas.some(b=>canonical(b.project_slug)===canonical(slug))));
+  return releases.filter(r=>[r.project_slug,r.mod_slug,r.modId,r.slug,r.mod].some(v=>canonical(v)===canonical(slug)) && r.catalogue && (!betaOnly||r.channel!=='stable'));
 }
 function state(root,error,empty){root.replaceChildren();if(error)root.append(node('p',tr('Dieser Bereich konnte nicht geladen werden. Nutze „Aktualisieren“, um es erneut zu versuchen.','This area could not be loaded. Use Refresh to try again.'),'personal-error'));else if(empty)root.append(node('p',empty,'personal-empty'));}
 function renderProfile(){
@@ -37,10 +37,7 @@ function renderProfile(){
   if(safeUrl(url)){const image=node('img');image.src=url;image.alt='';image.referrerPolicy='no-referrer';image.addEventListener('error',()=>image.remove());avatar.append(image);}
   $('profile-link').href='user.html?id='+encodeURIComponent(user.id);
   const badges=$('personal-badges');badges.replaceChildren();
-  const role={owner:'Owner',admin:'Admin',developer:'Developer',staff:tr('Mitarbeiter','Staff')}[profile?.role] || tr('Mitglied','Member');
-  badges.append(node('span',role,'personal-badge'));
-  const owned=new Set(grants.map(g=>g.badge_id));
-  for(const b of definitions.filter(b=>b.name==='Community'||owned.has(b.id))){const n=node('span',b.name,'personal-badge');n.title=b.description||b.name;badges.append(n);}
+  renderPublicBadgeList(badges,publicBadges,{publicProfile:false});
   $('personal-post-count').textContent=postCount??'—';$('personal-ticket-count').textContent=ticketCount??'—';$('personal-beta-count').textContent=(!loaded||errors.betas)?'—':String(betas.length);
 }
 function date(value){return new Date(value).toLocaleDateString(tr('de-DE','en-GB'));}
@@ -62,20 +59,12 @@ async function mutatePost(post,kind,body){
   catch{if(run===generation)$('intro').textContent=tr('Änderung nicht erlaubt oder fehlgeschlagen. Dein Beitrag wurde nicht verändert.','Change denied or failed. Your post was not changed.');}
   finally{if(run===generation){loading=false;renderPosts();}}
 }
-function renderDownloads(){
-  const root=$('my-mods-feed');state(root,errors.mods||errors.rules||errors.releases||errors.betas,null);if(errors.mods||errors.rules||errors.releases||errors.betas)return;
-  const slugs=[...new Set([...mods.map(m=>canonical(m.mod_slug)),...betas.map(b=>canonical(b.project_slug))])].filter(s=>allowed(s));
-  let count=0;
-  for(const slug of slugs){const found=matching(slug);if(!found.length)continue;count++;const row=node('article',undefined,'personal-row');row.append(node('strong',names[slug]||slug));
-    for(const release of found){const meta=[release.version,release.minecraftVersion||release.minecraft_version,release.loader].filter(Boolean).join(' · ');row.append(link(meta||tr('Version auswählen','Choose version'),'downloads.html#'+new URLSearchParams({mod:release.modId||release.mod||slug,view:'versions'})));if(release.demo)row.append(node('small',tr('Testdatei · keine installierbare Mod','Test file · not an installable mod')));}
-    root.append(row);
-  }
-  if(!count)root.append(node('p',tr('Für deine ausgewählten Mods und Zugänge sind aktuell keine freigegebenen Downloads vorhanden.','No approved downloads are currently available for your selected mods and access.'),'personal-empty'));
-}
+function renderDownloads(){library.render();}
+
 function renderBetas(){
   const root=$('my-beta-feed');state(root,errors.betas||errors.rules||errors.releases,!betas.length?tr('Du hast noch keine Beta-Zugänge.','You do not have any beta access yet.'):null);if(errors.betas||errors.rules||errors.releases)return;
   let count=0;
-  for(const b of betas){const slug=canonical(b.project_slug);if(!allowed(slug,true))continue;count++;const row=node('article',undefined,'personal-row');row.append(node('strong',names[slug]||slug),node('small',tr('Beta-Zugang freigeschaltet','Beta access granted')),link(tr('Projekt öffnen','Open project'),'project.html?mod='+encodeURIComponent(slug)));
+  for(const b of betas){const slug=canonical(b.project_slug);if(!allowed(slug,true))continue;count++;const row=node('article',undefined,'personal-row');row.append(node('strong',names[slug]||slug),node('small',tr('Beta-Zugang freigeschaltet','Beta access granted')),link(tr('Projekt öffnen','Open project'),'downloads.html#'+new URLSearchParams({mod:slug})));
     const found=matching(slug,true);if(!found.length)row.append(node('p',tr('Noch keine freigegebene Version verfügbar.','No approved version available yet.')));else for(const r of found)row.append(link(r.version||tr('Version öffnen','Open version'),'downloads.html#'+new URLSearchParams({mod:r.modId||r.mod||slug,view:'versions'})));root.append(row);
   }
   if(betas.length&&!count)root.append(node('p',tr('Deine Beta-Projekte sind momentan nicht zur Ansicht freigegeben.','Your beta projects are currently unavailable.'),'personal-empty'));
@@ -99,7 +88,7 @@ async function loadRows(type,more=false){
 }
 async function load(){
   if(loading||!user)return;loading=true;const run=generation;$('personal-refresh').disabled=true;$('intro').textContent=tr('Dein Bereich wird geladen …','Loading your space …');
-  const uid=user.id;
+  const uid=user.id;void library.load(uid);
   try{
     const tasks=await Promise.all([
       read(getPublicProfile(uid),'profile'),
@@ -108,16 +97,17 @@ async function load(){
       read(db.from('mod_visibility').select('project_slug,visibility,visible'),'rules'),
       read(db.from('profile_badge_definitions').select('id,name,description'),'definitions'),
       read(db.from('profile_badge_grants').select('badge_id').eq('user_id',uid),'grants'),
-      fetch('updates.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>({data:Array.isArray(data.releases)?data.releases:[]})).catch(()=>({data:[],failed:'releases'})),
+      loadCatalogue().then(data=>{catalogueMods=data.mods;for(const m of data.mods)names[m.slug]=m.name;return {data:data.releases}}).catch(()=>({data:[],failed:'releases'})),
       loadRows('posts'),loadRows('tickets')
     ]);
     if(run!==generation)return;
     const [p,m,b,r,d,g,f]=tasks;for(const [key,value] of Object.entries({profile:p,mods:m,betas:b,rules:r,definitions:d,grants:g,releases:f}))errors[key]=!!value.failed;
+    const badgeResult=await db.rpc('get_public_profile_badges',{p_user_id:uid});if(run!==generation)return;publicBadges=badgeResult.error?[]:badgeResult.data||[];
     profile=(Array.isArray(p.data)?p.data[0]:p.data)||null;admin=['owner','admin'].includes(profile?.role);mods=m.data||[];betas=b.data||[];rules=r.data||[];definitions=d.data||[];grants=g.data||[];releases=f.data||[];
     loaded=true;$('intro').textContent=Object.values(errors).some(Boolean)?tr('Einige Daten konnten nicht geladen werden. Bitte versuche es erneut.','Some data could not be loaded. Please try again.'):'';render();
   }finally{if(run===generation){loading=false;$('personal-refresh').disabled=false;}}
 }
-function clear(){generation++;user=null;profile=null;posts=[];tickets=[];mods=[];betas=[];rules=[];releases=[];grants=[];definitions=[];loaded=false;loading=false;errors={};postCount=null;ticketCount=null;$('dashboard').hidden=true;['personal-posts-list','personal-tickets-list','my-mods-feed','my-beta-feed','personal-badges','personal-avatar'].forEach(id=>$(id).replaceChildren());$('display-name').textContent='';$('profile-link').href='profile.html';$('intro').textContent='';$('auth-required').hidden=false;}
+function clear(){library.clear();publicBadges=[];catalogueMods=[];generation++;user=null;profile=null;posts=[];tickets=[];mods=[];betas=[];rules=[];releases=[];grants=[];definitions=[];loaded=false;loading=false;errors={};postCount=null;ticketCount=null;$('dashboard').hidden=true;['personal-posts-list','personal-tickets-list','my-mods-feed','my-beta-feed','personal-badges','personal-avatar'].forEach(id=>$(id).replaceChildren());$('display-name').textContent='';$('profile-link').href='profile.html';$('intro').textContent='';$('auth-required').hidden=false;}
 document.addEventListener('akame-community-view',e=>{if(e.detail.view==='personal'&&user&&!loaded)void load();});
 document.addEventListener('akame-language-change',render);
 document.addEventListener('akame-community-signout',clear);
