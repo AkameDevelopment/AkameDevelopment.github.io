@@ -2,7 +2,7 @@
    DOM-only rendering: never parse untrusted text as HTML. */
 (()=>{"use strict";
   const forbidden="script,style,noscript,textarea,input,select,option,button,pre,code,kbd,samp,svg,math,[contenteditable],[data-no-richtext]";
-  const bold=/\\*\\*([^*\\n]+?)\\*\\*/g;
+  const bold=/\*\*([^*\n]+?)\*\*/g;
   function transform(node){
     if(node.nodeType!==Node.TEXT_NODE || !node.nodeValue?.includes("**"))return;
     const parent=node.parentElement;
