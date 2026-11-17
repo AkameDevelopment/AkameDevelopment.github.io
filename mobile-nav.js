@@ -66,7 +66,7 @@ function setUser(user){if(user&&sessionStorage.getItem("akame-support-return")==
 
 /* AkameSMP guide navigation: same desktop dropdown geometry as Home. */
 (()=>{
- const items=[['Startseite','Home','/akamesmp/'],['Server beitreten','Join the server','/akamesmp/guide/'],['Benötigte Mods','Required mods','akamesmp/mods.html'],['Serverregeln & Hilfe','Server rules & help','akamesmp/rules.html']];
+ const items=[['Server beitreten','Join the server','/akamesmp/guide/'],['Benötigte Mods','Required mods','akamesmp/mods.html'],['Serverregeln & Hilfe','Server rules & help','akamesmp/rules.html']];
  const nav=document.querySelector('header .akame-site-nav .navlinks');
  const key=value=>String(value||'').split(/[?#]/)[0].replace(/^\//,'').replace(/\.html$/,'').replace(/\/$/,'');
  const smp=nav&&[...nav.querySelectorAll(':scope > a')].find(a=>key(a.getAttribute('href'))==='akamesmp');
@@ -81,7 +81,7 @@ function setUser(user){if(user&&sessionStorage.getItem("akame-support-return")==
   const group=document.createElement('div');group.className='akame-smp-mobile-subnav';mobile.after(group);
   for(const [de,en,href] of items){const a=document.createElement('a');a.href=href;if(key(location.pathname)===key(href))a.setAttribute('aria-current','page');group.append(a);labels.push({a,de,en});}
  }
- function translate(){const english=(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en';for(const {a,de,en} of labels)a.textContent=english?en:de;if(smp)smp.setAttribute('aria-label',english?'AkameSMP, submenu with home, joining guide, mods and server rules':'AkameSMP, Untermenü mit Startseite, Beitritt, Mods und Serverregeln');}
+ function translate(){const english=(window.AkameLanguage?.get?.()||localStorage.getItem('akame-lang'))==='en';for(const {a,de,en} of labels)a.textContent=english?en:de;if(smp)smp.setAttribute('aria-label',english?'AkameSMP, submenu with joining guide, mods and server rules':'AkameSMP, Untermenü mit Beitritt, Mods und Serverregeln');}
  translate();document.addEventListener('akame-language-change',translate);
 })();
 
