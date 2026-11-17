@@ -939,3 +939,11 @@ html[data-akame-theme="light"] body header>.wrap.nav.akame-site-nav>nav.navlinks
 /* AkameSMP subpages reuse the Home dropdown and remain reachable in mobile navigation. */
 @media(min-width:851px){html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-smp-dropdown>.akame-home-submenu{width:220px!important;min-width:220px!important}html body header>.wrap.nav.akame-site-nav>nav.navlinks>.akame-smp-dropdown>.akame-home-submenu>a{white-space:nowrap!important}}
 .akame-smp-mobile-subnav{margin:0 0 5px 15px;padding-left:8px;border-left:1px solid #a982ff55}.akame-menu-panel .akame-smp-mobile-subnav>a{font-size:12px!important;min-height:38px!important;display:flex!important;align-items:center!important;padding:8px 10px!important}.akame-smp-mobile-subnav>a[aria-current=page]{background:#a982ff24;border-radius:8px}html[data-akame-theme=light] .akame-smp-mobile-subnav{border-color:#d7c7e8}
+
+/* Account menu rows must not inherit centered page-form button alignment. */
+html body header .akame-account-dropdown>a,
+html body header .akame-account-dropdown>button{
+ justify-content:flex-start!important;
+ box-sizing:border-box!important;
+ margin:0!important;
+}
