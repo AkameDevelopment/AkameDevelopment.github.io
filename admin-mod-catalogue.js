@@ -1,3 +1,4 @@
+import {createDemoMod} from './admin-demo-mod.js';
 import {db,validateFile,fileExtension,assetUrl} from './mod-catalogue.js';
 const root=document.getElementById('mod-catalogue-manager');
 const tr=(de,en)=>localStorage.getItem('akame-lang')==='en'?en:de;
@@ -114,6 +115,9 @@ if(root){
   $('description').rows=3;
  }
  simplifyEditor();
+ const demoButton=node('button',tr('Test-Mod erstellen','Create demo mod'),'ghost');demoButton.type='button';demoButton.id='catalogue-create-demo';demoButton.dataset.de='Test-Mod erstellen';demoButton.dataset.en='Create demo mod';root.querySelector('.catalogue-heading').append(demoButton);
+ demoButton.onclick=async()=>{if(busy||!authorized)return;locked(true);let result;try{message(tr('Test-Mod mit Bildern und Versionen wird erstellt …','Creating demo mod with images and versions …'));result=await createDemoMod({db});await reload();}catch(error){message(error.message,true)}finally{locked(false)}if(result){editMod(mods.find(mod=>mod.slug===result.slug));message(result.existing?tr('Die Test-Mod ist bereits vorhanden.','The demo mod already exists.'):tr('Test-Mod erfolgreich erstellt. Auf der Download-Seite verfügbar.','Demo mod created successfully. Available on the downloads page.'));window.AkameToast?.(result.existing?tr('Vorhandene Test-Mod geöffnet.','Existing demo mod opened.'):tr('Test-Mod erfolgreich hochgeladen!','Demo mod uploaded successfully!'));}};
+
  function translate(){root.querySelectorAll('[data-de]').forEach(n=>n.textContent=tr(n.dataset.de,n.dataset.en));renderLibrary();renderGallery();renderPendingGallery();renderReleases()}
  $('new').onclick=()=>editMod(null);$('delete-mod').onclick=deleteMod;$('release-new').onclick=()=>{if(!busy)clearRelease()};$('form').onsubmit=saveMod;$('release-form').onsubmit=saveRelease;translate();document.addEventListener('akame-language-change',translate);
  try{const {data:{user}}=await db.auth.getUser();if(user){const {data,error}=await db.from('staff_access').select('role').eq('user_id',user.id).maybeSingle();if(!error&&['owner','developer'].includes(data?.role)){authorized=true;root.hidden=false;document.getElementById('mods-manager').hidden=false;await reload();editMod(null);message('');}}}catch(e){message(e.message,true)}
