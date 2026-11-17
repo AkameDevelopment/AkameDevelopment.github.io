@@ -38,19 +38,18 @@ export function attachDownload(anchor,release,{source='downloads',onError=()=>{}
  let busy=false,lastStarted=0;
  if(release.catalogue&&!release.storage_path){anchor.removeAttribute('href');anchor.setAttribute('aria-disabled','true');anchor.textContent=localStorage.getItem('akame-lang')==='en'?'No download available':'Kein Download verfügbar';anchor.addEventListener('click',event=>event.preventDefault());return;}
  if(release.canDownload===false){anchor.href='#';anchor.setAttribute('aria-disabled','true');anchor.classList.add('mod-download-locked');anchor.addEventListener('click',event=>{event.preventDefault();onError(Error(release.signedIn?'Für diesen Download benötigst du einen Beta-Zugang.':'Bitte anmelden und eine Beta-Einladung annehmen.'))});return;}
- anchor.href=release.catalogue?'#':release.url;anchor.target='_blank';anchor.rel='noopener noreferrer';
+ anchor.href=release.catalogue?'#':release.url;anchor.target='_self';anchor.rel='noopener noreferrer';
  anchor.addEventListener('click',async event=>{
   if(release.catalogue)event.preventDefault();
   if(busy||Date.now()-lastStarted<1500){event.preventDefault();return;}
   if(!release.catalogue){lastStarted=Date.now();void recordDownload(release,source);return;}
   busy=true;anchor.setAttribute('aria-busy','true');
-  const popup=window.open('about:blank','_blank');if(popup)popup.opener=null;
   try{
    const {data,error}=await db.storage.from('mod-files').createSignedUrl(release.storage_path,60,{download:release.file_name});
    if(error||!data?.signedUrl)throw error||Error('Download konnte nicht vorbereitet werden.');
-   if(popup)popup.location.replace(data.signedUrl);else window.location.assign(data.signedUrl);
+   window.location.assign(data.signedUrl);
    lastStarted=Date.now();void recordDownload(release,source);
-  }catch(error){if(popup)popup.close();onError(error);}
+  }catch(error){onError(error);}
   finally{busy=false;anchor.removeAttribute('aria-busy');}
  });
 }
