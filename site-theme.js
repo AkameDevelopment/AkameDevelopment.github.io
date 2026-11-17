@@ -1,4 +1,12 @@
 (()=>{"use strict";
+// Shared safe rich-text renderer: applies **bold** across dynamically loaded website content.
+if(!document.querySelector('script[data-akame-richtext]')){
+ const richtext=document.createElement("script");
+ richtext.dataset.akameRichtext="true";
+ richtext.src="/akame-richtext.js?v=20261118-1";
+ document.head.appendChild(richtext);
+}
+
 const KEY="akame-site-theme",root=document.documentElement;
 const stored=()=>{try{return localStorage.getItem(KEY)==="light"?"light":"dark"}catch{return "dark"}};
 const current=()=>root.dataset.akameTheme==="light"?"light":"dark";
