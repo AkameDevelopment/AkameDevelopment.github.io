@@ -1,0 +1,34 @@
+import {badgeName,badgeDescription,badgeText,badgeSymbols} from './badge-ui.js';
+let favorites=[],badges=[],visibility={},achievements=[],onChange=()=>{};
+export const currentBadgeShowcase=()=>favorites.slice();
+export const currentBadgeVisibilityState=()=>({...visibility});
+const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
+const button=(text,fn,label)=>{const b=node('button',text,'secondary badge-small-button');b.type='button';b.setAttribute('aria-label',label||text);b.onclick=fn;return b;};
+export function refreshBadgeControls(){const disabled=!document.getElementById('profile-show-badges').checked;for(const input of document.querySelectorAll('[data-profile-badge-id]'))input.disabled=disabled;for(const control of document.querySelectorAll('#badge-favorites button'))control.disabled=disabled||control.dataset.limitDisabled==='true';}
+function render(){
+ const host=document.getElementById('profile-badge-visibility-list');if(!host)return;host.replaceChildren();
+ let section=document.getElementById('badge-favorites');if(!section){section=node('section');section.id='badge-favorites';host.before(section)}section.replaceChildren();
+ section.append(node('h3',badgeText('Badge-Showcase','Badge showcase')),node('p',badgeText('Wähle bis zu 3 freigeschaltete Badges und ordne sie. Ausgeblendete Badges bleiben auch hier privat.','Choose up to 3 earned badges and set their order. Hidden badges remain private even when selected.')));
+ const status=node('p',favorites.length+'/3 '+badgeText('Favoriten','favorites'),'badge-favorite-count');status.setAttribute('role','status');section.append(status);
+ const order=node('ol',undefined,'badge-favorite-order');for(const [index,id]of favorites.entries()){
+  const badge=badges.find(b=>String(b.id)===String(id));if(!badge)continue;const li=node('li');li.append(node('span',badgeName(badge)));
+  const move=direction=>{const other=index+direction;if(other<0||other>=favorites.length)return;[favorites[index],favorites[other]]=[favorites[other],favorites[index]];render();onChange()};
+  const up=button('↑',()=>move(-1),badgeText('Nach oben: ','Move up: ')+badgeName(badge)),down=button('↓',()=>move(1),badgeText('Nach unten: ','Move down: ')+badgeName(badge));up.dataset.limitDisabled=String(index===0);down.dataset.limitDisabled=String(index===favorites.length-1);
+  li.append(up,down,button('×',()=>{favorites=favorites.filter(x=>x!==id);render();onChange()},badgeText('Favorit entfernen: ','Remove favorite: ')+badgeName(badge)));order.append(li);
+ }section.append(order);
+ const choices=node('div',undefined,'badge-favorite-choices');for(const b of badges){const chosen=favorites.includes(String(b.id)),row=node('div',undefined,'profile-badge-choice'),label=node('label',undefined,'profile-badge-visibility-entry'),input=node('input');input.type='checkbox';input.dataset.profileBadgeId=String(b.id);input.checked=visibility[String(b.id)]!==false;input.onchange=()=>{visibility[String(b.id)]=input.checked;render();onChange()};const icon=node('span',badgeSymbols[b.icon]||'✧','profile-badge-visibility-swatch');icon.style.color=/^#[a-f\d]{6}$/i.test(b.color)?b.color:'#b58cff';label.append(input,icon,node('span',badgeName(b)));label.title=badgeDescription(b)||'';
+  const star=button(chosen?'★':'☆',()=>{if(chosen)favorites=favorites.filter(x=>x!==String(b.id));else if(favorites.length<3)favorites.push(String(b.id));render();onChange()},(chosen?badgeText('Favorit entfernen: ','Remove favorite: '):badgeText('Als Favorit wählen: ','Favorite: '))+badgeName(b));star.setAttribute('aria-pressed',String(chosen));star.dataset.limitDisabled=String(!chosen&&(favorites.length===3||!input.checked));row.append(label,star);choices.append(row);
+ }section.append(choices);host.append(node('p',badgeText('Die Häkchen legen fest, welche Badges öffentlich sichtbar sind. Favoriten stehen zuerst.','Checkboxes control public visibility. Favorites appear first.')));
+ let progress=document.getElementById('badge-achievements');if(!progress){progress=node('section');progress.id='badge-achievements';host.after(progress)}progress.replaceChildren();progress.append(node('h3',badgeText('Achievements','Achievements')));
+ for(const a of achievements){const row=node('article',undefined,'achievement-row');row.classList.toggle('achievement-locked',!a.earned);row.append(node('strong',(a.earned?'✓ ':'◇ ')+badgeName(a)),node('p',badgeDescription(a)||''));const state=a.earned?(a.legacy_award?badgeText('Bereits früher vergeben · bleibt erhalten','Previously awarded · retained'):badgeText('Freigeschaltet','Earned')):a.revoked?badgeText('Administrativ entzogen','Revoked by an administrator'):!a.enabled?badgeText('Automatische Vergabe pausiert','Automatic awarding paused'):badgeText('Noch gesperrt','Locked');row.append(node('small',state));if(!a.earned){const bar=node('progress');bar.max=a.target;bar.value=a.progress||0;bar.setAttribute('aria-label',badgeName(a));row.append(bar,node('small',Math.min(a.progress||0,a.target)+' / '+a.target));}progress.append(row)}
+ refreshBadgeControls();
+}
+export async function loadBadgeSettings(db,user,profile,change){
+ onChange=change;visibility={...(profile?.badge_visibility||{})};favorites=(profile?.badge_showcase||[]).map(String);const earned=await db.rpc('get_my_achievements');achievements=earned.error?[]:earned.data||[];
+ const [defs,grants,publicProfile]=await Promise.all([db.from('profile_badge_definitions').select('id,name,name_de,icon,color,description,description_de,system_key').order('id'),db.from('profile_badge_grants').select('badge_id').eq('user_id',user.id),db.rpc('get_public_profile',{p_user_id:user.id})]);
+ const host=document.getElementById('profile-badge-visibility-list');if(defs.error||grants.error){host.textContent=badgeText('Badge-Einstellungen konnten nicht geladen werden. Bitte neu laden.','Could not load badge settings. Please reload.');return}
+ const owned=new Set((grants.data||[]).map(g=>String(g.badge_id))),info=publicProfile.data?.[0]||{};const aliases={owner:['owner'],admin:['admin','administrator'],developer:['developer','entwickler'],staff:['staff','team']}[info.role]||[];
+ badges=(defs.data||[]).filter(b=>b.name==='Community'||owned.has(String(b.id))||(b.system_key==='minecraft'&&info.smp_member)||aliases.includes(b.name.toLowerCase()));visibility={...(profile?.badge_visibility||{})};favorites=(profile?.badge_showcase||[]).map(String).filter(id=>badges.some(b=>String(b.id)===id)).slice(0,3);render();
+ if(earned.error){document.getElementById('badge-achievements').append(node('p',badgeText('Erfolge konnten nicht geladen werden. Bitte erneut versuchen.','Achievements could not be loaded. Please try again.')))}
+}
+document.addEventListener('akame-language-change',()=>{if(badges.length||achievements.length)render()});
