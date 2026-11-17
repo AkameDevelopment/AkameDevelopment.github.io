@@ -1,0 +1,46 @@
+begin;
+select set_config('test.member',(select cp.user_id::text from public.community_profiles cp where not exists(select 1 from public.staff_access s where s.user_id=cp.user_id) order by cp.created_at desc limit 1),true);
+select set_config('test.other',(select cp.user_id::text from public.community_profiles cp where cp.user_id::text<>current_setting('test.member') and not exists(select 1 from public.staff_access s where s.user_id=cp.user_id) limit 1),true);
+select set_config('test.admin',(select user_id::text from public.staff_access where role='owner' limit 1),true);
+insert into public.mod_catalogue(slug,name,published,visibility,release_status) values('library-clear-qa','Library QA',true,'public','released');
+insert into public.mod_releases(id,mod_slug,version,loader,published,storage_path,file_name,file_size) values('30000000-0000-4000-8000-000000000001','library-clear-qa','1.0.0','Fabric',true,'library-clear-qa/00000000-0000-4000-8000-000000000001.zip','qa.zip',1);
+insert into public.download_events(user_id,mod_slug,mod_name,version) values(current_setting('test.other')::uuid,'library-clear-qa','Library QA','0.9.0');
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
+set local role service_role;
+select public.record_verified_download('30000000-0000-4000-8000-000000000001',current_setting('test.member')::uuid,'downloads');
+reset role;
+select set_config('test.grants',(select count(*)::text from public.profile_badge_grants where user_id=current_setting('test.member')::uuid),true);
+select set_config('test.event',(select id::text from public.download_events where user_id=current_setting('test.member')::uuid and release_id='30000000-0000-4000-8000-000000000001'),true);
+select set_config('request.jwt.claims',jsonb_build_object('sub',current_setting('test.member'),'role','authenticated')::text,true);
+set local role authenticated;
+select public.clear_my_download_history();
+do $$begin
+ if jsonb_array_length(public.get_my_mod_library())<>0 then raise exception 'personal_list_not_cleared';end if;
+ if (select count(*) from public.profile_badge_grants where user_id=auth.uid())<>current_setting('test.grants')::int then raise exception 'achievements_changed';end if;
+ begin update public.download_events set mod_name='tampered' where user_id=auth.uid();raise exception 'trusted_metadata_writable';exception when insufficient_privilege then null;end;
+ update public.download_events set hidden_from_library=true where user_id=current_setting('test.other')::uuid;
+end $$;
+reset role;
+do $$begin if exists(select 1 from public.download_events where user_id=current_setting('test.other')::uuid and mod_slug='library-clear-qa' and hidden_from_library) then raise exception 'foreign_list_modified';end if;end $$;
+select set_config('request.jwt.claims',jsonb_build_object('sub',current_setting('test.admin'),'role','authenticated')::text,true);
+set local role authenticated;
+do $$begin
+ if not exists(select 1 from public.download_events where id=current_setting('test.event')::uuid and hidden_from_library) then raise exception 'admin_history_lost';end if;
+end $$;
+reset role;
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
+set local role service_role;
+select public.record_verified_download('30000000-0000-4000-8000-000000000001',current_setting('test.member')::uuid,'downloads');
+reset role;
+select set_config('request.jwt.claims',jsonb_build_object('sub',current_setting('test.member'),'role','authenticated')::text,true);
+set local role authenticated;
+do $$begin
+ if not exists(select 1 from jsonb_array_elements(public.get_my_mod_library())m where m->>'slug'='library-clear-qa') then raise exception 'later_download_did_not_reappear';end if;
+ if not exists(select 1 from public.download_events where id=current_setting('test.event')::uuid and not hidden_from_library) then raise exception 'daily_event_replaced_or_hidden';end if;
+end $$;
+reset role;
+set local role anon;
+do $$begin begin perform public.clear_my_download_history();raise exception 'anonymous_clear_allowed';exception when insufficient_privilege then null;end;end $$;
+reset role;
+rollback;
+select 'PASS: own list cleared; admin records/achievements retained; foreign lists protected; later same-day download reappears without duplication' as result;

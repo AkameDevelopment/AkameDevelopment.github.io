@@ -3,11 +3,13 @@ import {assetUrl} from './mod-catalogue.js';
 import {libraryState} from './mod-library-model.js';
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 export function mountModLibrary(db,host){
- let mods=[],status='idle',filter='all',generation=0,uid=null;
+ let mods=[],status='idle',filter='all',generation=0,uid=null,clearing=false,clearError=false,cleared=false;
  const date=s=>{const d=new Date(s);return Number.isNaN(d.getTime())?'—':d.toLocaleDateString(t('de-DE','en-GB'));};
  function render(){if(!host)return;host.replaceChildren();if(!uid)return;
   host.append(node('p',t('Deine Download-Historie – keine Erkennung installierter Mods. Verifizierte Einträge belegen einen autorisierten Download-Start, nicht das Speichern oder Installieren.','Your download history — not a list of installed mods. Verified entries mean an authorised download start, not a completed save or installation.'),'mod-library-note'));
-  const controls=node('div',undefined,'mod-library-controls');for(const [value,de,en]of [['all','Alle','All'],['updates','Updates verfügbar','Updates available'],['beta','Beta / Alpha','Beta / Alpha']]){const b=node('button',t(de,en),'personal-button');b.type='button';b.setAttribute('aria-pressed',String(filter===value));b.onclick=()=>{filter=value;render()};controls.append(b)}host.append(controls);
+  const controls=node('div',undefined,'mod-library-controls');for(const [value,de,en]of [['all','Alle','All'],['updates','Updates verfügbar','Updates available'],['beta','Beta / Alpha','Beta / Alpha']]){const b=node('button',t(de,en),'personal-button');b.type='button';b.setAttribute('aria-pressed',String(filter===value));b.onclick=()=>{filter=value;render()};controls.append(b)}const clean=node('button',clearing?t('Wird geleert …','Clearing …'):t('Meine Liste leeren','Clear my list'),'personal-button');clean.type='button';clean.disabled=clearing||status!=='ready'||!mods.length;clean.onclick=clearList;controls.append(clean);host.append(controls);
+  if(clearError)host.append(node('p',t('Die Liste konnte nicht geleert werden. Bitte erneut versuchen.','Could not clear your list. Please try again.'),'personal-error'));
+  if(cleared){const notice=node('p',t('Deine Liste wurde geleert. Admin-Einträge und Achievements bleiben erhalten.','Your list was cleared. Admin records and achievements are preserved.'),'mod-library-note');notice.setAttribute('role','status');host.append(notice);}
   if(status==='loading'){host.append(node('p',t('Bibliothek wird geladen …','Loading library …')));return}
   if(status==='error'){const b=node('button',t('Erneut versuchen','Try again'),'personal-button');b.type='button';b.onclick=()=>load(uid);host.append(node('p',t('Die Bibliothek konnte nicht geladen werden.','Could not load your library.')),b);return}
   const shown=mods.filter(m=>filter==='all'||filter==='updates'&&libraryState(m).update||filter==='beta'&&(m.beta||[]).length);
@@ -21,6 +23,7 @@ export function mountModLibrary(db,host){
    const details=node('details',undefined,'mod-library-history');details.append(node('summary',t('Letzte Downloads','Recent downloads')));const list=node('ul');const seenHistory=new Set();for(const entry of mod.history||[]){const key=JSON.stringify([entry.version,entry.loader,entry.channel]);if(seenHistory.has(key))continue;seenHistory.add(key);list.append(node('li',entry.version+' · '+(entry.loader||'—')+' · '+date(entry.created_at)));}details.append(list);row.append(details);host.append(row);
   }
  }
- async function load(userId){if(!host)return;uid=userId;const run=++generation;if(!uid){mods=[];status='idle';render();return}status='loading';render();try{const result=await db.rpc('get_my_mod_library');if(run!==generation)return;if(result.error||!Array.isArray(result.data))throw Error();mods=result.data;status='ready';}catch{if(run!==generation)return;mods=[];status='error'}render();}
- document.addEventListener('akame-language-change',render);return {load,render,clear(){generation++;uid=null;mods=[];status='idle';render()}};
+ async function clearList(){if(clearing||!uid||status!=='ready')return;const run=++generation;clearing=true;clearError=false;cleared=false;render();try{const result=await db.rpc('clear_my_download_history');if(run!==generation)return;if(result.error)throw result.error;mods=[];filter='all';cleared=true;}catch{if(run===generation)clearError=true}finally{if(run===generation){clearing=false;render()}}}
+ async function load(userId){if(!host)return;uid=userId;clearing=false;clearError=false;cleared=false;const run=++generation;if(!uid){mods=[];status='idle';render();return}status='loading';render();try{const result=await db.rpc('get_my_mod_library');if(run!==generation)return;if(result.error||!Array.isArray(result.data))throw Error();mods=result.data;status='ready';}catch{if(run!==generation)return;mods=[];status='error'}render();}
+ document.addEventListener('akame-language-change',render);return {load,render,clear(){generation++;uid=null;mods=[];clearing=false;clearError=false;cleared=false;status='idle';render()}};
 }
