@@ -21,7 +21,7 @@ async function loadProjects(){
    for(const release of legacyResult.value.releases){const slug=release?.modId||release?.mod;if(!slug||!safeUrl(release.url))continue;const visibility=rules.get(slug);if(privileged||visibility==='public'||visibility==='beta'&&beta.has(slug))if(!entries.has(slug))entries.set(slug,release.mod||slug)}
   }
  }
- select.replaceChildren();for(const [slug,name] of entries){const option=text('option',name);option.value=slug;select.append(option)}
+ select.replaceChildren();for(const [slug,name] of entries){projects[slug]=name;const option=text('option',name);option.value=slug;select.append(option)}
  select.disabled=false;
  const message=$('support-form-message');if(!catalogueOk&&!legacyOk&&message)message.textContent=tr('Die aktuelle Mod-Liste konnte nicht geladen werden. Du kannst weiterhin „Website“ auswählen.','The current mod list could not be loaded. You can still select “Website”.');
 }
