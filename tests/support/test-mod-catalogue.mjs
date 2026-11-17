@@ -7,7 +7,7 @@ const moduleCode=fs.readFileSync(new URL('../../mod-catalogue.js',import.meta.ur
 function setup({signedIn=true,signError=false,insertError=false}={}){
  const {window}=parseHTML('<html><body><a id="download">Download</a></body></html>');const writes=[],opened=[],errors=[];
  const db={auth:{getSession:async()=>({data:{session:signedIn?{access_token:'fixture'}:null}})},from(){return {insert:async row=>{writes.push(row);return {error:insertError?Error('offline'):null}}}},storage:{from(){return {createSignedUrl:async()=>({data:signError?null:{signedUrl:'https://fixture.test/file'},error:signError?Error('denied'):null}),getPublicUrl:path=>({data:{publicUrl:'https://fixture.test/'+path}})}}}};
- const context=vm.createContext({window:{open(){const popup={opener:{},location:{replace(url){opened.push(url)}},close(){opened.push('closed')}};return popup},location:{assign(url){opened.push(url)}}},createClient:()=>db,console:{warn:()=>{}},Date,Error,URL,Promise,Map,Set});
+ const context=vm.createContext({window:{open(){throw Error('Downloads must not open a new tab')},location:{assign(url){opened.push(url)}}},createClient:()=>db,console:{warn:()=>{}},Date,Error,URL,Promise,Map,Set});
  vm.runInContext(moduleCode+';globalThis.api={validateFile,assetUrl,recordDownload,attachDownload};',context);
  return {api:context.api,writes,opened,errors,anchor:window.document.getElementById('download'),window};
 }
@@ -25,10 +25,10 @@ test('download events use authenticated server defaults for identity and timesta
  const anonymous=setup({signedIn:false});await anonymous.api.recordDownload(release);assert.equal(anonymous.writes.length,0);
 });
 test('signed download opens the file and records one start; repeat clicks are coalesced',async()=>{
- const x=setup();x.api.attachDownload(x.anchor,release);const event=new x.window.Event('click',{cancelable:true});x.anchor.dispatchEvent(event);await new Promise(r=>setImmediate(r));assert.equal(event.defaultPrevented,true);assert.deepEqual(x.opened,['https://fixture.test/file']);assert.equal(x.writes.length,1);x.anchor.dispatchEvent(new x.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.equal(x.writes.length,1);
+ const x=setup();x.api.attachDownload(x.anchor,release);assert.equal(x.anchor.target,'_self');const event=new x.window.Event('click',{cancelable:true});x.anchor.dispatchEvent(event);await new Promise(r=>setImmediate(r));assert.equal(event.defaultPrevented,true);assert.deepEqual(x.opened,['https://fixture.test/file']);assert.equal(x.writes.length,1);x.anchor.dispatchEvent(new x.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.equal(x.writes.length,1);
 });
 test('failed signed URLs never record a download; tracking failures do not block download',async()=>{
- const x=setup({signError:true});x.api.attachDownload(x.anchor,release,{onError:error=>x.errors.push(error)});x.anchor.dispatchEvent(new x.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.equal(x.writes.length,0);assert.equal(x.errors.length,1);assert.deepEqual(x.opened,['closed']);
+ const x=setup({signError:true});x.api.attachDownload(x.anchor,release,{onError:error=>x.errors.push(error)});x.anchor.dispatchEvent(new x.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.equal(x.writes.length,0);assert.equal(x.errors.length,1);assert.deepEqual(x.opened,[]);
  const y=setup({insertError:true});y.api.attachDownload(y.anchor,release);y.anchor.dispatchEvent(new y.window.Event('click',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.deepEqual(y.opened,['https://fixture.test/file']);
 });
 
