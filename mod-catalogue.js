@@ -24,7 +24,7 @@ export async function loadCatalogue(){
  const bySlug=new Map(visibleMods.map(mod=>[mod.slug,mod]));
  return {mods:visibleMods,releases:(versions.data||[]).filter(r=>bySlug.has(r.mod_slug)).map(r=>{
   const mod=bySlug.get(r.mod_slug);
-  return {...r,modId:r.mod_slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),bannerUrl:assetUrl(mod.banner_path),minecraftVersion:r.minecraft_version,date:r.created_at.slice(0,10),catalogue:true,visibility:mod.visibility,betaRequired:mod.visibility==='beta'||['beta','alpha'].includes(r.channel),canDownload:privileged||grants.has(mod.slug)||(mod.visibility==='public'&&r.channel==='stable'),signedIn:!!uid,releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date};
+  return {...r,modId:r.mod_slug,mod:mod.name,summary:mod.summary,description:mod.description,gallery:mod.gallery,image:assetUrl(mod.cover_path),bannerUrl:assetUrl(mod.banner_path),minecraftVersion:r.minecraft_version,date:r.created_at.slice(0,10),catalogue:true,hasFile:!!r.storage_path,visibility:mod.visibility,betaRequired:mod.visibility==='beta'||['beta','alpha'].includes(r.channel),canDownload:privileged||grants.has(mod.slug)||(mod.visibility==='public'&&r.channel==='stable'),signedIn:!!uid,releaseStatus:mod.release_status,releaseNote:mod.release_note,releaseDate:mod.expected_release_date};
  })};
 }
 export async function recordDownload(release,source='downloads'){
@@ -36,6 +36,7 @@ export async function recordDownload(release,source='downloads'){
 }
 export function attachDownload(anchor,release,{source='downloads',onError=()=>{}}={}){
  let busy=false,lastStarted=0;
+ if(release.catalogue&&!release.storage_path){anchor.removeAttribute('href');anchor.setAttribute('aria-disabled','true');anchor.textContent=localStorage.getItem('akame-lang')==='en'?'No download available':'Kein Download verfügbar';anchor.addEventListener('click',event=>event.preventDefault());return;}
  if(release.canDownload===false){anchor.href='#';anchor.setAttribute('aria-disabled','true');anchor.classList.add('mod-download-locked');anchor.addEventListener('click',event=>{event.preventDefault();onError(Error(release.signedIn?'Für diesen Download benötigst du einen Beta-Zugang.':'Bitte anmelden und eine Beta-Einladung annehmen.'))});return;}
  anchor.href=release.catalogue?'#':release.url;anchor.target='_blank';anchor.rel='noopener noreferrer';
  anchor.addEventListener('click',async event=>{
