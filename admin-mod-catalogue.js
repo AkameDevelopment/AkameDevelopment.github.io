@@ -115,7 +115,7 @@ if(root){
   $('description').rows=3;
  }
  simplifyEditor();
- const demoButton=node('button',tr('Test-Mod erstellen','Create demo mod'),'ghost');demoButton.type='button';demoButton.id='catalogue-create-demo';demoButton.dataset.de='Test-Mod erstellen';demoButton.dataset.en='Create demo mod';root.querySelector('.catalogue-heading').append(demoButton);
+ const demoButton=node('button',tr('Test-Mod erstellen','Create demo mod'),'ghost');demoButton.type='button';demoButton.id='catalogue-create-demo';demoButton.dataset.de='Test-Mod erstellen';demoButton.dataset.en='Create demo mod';const headingActions=node('div',undefined,'catalogue-heading-actions');headingActions.append($('new'),demoButton);root.querySelector('.catalogue-heading').append(headingActions);
  demoButton.onclick=async()=>{if(busy||!authorized)return;locked(true);let result;try{message(tr('Test-Mod mit Bildern und Versionen wird erstellt …','Creating demo mod with images and versions …'));result=await createDemoMod({db});await reload();}catch(error){message(error.message,true)}finally{locked(false)}if(result){editMod(mods.find(mod=>mod.slug===result.slug));message(result.existing?tr('Die Test-Mod ist bereits vorhanden.','The demo mod already exists.'):tr('Test-Mod erfolgreich erstellt. Auf der Download-Seite verfügbar.','Demo mod created successfully. Available on the downloads page.'));window.AkameToast?.(result.existing?tr('Vorhandene Test-Mod geöffnet.','Existing demo mod opened.'):tr('Test-Mod erfolgreich hochgeladen!','Demo mod uploaded successfully!'));}};
 
  function translate(){root.querySelectorAll('[data-de]').forEach(n=>n.textContent=tr(n.dataset.de,n.dataset.en));renderLibrary();renderGallery();renderPendingGallery();renderReleases()}
